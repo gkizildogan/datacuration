@@ -1,0 +1,442 @@
+project:
+  name: bilingual-aviation-corpus
+  contact: goksu.kizildogan@gmail.com
+  user_agent: bilingual-aviation-corpus/0.1 (+mailto:goksu.kizildogan@gmail.com)
+  default_requests_per_second: 1.0
+  default_concurrency: 1
+  default_max_bytes: 52428800
+
+sources:
+  - source_id: fixture_airport_markdown_en
+    enabled: true
+    adapter: file
+    seed_urls: ["file:fixtures/sources/airport_en.md"]
+    publisher: Project fixture authors
+    source_family: project-fixtures
+    authority_level: synthetic_fixture
+    languages: [en]
+    topics: [airports]
+    expected_mime_types: [text/markdown, text/plain]
+    title: Airport operations fixture
+    native_format: markdown
+    update_cadence: frozen
+    version_discovery: content checksum
+    rights:
+      state: open
+      license_id: CC0-1.0
+      license_url: https://creativecommons.org/publicdomain/zero/1.0/
+      terms_url: https://creativecommons.org/publicdomain/zero/1.0/
+      reviewed_on: 2026-07-29
+      attribution: Project fixture authors; dedicated to the public domain.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  - source_id: fixture_safety_html_tr
+    enabled: true
+    adapter: file
+    seed_urls: ["file:fixtures/sources/safety_tr.html"]
+    publisher: Project fixture authors
+    source_family: project-fixtures
+    authority_level: synthetic_fixture
+    languages: [tr]
+    topics: [safety]
+    expected_mime_types: [text/html]
+    title: Pist emniyeti örnek belgesi
+    native_format: html
+    update_cadence: frozen
+    version_discovery: content checksum
+    selectors:
+      content: main
+    rights:
+      state: open
+      license_id: CC0-1.0
+      license_url: https://creativecommons.org/publicdomain/zero/1.0/
+      terms_url: https://creativecommons.org/publicdomain/zero/1.0/
+      reviewed_on: 2026-07-29
+      attribution: Project fixture authors; dedicated to the public domain.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  - source_id: fixture_aircraft_json_en
+    enabled: true
+    adapter: file
+    seed_urls: ["file:fixtures/sources/aircraft_en.json"]
+    publisher: Project fixture authors
+    source_family: project-fixtures
+    authority_level: synthetic_fixture
+    languages: [en]
+    topics: [aircraft]
+    expected_mime_types: [application/json]
+    title: Aircraft certification fixture
+    native_format: json
+    update_cadence: frozen
+    version_discovery: content checksum
+    rights:
+      state: open
+      license_id: CC0-1.0
+      license_url: https://creativecommons.org/publicdomain/zero/1.0/
+      terms_url: https://creativecommons.org/publicdomain/zero/1.0/
+      reviewed_on: 2026-07-29
+      attribution: Project fixture authors; dedicated to the public domain.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  - source_id: wikipedia_en_dump
+    enabled: false
+    adapter: wikimedia_dump
+    seed_urls: ["https://dumps.wikimedia.org/enwiki/"]
+    publisher: Wikimedia Foundation and Wikipedia contributors
+    source_family: wikipedia
+    authority_level: community_reference
+    languages: [en]
+    topics: [regulation, airlines, airports, aircraft, engines, operations, safety, general_aviation]
+    expected_mime_types: [application/x-bzip2, application/xml]
+    native_format: xml
+    update_cadence: release_snapshot
+    version_discovery: multistream dump index and dumpstatus.json
+    bulk_patterns: ["pages-articles-multistream*.xml*.bz2", "pages-articles-multistream-index*.txt*.bz2"]
+    rights:
+      state: open
+      license_id: CC-BY-SA-4.0
+      license_url: https://creativecommons.org/licenses/by-sa/4.0/
+      terms_url: https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use
+      reviewed_on: 2026-07-29
+      attribution: Wikipedia contributors; preserve page title, revision ID, URL, and history attribution.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  - source_id: wikipedia_tr_dump
+    enabled: false
+    adapter: wikimedia_dump
+    seed_urls: ["https://dumps.wikimedia.org/trwiki/"]
+    publisher: Wikimedia Foundation and Wikipedia contributors
+    source_family: wikipedia
+    authority_level: community_reference
+    languages: [tr]
+    topics: [regulation, airlines, airports, aircraft, engines, operations, safety, general_aviation]
+    expected_mime_types: [application/x-bzip2, application/xml]
+    native_format: xml
+    update_cadence: release_snapshot
+    version_discovery: multistream dump index and dumpstatus.json
+    bulk_patterns: ["pages-articles-multistream*.xml*.bz2", "pages-articles-multistream-index*.txt*.bz2"]
+    rights:
+      state: open
+      license_id: CC-BY-SA-4.0
+      license_url: https://creativecommons.org/licenses/by-sa/4.0/
+      terms_url: https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use
+      reviewed_on: 2026-07-29
+      attribution: Wikipedia contributors; preserve page title, revision ID, URL, and history attribution.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  # Bounded alternatives to the disabled full dumps above. These entries use
+  # the read-only Action API and acquire one revision-pinned article per record.
+  - source_id: wikipedia_en_aviation_api
+    enabled: true
+    adapter: mediawiki_api
+    seed_urls: ["https://en.wikipedia.org/w/api.php"]
+    publisher: Wikimedia Foundation and Wikipedia contributors
+    source_family: wikipedia
+    authority_level: community_reference
+    languages: [en]
+    topics: [aircraft, engines, general_aviation]
+    expected_mime_types: [text/html]
+    native_format: html
+    update_cadence: frozen_snapshot
+    version_discovery: latest revision IDs from bounded category and title queries
+    selectors:
+      content: .mw-parser-output
+    requests_per_second: 1.0
+    concurrency: 1
+    max_bytes: 5242880
+    mediawiki:
+      page_titles:
+        - Aircraft engine
+        - Aerodynamics
+      category_titles:
+        - "Category:Aircraft engines"
+        - "Category:Aircraft aerodynamics"
+      max_pages: 150
+      max_total_bytes: 268435456
+      batch_size: 20
+      maxlag: 5
+    rights:
+      state: open
+      license_id: CC-BY-SA-4.0
+      license_url: https://creativecommons.org/licenses/by-sa/4.0/
+      terms_url: https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use
+      reviewed_on: 2026-07-29
+      attribution: Wikipedia contributors; preserve page title, revision ID, permanent URL, and history URL.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  - source_id: wikipedia_tr_airlines_api
+    enabled: true
+    adapter: mediawiki_api
+    seed_urls: ["https://tr.wikipedia.org/w/api.php"]
+    publisher: Wikimedia Foundation and Vikipedi contributors
+    source_family: wikipedia
+    authority_level: community_reference
+    languages: [tr]
+    topics: [airlines, operations]
+    expected_mime_types: [text/html]
+    native_format: html
+    update_cadence: frozen_snapshot
+    version_discovery: latest revision IDs from the named list and its airline category
+    selectors:
+      content: .mw-parser-output
+    requests_per_second: 1.0
+    concurrency: 1
+    max_bytes: 5242880
+    mediawiki:
+      page_titles:
+        - Türkiye merkezli havayolu şirketleri listesi
+      category_titles:
+        - "Kategori:Türkiye merkezli havayolu şirketleri"
+      max_pages: 40
+      max_total_bytes: 67108864
+      batch_size: 20
+      maxlag: 5
+    rights:
+      state: open
+      license_id: CC-BY-SA-4.0
+      license_url: https://creativecommons.org/licenses/by-sa/4.0/
+      terms_url: https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use
+      reviewed_on: 2026-07-29
+      attribution: Vikipedi contributors; preserve page title, revision ID, permanent URL, and history URL.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  - source_id: wikidata_entities
+    enabled: false
+    adapter: wikidata_dump
+    seed_urls: ["https://www.wikidata.org/wiki/Wikidata:Database_download"]
+    publisher: Wikidata contributors
+    source_family: wikidata
+    authority_level: community_structured_reference
+    languages: [mul]
+    topics: [airlines, airports, aircraft, engines, general_aviation]
+    expected_mime_types: [application/json, application/x-bzip2]
+    native_format: json
+    update_cadence: release_snapshot
+    version_discovery: dated JSON dump index
+    bulk_patterns: ["latest-all.json.bz2"]
+    rights:
+      state: open
+      license_id: CC0-1.0
+      license_url: https://creativecommons.org/publicdomain/zero/1.0/
+      terms_url: https://www.wikidata.org/wiki/Wikidata:Licensing
+      reviewed_on: 2026-07-29
+      attribution: Wikidata contributors.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  - source_id: easa_easy_access_rules
+    enabled: false
+    adapter: bulk_index
+    seed_urls: ["https://www.easa.europa.eu/en/easy-access-rules-xml-export"]
+    publisher: European Union Aviation Safety Agency
+    source_family: easa
+    authority_level: supranational_authority
+    languages: [en]
+    topics: [regulation, aircraft, engines, operations, safety, general_aviation]
+    expected_mime_types: [application/xml, application/pdf, application/zip]
+    native_format: mixed
+    update_cadence: monthly
+    version_discovery: publication title, amendment, file URL, and Last-Modified
+    bulk_patterns: ["*.xml", "*.zip", "*.pdf"]
+    rights:
+      state: open
+      license_id: LicenseRef-EASA-Reuse
+      license_url: https://www.easa.europa.eu/en/easy-access-rules-xml-export
+      terms_url: https://www.easa.europa.eu/en/copyright
+      reviewed_on: 2026-07-29
+      attribution: European Union Aviation Safety Agency; acknowledge EASA and preserve amendment/version.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+
+  - source_id: faa_handbooks
+    enabled: false
+    adapter: bulk_index
+    seed_urls: ["https://www.faa.gov/regulations_policies/handbooks_manuals"]
+    publisher: Federal Aviation Administration
+    source_family: faa
+    authority_level: national_authority
+    languages: [en]
+    topics: [regulation, aircraft, engines, operations, safety, general_aviation]
+    expected_mime_types: [application/pdf, application/zip]
+    native_format: pdf
+    update_cadence: monthly
+    version_discovery: publication number, edition, revision date, and file checksum
+    bulk_patterns: ["*.pdf", "*.zip"]
+    rights:
+      state: manifest_only
+      license_id: LicenseRef-FAA-Per-Publication-Review
+      license_url: https://www.faa.gov/web_policies
+      terms_url: https://www.faa.gov/web_policies
+      reviewed_on: 2026-07-29
+      attribution: Federal Aviation Administration; review each publication for third-party material.
+      release_source: false
+      release_derived_text: false
+      release_qa: false
+
+  - source_id: ourairports_csv
+    enabled: true
+    adapter: direct
+    seed_urls: 
+        - https://raw.githubusercontent.com/davidmegginson/ourairports-data/47c10b4b4307377ef5768d4e86e43e7a1d0f4ded/airports.csv
+        - https://raw.githubusercontent.com/davidmegginson/ourairports-data/47c10b4b4307377ef5768d4e86e43e7a1d0f4ded/runways.csv
+        - https://raw.githubusercontent.com/davidmegginson/ourairports-data/47c10b4b4307377ef5768d4e86e43e7a1d0f4ded/navaids.csv
+        - https://raw.githubusercontent.com/davidmegginson/ourairports-data/47c10b4b4307377ef5768d4e86e43e7a1d0f4ded/airport-frequencies.csv
+    publisher: OurAirports contributors
+    source_family: ourairports
+    authority_level: community_structured_reference
+    languages: [en]
+    topics: [airports]
+    expected_mime_types: [text/csv, text/plain]
+    native_format: csv
+    update_cadence: release_snapshot
+    version_discovery: immutable Git commit 47c10b4b4307377ef5768d4e86e43e7a1d0f4ded
+    rights:
+      state: open
+      license_id: LicenseRef-OurAirports-Public-Domain
+      license_url: https://ourairports.com/data/
+      terms_url: https://ourairports.com/data/
+      reviewed_on: 2026-07-29
+      attribution: OurAirports contributors; preserve the source commit and do not imply official IATA/ICAO authority.
+      release_source: true
+      release_derived_text: true
+      release_qa: true
+      notes: The official download page states that all data is released to the Public Domain.
+
+  - source_id: ntsb_aviation_bulk
+    enabled: false
+    adapter: bulk_index
+    seed_urls: ["https://www.ntsb.gov/safety/data/pages/Data_Stats.aspx"]
+    publisher: National Transportation Safety Board
+    source_family: ntsb
+    authority_level: national_authority
+    languages: [en]
+    topics: [safety]
+    expected_mime_types: [application/zip, application/x-msaccess, text/csv]
+    native_format: mixed
+    update_cadence: release_snapshot
+    version_discovery: downloadable archive name, date, and checksum
+    bulk_patterns: ["*.zip", "*.csv", "*.mdb"]
+    rights:
+      state: manifest_only
+      license_id: LicenseRef-NTSB-Review-And-Privacy-Filter
+      license_url: https://www.ntsb.gov/about/Pages/foia.aspx
+      terms_url: https://www.ntsb.gov/Pages/Privacy.aspx
+      reviewed_on: 2026-07-29
+      attribution: National Transportation Safety Board; exclude names, addresses, owners, and other unnecessary personal data.
+      release_source: false
+      release_derived_text: false
+      release_qa: false
+
+  - source_id: shgm_legislation_manifest
+    enabled: false
+    adapter: sitemap
+    seed_urls: ["https://mevzuat.shgm.gov.tr/index.php/yonetmelik/"]
+    publisher: Sivil Havacılık Genel Müdürlüğü
+    source_family: shgm
+    authority_level: national_authority
+    languages: [tr]
+    topics: [regulation]
+    expected_mime_types: [text/html, application/pdf]
+    native_format: mixed
+    update_cadence: monthly
+    version_discovery: page links and publication dates
+    rights:
+      state: manifest_only
+      license_id: LicenseRef-SHGM-Unclear
+      license_url: https://mevzuat.shgm.gov.tr/
+      terms_url: https://mevzuat.shgm.gov.tr/
+      reviewed_on: 2026-07-29
+      attribution: Sivil Havacılık Genel Müdürlüğü
+      release_source: false
+      release_derived_text: false
+      release_qa: false
+
+  - source_id: dhmi_statistics_manifest
+    enabled: false
+    adapter: bulk_index
+    seed_urls: ["https://www.dhmi.gov.tr/Sayfalar/Istatistikler.aspx"]
+    publisher: Devlet Hava Meydanları İşletmesi
+    source_family: dhmi
+    authority_level: national_authority
+    languages: [tr]
+    topics: [airlines, airports, operations]
+    expected_mime_types: [text/html, application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet]
+    native_format: mixed
+    update_cadence: monthly
+    version_discovery: table title, reporting period, file URL, and checksum
+    bulk_patterns: ["*.xlsx", "*.xls", "*.pdf"]
+    rights:
+      state: manifest_only
+      license_id: LicenseRef-DHMI-Unclear
+      license_url: https://www.dhmi.gov.tr/
+      terms_url: https://www.dhmi.gov.tr/
+      reviewed_on: 2026-07-29
+      attribution: Devlet Hava Meydanları İşletmesi
+      release_source: false
+      release_derived_text: false
+      release_qa: false
+
+  - source_id: turkish_accident_reports_manifest
+    enabled: false
+    adapter: bulk_index
+    seed_urls: ["https://ulasimemniyeti.uab.gov.tr/hava-araci?PageSpeed=noscript"]
+    publisher: Ulaşım Emniyeti İnceleme Merkezi Başkanlığı
+    source_family: turkish-accident-investigation
+    authority_level: national_authority
+    languages: [tr]
+    topics: [safety]
+    expected_mime_types: [text/html, application/pdf]
+    native_format: mixed
+    update_cadence: monthly
+    version_discovery: report identifier, occurrence date, publication date, and checksum
+    bulk_patterns: ["*.pdf"]
+    rights:
+      state: manifest_only
+      license_id: LicenseRef-UAB-Accident-Reports-Unclear
+      license_url: https://ulasimemniyeti.uab.gov.tr/
+      terms_url: https://ulasimemniyeti.uab.gov.tr/
+      reviewed_on: 2026-07-29
+      attribution: Ulaşım Emniyeti İnceleme Merkezi Başkanlığı; apply personal-data exclusions.
+      release_source: false
+      release_derived_text: false
+      release_qa: false
+
+  - source_id: proprietary_code_products
+    enabled: false
+    adapter: none
+    seed_urls: []
+    publisher: Proprietary aviation code publishers
+    source_family: proprietary-codes
+    authority_level: industry
+    languages: [en]
+    topics: [airports]
+    expected_mime_types: []
+    native_format: unknown
+    update_cadence: none
+    version_discovery: none
+    rights:
+      state: blocked
+      license_id: LicenseRef-Proprietary
+      license_url: https://example.invalid/not-acquired
+      terms_url: https://example.invalid/not-acquired
+      reviewed_on: 2026-07-29
+      attribution: Not acquired.
+      release_source: false
+      release_derived_text: false
+      release_qa: false

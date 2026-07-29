@@ -1,0 +1,58 @@
+stages:
+  fetch:
+    cmd: uv run aviation-data fetch --snapshot ${snapshot}
+    deps:
+      - configs/sources.yaml
+      - src/aviation_data
+    outs:
+      - data/raw
+      - data/manifests/source_records.jsonl
+  extract:
+    cmd: uv run aviation-data extract
+    deps:
+      - data/raw
+      - data/manifests/source_records.jsonl
+    outs:
+      - data/extracted
+  curate:
+    cmd: uv run aviation-data curate
+    deps:
+      - data/extracted
+      - configs/sampling.yaml
+    outs:
+      - data/curated
+  passages:
+    cmd: uv run aviation-data passages build
+    deps:
+      - data/curated
+      - configs/passages.yaml
+    outs:
+      - data/passages
+  qa_generate:
+    cmd: uv run aviation-data qa generate --backend fixture --target 8
+    deps:
+      - data/passages
+      - configs/generation.yaml
+      - prompts/qa_generation.md
+    outs:
+      - data/qa/generated.jsonl
+  qa_validate:
+    cmd: uv run aviation-data qa validate
+    deps:
+      - data/qa/generated.jsonl
+      - data/passages
+    outs:
+      - data/qa/accepted.jsonl
+      - data/qa/rejected.jsonl
+  report:
+    cmd: uv run aviation-data report
+    deps:
+      - data/curated
+      - data/qa
+    outs:
+      - data/reports/pilot_report.json
+      - data/reports/pilot_report.md
+
+vars:
+  - snapshot: "2026-07-29"
+

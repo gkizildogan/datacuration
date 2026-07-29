@@ -1,0 +1,11 @@
+language_token_targets:
+  en: 0.70
+  tr: 0.30
+quota_tolerance: 0.05
+minimum_topic_share: 0.05
+maximum_source_family_share: 0.40
+pilot_documents: 500
+pilot_qa: 1500
+full_documents: 5000
+full_qa: 20000
+

@@ -1,0 +1,8 @@
+target_tokens: 600
+max_tokens: 900
+overlap_tokens: 80
+max_table_tokens: 1200
+tokenizer:
+  mode: regex_fixture
+  id: regex-word-v1
+  revision: local-v1

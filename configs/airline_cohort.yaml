@@ -1,0 +1,181 @@
+release: v0.1.0-pilot
+snapshot_date: 2026-07-29
+status: frozen
+
+ranking_inputs:
+  passenger_volume:
+    source: &passenger_source https://theflyingengineer.com/worlds-largest-airlines-by-passengers/
+    source_published_on: 2026-01-19
+    year: 2026
+    metric: annual_passengers
+    tie_policy: include_all_ties_at_rank_10
+    snapshot_date: 2026-07-29
+    top_10: 
+      - rank: 1
+        airline: American Airlines
+        value_min: 215000000
+        value_max: 220000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 2
+        airline: Delta Air Lines
+        value_min: 190000000
+        value_max: 200000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 3
+        airline: Southwest Airlines
+        value_min: 180000000
+        value_max: 190000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 4
+        airline: United Airlines
+        value_min: 175000000
+        value_max: 185000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 5
+        airline: Ryanair Group
+        value_min: 175000000
+        value_max: 185000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 6
+        airline: Turkish Airlines
+        value_min: 165000000
+        value_max: 175000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 7
+        airline: China Southern Airlines
+        value_min: 155000000
+        value_max: 165000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 8
+        airline: China Eastern Airlines
+        value_min: 150000000
+        value_max: 160000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 9
+        airline: IndiGo
+        value_min: 100000000
+        value_max: 110000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+      - rank: 10
+        airline: Air China
+        value_min: 95000000
+        value_max: 105000000
+        unit: passengers
+        citation_url: *passenger_source
+        tied: false
+
+  fleet_size:
+    source: https://en.wikipedia.org/w/index.php?title=Largest_airlines_in_the_world&oldid=1364601867#Aircraft_operated_(February_2026)
+    source_revision: 1364601867
+    year: 2026
+    data_as_of: 2026-02
+    metric: active_fleet_size
+    tie_policy: include_all_ties_at_rank_10
+    snapshot_date: 2026-07-29
+    top_10: 
+      - rank: 1
+        airline: United Airlines
+        value: 1090
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 28
+        tied: false
+      - rank: 2
+        airline: American Airlines
+        value: 1013
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 29
+        tied: false
+      - rank: 3
+        airline: Delta Air Lines
+        value: 989
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 30
+        tied: false
+      - rank: 4
+        airline: China Southern Airlines
+        value: 850
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 31
+        tied: false
+      - rank: 5
+        airline: Southwest Airlines
+        value: 810
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 16
+        tied: false
+      - rank: 6
+        airline: China Eastern Airlines
+        value: 664
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 32
+        tied: false
+      - rank: 7
+        airline: Ryanair
+        value: 643
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 33
+        tied: false
+      - rank: 8
+        airline: SkyWest Airlines
+        value: 579
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 34
+        tied: false
+      - rank: 9
+        airline: Turkish Airlines
+        value: 545
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 35
+        tied: false
+      - rank: 10
+        airline: Air China
+        value: 510
+        unit: aircraft
+        as_of: 2026-02
+        source_reference: 36
+        tied: false
+
+entity_scope_notes:
+  - passenger_entity: Ryanair Group
+    fleet_entity: Ryanair
+    relationship: airline_group_to_operating_airline
+        
+mandatory_turkish_carriers:
+  - Turkish Airlines
+  - SunExpress
+  - Pegasus Airlines
+  - AJet
+  - Corendon Airlines
+
+rules:
+  cohort: union_of_both_rankings_and_mandatory_turkish_carriers
+  fleet_facts_require_as_of: true
+  field_level_citations_required: true
+  unclear_rights_official_pages: manifest_only

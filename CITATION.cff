@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software or a released dataset, cite the versioned Zenodo record."
+title: "Bilingual Aviation Corpus and RAG QA Benchmark Pipeline"
+type: software
+version: 0.1.0
+date-released: 2026-07-29
+license: Apache-2.0
+authors:
+  - name: "Aviation Data Curation Contributors"
+repository-code: "REPLACE_WITH_GITHUB_URL"
+abstract: >-
+  Rights-aware Python pipeline for a frozen English/Turkish civil-aviation
+  corpus and evidence-linked retrieval and generation benchmark.

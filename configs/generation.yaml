@@ -1,0 +1,27 @@
+model:
+  primary: AxisQuant/Qwen3.6-27b-gptq-int4
+  fallback: glenic/Qwen3.6-27B-AWQ
+  # Verified from the repository history on 2026-07-29.
+  revision: e4a111caa43e97606b7a5fa20849bbcc051aa4f0
+  tokenizer_revision: e4a111caa43e97606b7a5fa20849bbcc051aa4f0
+  fallback_revision: 3dec12a2e68033ba440364493c074f6b3c6995f6
+  # vllm/vllm-openai:v0.25.1, repository digest verified on 2026-07-29.
+  container_digest: sha256:e4f88a835143cd22aee2397a26ec6bb80b3a4a6fe0c882bcbc63822904766089
+runtime:
+  vllm_version: "0.25.1"
+  language_model_only: true
+  gpu_memory_utilization: 0.90
+  max_model_len: 8192
+  max_num_seqs: 1
+  reasoning_parser: qwen3
+  thinking: false
+generation:
+  temperature: 0.2
+  seed: 20260729
+  max_output_tokens: 768
+  max_retries: 3
+  timeout_seconds: 180
+pilot_comparison:
+  english_items: 200
+  turkish_items: 200
+  required_schema_success: 0.99

@@ -1,0 +1,12 @@
+{
+  "profile_type": "certification_fixture",
+  "aircraft": "Example Twin",
+  "category": "normal",
+  "maximum_takeoff_mass_kg": 5700,
+  "engines": 2,
+  "certification_note": "The approved type design defines the configuration needed for airworthiness certification.",
+  "limitations": [
+    "Operate within the approved flight envelope.",
+    "Follow the mandatory maintenance limitations."
+  ]
+}

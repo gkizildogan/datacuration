@@ -1,0 +1,319 @@
+{
+  "$defs": {
+    "Answerability": {
+      "enum": [
+        "answerable",
+        "corpus_unanswerable"
+      ],
+      "title": "Answerability",
+      "type": "string"
+    },
+    "EvidenceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_char_end": {
+          "minimum": 0,
+          "title": "Canonical Char End",
+          "type": "integer"
+        },
+        "canonical_char_start": {
+          "minimum": 0,
+          "title": "Canonical Char Start",
+          "type": "integer"
+        },
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "passage_char_end": {
+          "minimum": 0,
+          "title": "Passage Char End",
+          "type": "integer"
+        },
+        "passage_char_start": {
+          "minimum": 0,
+          "title": "Passage Char Start",
+          "type": "integer"
+        },
+        "passage_id": {
+          "title": "Passage Id",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        },
+        "quote_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Quote Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "passage_id",
+        "document_id",
+        "passage_char_start",
+        "passage_char_end",
+        "canonical_char_start",
+        "canonical_char_end",
+        "quote",
+        "quote_sha256"
+      ],
+      "title": "EvidenceSpan",
+      "type": "object"
+    },
+    "GeneratorConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "title": "Backend",
+          "type": "string"
+        },
+        "container_digest": {
+          "title": "Container Digest",
+          "type": "string"
+        },
+        "model_id": {
+          "title": "Model Id",
+          "type": "string"
+        },
+        "model_revision": {
+          "title": "Model Revision",
+          "type": "string"
+        },
+        "prompt_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Prompt Sha256",
+          "type": "string"
+        },
+        "prompt_version": {
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "settings": {
+          "additionalProperties": true,
+          "title": "Settings",
+          "type": "object"
+        },
+        "temperature": {
+          "title": "Temperature",
+          "type": "number"
+        },
+        "tokenizer_revision": {
+          "title": "Tokenizer Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "backend",
+        "model_id",
+        "model_revision",
+        "tokenizer_revision",
+        "container_digest",
+        "prompt_version",
+        "prompt_sha256",
+        "temperature",
+        "seed"
+      ],
+      "title": "GeneratorConfiguration",
+      "type": "object"
+    },
+    "Language": {
+      "enum": [
+        "en",
+        "tr",
+        "mul",
+        "und"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "QAType": {
+      "enum": [
+        "factual",
+        "definition",
+        "list_table",
+        "comparison",
+        "temporal"
+      ],
+      "title": "QAType",
+      "type": "string"
+    },
+    "ReviewStatus": {
+      "enum": [
+        "unreviewed",
+        "auto_accepted",
+        "auto_rejected",
+        "human_accepted",
+        "human_rejected",
+        "adjudicated"
+      ],
+      "title": "ReviewStatus",
+      "type": "string"
+    },
+    "Split": {
+      "enum": [
+        "train",
+        "validation",
+        "test",
+        "unassigned"
+      ],
+      "title": "Split",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "acceptable_variants": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Acceptable Variants",
+      "type": "array"
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Answer"
+    },
+    "answerability": {
+      "$ref": "#/$defs/Answerability"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "cross_lingual": {
+      "default": false,
+      "title": "Cross Lingual",
+      "type": "boolean"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceSpan"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "evidence_languages": {
+      "items": {
+        "$ref": "#/$defs/Language"
+      },
+      "title": "Evidence Languages",
+      "type": "array"
+    },
+    "flags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Flags",
+      "type": "array"
+    },
+    "generation_attempts": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Generation Attempts",
+      "type": "integer"
+    },
+    "generator": {
+      "$ref": "#/$defs/GeneratorConfiguration"
+    },
+    "primary_type": {
+      "$ref": "#/$defs/QAType"
+    },
+    "provenance_passage_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Provenance Passage Ids",
+      "type": "array"
+    },
+    "qa_id": {
+      "title": "Qa Id",
+      "type": "string"
+    },
+    "question": {
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "question_language": {
+      "$ref": "#/$defs/Language"
+    },
+    "reference_answer": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reference Answer"
+    },
+    "rejection_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rejection Reasons",
+      "type": "array"
+    },
+    "review_status": {
+      "$ref": "#/$defs/ReviewStatus",
+      "default": "unreviewed"
+    },
+    "rubric": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rubric",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_document_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Document Ids",
+      "type": "array"
+    },
+    "split": {
+      "$ref": "#/$defs/Split",
+      "default": "unassigned"
+    },
+    "split_group_id": {
+      "title": "Split Group Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "qa_id",
+    "question",
+    "question_language",
+    "primary_type",
+    "answerability",
+    "split_group_id",
+    "generator"
+  ],
+  "title": "QARecord",
+  "type": "object"
+}

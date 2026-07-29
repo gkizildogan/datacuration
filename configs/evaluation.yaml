@@ -1,0 +1,20 @@
+retrieval:
+  lexical:
+    backend: bm25-local-v1
+    k1: 1.2
+    b: 0.75
+  dense:
+    model: intfloat/multilingual-e5-base
+    revision: d128750597153bb5987e10b1c3493a34e5a4502a
+    endpoint: http://127.0.0.1:8001/v1
+    passage_prefix: "passage: "
+    query_prefix: "query: "
+    batch_size: 64
+    unanswerable_similarity_threshold: 0.82
+metrics:
+  retrieval: [recall@5, recall@10, recall@20, mrr@10, ndcg@10]
+  closed_answer: [normalized_exact_match, token_f1, numeric_date_equivalence, list_set_f1]
+judge:
+  calibration_required: true
+  sample_fraction: 0.15
+  maximum_human_items: 3000

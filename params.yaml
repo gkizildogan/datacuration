@@ -1,0 +1,8 @@
+snapshot: "2026-07-29"
+pilot:
+  documents: 500
+  qa: 1500
+full:
+  documents: 5000
+  qa: 20000
+

@@ -1,0 +1,22 @@
+{
+  "title": "Bilingual Aviation Corpus and RAG QA Benchmark",
+  "description": "Versioned English/Turkish civil-aviation corpus and evidence-linked QA benchmark. DOI metadata is finalized only after the pilot passes.",
+  "upload_type": "dataset",
+  "license": "other-open",
+  "keywords": [
+    "aviation",
+    "Turkish",
+    "English",
+    "retrieval-augmented generation",
+    "question answering",
+    "information retrieval"
+  ],
+  "creators": [
+    {
+      "name": "Aviation Data Curation Contributors"
+    }
+  ],
+  "access_right": "open",
+  "notes": "Mixed-license dataset: consult per-record license_id and license shards. Software is Apache-2.0."
+}
+
