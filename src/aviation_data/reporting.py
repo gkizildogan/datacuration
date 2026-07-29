@@ -10,6 +10,7 @@ import yaml
 
 from aviation_data.io import read_json, read_jsonl, write_json
 from aviation_data.models import DocumentRecord, PassageRecord, QARecord, SourceRecord
+from aviation_data.qa_planning import qa_run_dir
 
 AIRLINE_RANKING_SIZE = 10
 
@@ -36,7 +37,7 @@ def _human_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
     scores = []
     for row in rows:
         accepted = all(
-            bool(row.get(dimension))
+            row.get(dimension) is True
             for dimension in ("clarity", "correctness", "evidence_sufficiency", "language_quality")
         )
         by_qa[str(row["qa_id"])].append(accepted)
@@ -76,22 +77,46 @@ def _gate(name: str, actual: Any, threshold: Any, passed: bool | None) -> dict[s
     }
 
 
+def _read_qa_v11(path: Path) -> tuple[list[QARecord], int]:
+    rows = read_jsonl(path)
+    compatible = [
+        QARecord.model_validate(row)
+        for row in rows
+        if row.get("schema_version") == "1.1.0"
+    ]
+    return compatible, len(rows) - len(compatible)
+
+
 def build_report(
     data_dir: Path,
     airline_cohort_path: Path = Path("configs/airline_cohort.yaml"),
+    *,
+    qa_run_id: str = "benchmark",
 ) -> dict[str, Any]:
+    qa_dir = qa_run_dir(data_dir, qa_run_id)
     source_records = read_jsonl(data_dir / "manifests" / "source_records.jsonl", SourceRecord)
     extracted = read_jsonl(data_dir / "extracted" / "documents.jsonl", DocumentRecord)
     accepted_documents = read_jsonl(
         data_dir / "curated" / "accepted_documents.jsonl", DocumentRecord
     )
     passages = read_jsonl(data_dir / "passages" / "passages.jsonl", PassageRecord)
-    generated_qa = read_jsonl(data_dir / "qa" / "generated.jsonl", QARecord)
-    accepted_qa = read_jsonl(data_dir / "qa" / "accepted.jsonl", QARecord)
-    rejected_qa = read_jsonl(data_dir / "qa" / "rejected.jsonl", QARecord)
+    generated_qa, incompatible_generated = _read_qa_v11(
+        qa_dir / "generated.jsonl"
+    )
+    accepted_qa, incompatible_accepted = _read_qa_v11(
+        qa_dir / "accepted.jsonl"
+    )
+    rejected_qa, incompatible_rejected = _read_qa_v11(
+        qa_dir / "rejected.jsonl"
+    )
     qa_validation = (
-        read_json(data_dir / "qa" / "validation_report.json")
-        if (data_dir / "qa" / "validation_report.json").exists()
+        read_json(qa_dir / "validation_report.json")
+        if (qa_dir / "validation_report.json").exists()
+        else {}
+    )
+    generation_report = (
+        read_json(qa_dir / "generation_report.json")
+        if (qa_dir / "generation_report.json").exists()
         else {}
     )
     curation = (
@@ -104,12 +129,67 @@ def build_report(
         if (data_dir / "passages" / "report.json").exists()
         else {}
     )
-    human_rows = read_jsonl(data_dir / "qa" / "human_reviews.jsonl")
+    human_rows = read_jsonl(qa_dir / "human_reviews.jsonl")
     human = _human_metrics(human_rows)
+    review_sample = read_jsonl(qa_dir / "review_sample.jsonl")
+    sampled_qa_ids = {str(row.get("qa_id")) for row in review_sample if row.get("qa_id")}
+    review_assignment_counts = Counter(
+        str(row.get("qa_id")) for row in review_sample if row.get("qa_id")
+    )
+    sample_slots_by_qa: dict[str, set[str]] = defaultdict(set)
+    for row in review_sample:
+        if row.get("qa_id"):
+            sample_slots_by_qa[str(row["qa_id"])].add(str(row.get("reviewer_slot")))
+    reviewer_ids_by_qa: dict[str, set[str]] = defaultdict(set)
+    for row in human_rows:
+        reviewer_id = str(row.get("reviewer_id", "")).strip()
+        if reviewer_id:
+            reviewer_ids_by_qa[str(row.get("qa_id"))].add(reviewer_id)
+    double_review_complete = (
+        bool(sampled_qa_ids)
+        and len(review_sample) == len(sampled_qa_ids) * 2
+        and all(review_assignment_counts[qa_id] == 2 for qa_id in sampled_qa_ids)
+        and all(
+            sample_slots_by_qa.get(qa_id) == {"A", "B"} for qa_id in sampled_qa_ids
+        )
+        and len(human_rows) == len(review_sample)
+        and all(len(reviewer_ids_by_qa.get(qa_id, set())) == 2 for qa_id in sampled_qa_ids)
+    )
+    extraction_assignments = read_jsonl(
+        data_dir / "reports" / "extraction_review_sample.jsonl"
+    )
     extraction_reviews = read_jsonl(data_dir / "reports" / "extraction_reviews.jsonl")
+    accepted_ids = {document.document_id for document in accepted_documents}
+    assignment_id_counts = Counter(
+        str(row.get("document_id")) for row in extraction_assignments
+    )
+    assigned_ids = {
+        document_id for document_id in assignment_id_counts if document_id in accepted_ids
+    }
+    stale_assignment_rows = sum(
+        count
+        for document_id, count in assignment_id_counts.items()
+        if document_id not in accepted_ids
+    )
+    valid_extraction_reviews = [
+        row
+        for row in extraction_reviews
+        if str(row.get("document_id")) in assigned_ids
+        and isinstance(row.get("usable"), bool)
+        and bool(str(row.get("reviewer_id", "")).strip())
+    ]
+    reviewed_id_counts = Counter(str(row["document_id"]) for row in valid_extraction_reviews)
+    extraction_review_complete = (
+        bool(assigned_ids)
+        and stale_assignment_rows == 0
+        and all(assignment_id_counts[document_id] == 1 for document_id in assigned_ids)
+        and set(reviewed_id_counts) == assigned_ids
+        and all(count == 1 for count in reviewed_id_counts.values())
+    )
     manual_extraction_rate = (
-        sum(bool(row.get("usable")) for row in extraction_reviews) / len(extraction_reviews)
-        if extraction_reviews
+        sum(bool(row["usable"]) for row in valid_extraction_reviews)
+        / len(valid_extraction_reviews)
+        if extraction_review_complete
         else None
     )
     airline_cohort = (
@@ -147,13 +227,15 @@ def build_report(
         else 0.0
     )
     extraction_rate = len(accepted_documents) / len(extracted) if extracted else 0.0
-    terminal_raw = read_jsonl(data_dir / "qa" / "raw_responses.jsonl")
+    terminal_raw = read_jsonl(qa_dir / "raw_responses.jsonl")
     terminal = [row for row in terminal_raw if row.get("status") in {"accepted", "rejected"}]
-    structured_rate = (
-        sum(row.get("status") == "accepted" for row in terminal) / len(terminal)
-        if terminal
-        else 0.0
-    )
+    structured_rate = generation_report.get("json_schema_success_rate")
+    if structured_rate is None:
+        structured_rate = (
+            sum(row.get("status") == "accepted" for row in terminal) / len(terminal)
+            if terminal
+            else 0.0
+        )
     evidence_error_reasons = {
         "evidence_passage_missing",
         "evidence_document_missing",
@@ -198,7 +280,7 @@ def build_report(
             "accepted_qa_count",
             len(accepted_qa),
             1500,
-            len(accepted_qa) >= 1500,
+            len(accepted_qa) == 1500,
         ),
         _gate(
             "exact_evidence_offset_validity",
@@ -223,6 +305,18 @@ def build_report(
             len(qa_validation.get("quota_diagnostics", {}).get("issues", [])),
             0,
             not qa_validation.get("quota_diagnostics", {}).get("issues", ["missing"]),
+        ),
+        _gate(
+            "double_review_complete",
+            {
+                "unique_items": len(sampled_qa_ids),
+                "assignment_rows": len(review_sample),
+                "submitted_rows": len(human_rows),
+            },
+            {"unique_items": 225, "assignment_rows": 450},
+            double_review_complete
+            and len(sampled_qa_ids) == 225
+            and len(review_sample) == 450,
         ),
         _gate(
             "airline_cohort_frozen",
@@ -255,6 +349,7 @@ def build_report(
     )
     report = {
         "scope": "pilot",
+        "qa_run_id": qa_run_id,
         "overall_status": overall,
         "counts": {
             "source_records": len(source_records),
@@ -264,14 +359,32 @@ def build_report(
             "generated_qa": len(generated_qa),
             "accepted_qa": len(accepted_qa),
             "rejected_qa": len(rejected_qa),
+            "incompatible_legacy_qa": (
+                incompatible_generated + incompatible_accepted + incompatible_rejected
+            ),
         },
         "language_qa_counts": dict(
             sorted(Counter(qa.question_language.value for qa in accepted_qa).items())
         ),
         "human_review": human,
+        "qa_review_sample": {
+            "unique_sampled_items": len(sampled_qa_ids),
+            "assignment_rows": len(review_sample),
+            "double_review_complete": double_review_complete,
+        },
         "extraction_validation": {
             "automated_acceptance_proxy": round(extraction_rate, 6),
-            "manual_review_rows": len(extraction_reviews),
+            "assigned_review_rows": len(assigned_ids),
+            "assignment_file_rows": len(extraction_assignments),
+            "stale_assignment_rows": stale_assignment_rows,
+            "submitted_review_rows": len(extraction_reviews),
+            "valid_review_rows": len(valid_extraction_reviews),
+            "review_complete": extraction_review_complete,
+            "missing_document_ids": sorted(assigned_ids - set(reviewed_id_counts)),
+            "stale_review_rows": sum(
+                str(row.get("document_id")) not in assigned_ids
+                for row in extraction_reviews
+            ),
             "manual_usable_rate": manual_extraction_rate,
         },
         "curation": curation,
@@ -282,7 +395,7 @@ def build_report(
             "full collection must not begin until a real pilot passes."
         ),
     }
-    output = data_dir / "reports"
+    output = data_dir / "reports" if qa_run_id == "benchmark" else qa_dir
     write_json(output / "pilot_report.json", report)
     output.mkdir(parents=True, exist_ok=True)
     lines = [

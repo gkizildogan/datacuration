@@ -9,4 +9,4 @@ data/
 release/
 .env
 *.part
-
+data-archive/

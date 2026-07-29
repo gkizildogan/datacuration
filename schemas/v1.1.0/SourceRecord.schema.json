@@ -1,0 +1,279 @@
+{
+  "$defs": {
+    "Language": {
+      "enum": [
+        "en",
+        "tr",
+        "mul",
+        "und"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "RightsEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution": {
+          "minLength": 1,
+          "title": "Attribution",
+          "type": "string"
+        },
+        "license_id": {
+          "minLength": 1,
+          "title": "License Id",
+          "type": "string"
+        },
+        "license_url": {
+          "minLength": 1,
+          "title": "License Url",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "release_derived_text": {
+          "title": "Release Derived Text",
+          "type": "boolean"
+        },
+        "release_qa": {
+          "title": "Release Qa",
+          "type": "boolean"
+        },
+        "release_source": {
+          "title": "Release Source",
+          "type": "boolean"
+        },
+        "reviewed_on": {
+          "format": "date",
+          "title": "Reviewed On",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/RightsState"
+        },
+        "terms_url": {
+          "minLength": 1,
+          "title": "Terms Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "license_id",
+        "license_url",
+        "terms_url",
+        "reviewed_on",
+        "attribution",
+        "release_source",
+        "release_derived_text",
+        "release_qa"
+      ],
+      "title": "RightsEvidence",
+      "type": "object"
+    },
+    "RightsState": {
+      "enum": [
+        "open",
+        "manifest_only",
+        "blocked"
+      ],
+      "title": "RightsState",
+      "type": "string"
+    },
+    "Topic": {
+      "enum": [
+        "regulation",
+        "airlines",
+        "airports",
+        "aircraft",
+        "engines",
+        "operations",
+        "safety",
+        "general_aviation"
+      ],
+      "title": "Topic",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "authority_level": {
+      "title": "Authority Level",
+      "type": "string"
+    },
+    "byte_size": {
+      "minimum": 0,
+      "title": "Byte Size",
+      "type": "integer"
+    },
+    "canonical_url": {
+      "title": "Canonical Url",
+      "type": "string"
+    },
+    "detected_mime": {
+      "title": "Detected Mime",
+      "type": "string"
+    },
+    "etag": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Etag"
+    },
+    "fetch_recipe": {
+      "additionalProperties": true,
+      "title": "Fetch Recipe",
+      "type": "object"
+    },
+    "http_status": {
+      "title": "Http Status",
+      "type": "integer"
+    },
+    "languages": {
+      "items": {
+        "$ref": "#/$defs/Language"
+      },
+      "title": "Languages",
+      "type": "array"
+    },
+    "last_modified": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Modified"
+    },
+    "native_format": {
+      "title": "Native Format",
+      "type": "string"
+    },
+    "publisher": {
+      "title": "Publisher",
+      "type": "string"
+    },
+    "redirect_chain": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Redirect Chain",
+      "type": "array"
+    },
+    "registry_source_id": {
+      "title": "Registry Source Id",
+      "type": "string"
+    },
+    "request_url": {
+      "title": "Request Url",
+      "type": "string"
+    },
+    "response_headers": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Response Headers",
+      "type": "object"
+    },
+    "retrieved_at": {
+      "format": "date-time",
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "rights": {
+      "$ref": "#/$defs/RightsEvidence"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "snapshot_date": {
+      "format": "date",
+      "title": "Snapshot Date",
+      "type": "string"
+    },
+    "source_family": {
+      "title": "Source Family",
+      "type": "string"
+    },
+    "source_record_id": {
+      "title": "Source Record Id",
+      "type": "string"
+    },
+    "source_version": {
+      "title": "Source Version",
+      "type": "string"
+    },
+    "storage_path": {
+      "title": "Storage Path",
+      "type": "string"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    },
+    "topics": {
+      "items": {
+        "$ref": "#/$defs/Topic"
+      },
+      "title": "Topics",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source_record_id",
+    "registry_source_id",
+    "publisher",
+    "source_family",
+    "canonical_url",
+    "request_url",
+    "http_status",
+    "retrieved_at",
+    "snapshot_date",
+    "source_version",
+    "sha256",
+    "byte_size",
+    "detected_mime",
+    "storage_path",
+    "native_format",
+    "languages",
+    "topics",
+    "authority_level",
+    "rights"
+  ],
+  "title": "SourceRecord",
+  "type": "object"
+}

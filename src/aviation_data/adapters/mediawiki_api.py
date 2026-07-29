@@ -118,7 +118,54 @@ async def discover_pages(
         result = await request(endpoint, params)
         _collect_pages(result.data, pages)
 
-    for category in config.category_titles:
+    categories = list(dict.fromkeys(config.category_titles))
+    if config.subcategory_depth == 1:
+        discovered_subcategories: set[str] = set()
+        for category in sorted(categories, key=str.casefold):
+            continuation: str | None = None
+            while len(discovered_subcategories) < config.max_subcategories:
+                params = {
+                    "action": "query",
+                    "format": "json",
+                    "formatversion": "2",
+                    "maxlag": str(config.maxlag),
+                    "list": "categorymembers",
+                    "cmtitle": category,
+                    "cmnamespace": "14",
+                    "cmtype": "subcat",
+                    "cmlimit": str(
+                        min(500, config.max_subcategories - len(discovered_subcategories))
+                    ),
+                    "cmsort": "sortkey",
+                    "cmdir": "ascending",
+                }
+                if continuation:
+                    params["cmcontinue"] = continuation
+                result = await request(endpoint, params)
+                query = result.data.get("query")
+                members = query.get("categorymembers", []) if isinstance(query, Mapping) else []
+                if not isinstance(members, list):
+                    raise MediaWikiApiError(
+                        "MediaWiki subcategory response has invalid categorymembers"
+                    )
+                discovered_subcategories.update(
+                    str(member["title"])
+                    for member in members
+                    if isinstance(member, Mapping) and member.get("title")
+                )
+                raw_continue = result.data.get("continue", {})
+                continuation = (
+                    str(raw_continue["cmcontinue"])
+                    if isinstance(raw_continue, Mapping) and "cmcontinue" in raw_continue
+                    else None
+                )
+                if not continuation:
+                    break
+        categories.extend(
+            sorted(discovered_subcategories, key=str.casefold)[: config.max_subcategories]
+        )
+
+    for category in sorted(dict.fromkeys(categories), key=str.casefold):
         continuation: str | None = None
         while len(pages) < config.max_pages:
             remaining = config.max_pages - len(pages)

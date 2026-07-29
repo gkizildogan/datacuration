@@ -1,0 +1,252 @@
+{
+  "$defs": {
+    "Language": {
+      "enum": [
+        "en",
+        "tr",
+        "mul",
+        "und"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "RightsState": {
+      "enum": [
+        "open",
+        "manifest_only",
+        "blocked"
+      ],
+      "title": "RightsState",
+      "type": "string"
+    },
+    "Topic": {
+      "enum": [
+        "regulation",
+        "airlines",
+        "airports",
+        "aircraft",
+        "engines",
+        "operations",
+        "safety",
+        "general_aviation"
+      ],
+      "title": "Topic",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "accepted": {
+      "default": true,
+      "title": "Accepted",
+      "type": "boolean"
+    },
+    "artifact_paths": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Artifact Paths",
+      "type": "object"
+    },
+    "as_of": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "As Of"
+    },
+    "attribution": {
+      "title": "Attribution",
+      "type": "string"
+    },
+    "authority_level": {
+      "title": "Authority Level",
+      "type": "string"
+    },
+    "canonical_char_count": {
+      "minimum": 0,
+      "title": "Canonical Char Count",
+      "type": "integer"
+    },
+    "canonical_path": {
+      "title": "Canonical Path",
+      "type": "string"
+    },
+    "canonical_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Canonical Sha256",
+      "type": "string"
+    },
+    "canonical_token_count": {
+      "minimum": 0,
+      "title": "Canonical Token Count",
+      "type": "integer"
+    },
+    "derived_from": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Derived From",
+      "type": "array"
+    },
+    "document_id": {
+      "title": "Document Id",
+      "type": "string"
+    },
+    "document_version": {
+      "title": "Document Version",
+      "type": "string"
+    },
+    "duplicate_group_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Duplicate Group Id"
+    },
+    "duplicate_of": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Duplicate Of"
+    },
+    "entity_group_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Entity Group Id"
+    },
+    "language": {
+      "$ref": "#/$defs/Language"
+    },
+    "license_id": {
+      "title": "License Id",
+      "type": "string"
+    },
+    "native_format": {
+      "title": "Native Format",
+      "type": "string"
+    },
+    "native_mime": {
+      "title": "Native Mime",
+      "type": "string"
+    },
+    "publication_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Publication Date"
+    },
+    "publisher": {
+      "title": "Publisher",
+      "type": "string"
+    },
+    "quality_flags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Quality Flags",
+      "type": "array"
+    },
+    "release_derived_text": {
+      "title": "Release Derived Text",
+      "type": "boolean"
+    },
+    "release_qa": {
+      "title": "Release Qa",
+      "type": "boolean"
+    },
+    "rights_state": {
+      "$ref": "#/$defs/RightsState"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_family": {
+      "title": "Source Family",
+      "type": "string"
+    },
+    "source_record_id": {
+      "title": "Source Record Id",
+      "type": "string"
+    },
+    "source_url": {
+      "title": "Source Url",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "topics": {
+      "items": {
+        "$ref": "#/$defs/Topic"
+      },
+      "title": "Topics",
+      "type": "array"
+    },
+    "variant_group_id": {
+      "title": "Variant Group Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "document_id",
+    "document_version",
+    "variant_group_id",
+    "title",
+    "language",
+    "topics",
+    "publisher",
+    "source_family",
+    "authority_level",
+    "source_record_id",
+    "source_url",
+    "native_mime",
+    "native_format",
+    "license_id",
+    "attribution",
+    "rights_state",
+    "release_derived_text",
+    "release_qa",
+    "canonical_path",
+    "canonical_sha256",
+    "canonical_char_count",
+    "canonical_token_count"
+  ],
+  "title": "DocumentRecord",
+  "type": "object"
+}

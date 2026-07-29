@@ -5,6 +5,7 @@ import html
 import json
 import re
 import xml.etree.ElementTree as ET
+from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,60 @@ from aviation_data.registry import source_index
 
 class ExtractionError(RuntimeError):
     pass
+
+
+GENERIC_HTML_PROFILE = "generic_html_v2"
+MEDIAWIKI_ARTICLE_PROFILE = "mediawiki_article_v1"
+
+BASE_HTML_REMOVE_SELECTORS = (
+    "script",
+    "style",
+    "nav",
+    "footer",
+    "aside",
+    "form",
+    "noscript",
+)
+
+MEDIAWIKI_REMOVE_SELECTORS = (
+    ".navbox",
+    ".navbar",
+    ".vertical-navbox",
+    ".authority-control",
+    ".mw-references-wrap",
+    ".reflist",
+    ".metadata",
+    ".noprint",
+    ".shortdescription",
+    ".ambox",
+    ".mbox-small",
+    ".sistersitebox",
+    ".portalbox",
+    ".catlinks",
+    ".mw-editsection",
+    "sup.reference",
+    '[role="navigation"]',
+)
+
+MEDIAWIKI_EXCLUDED_SECTIONS = {
+    "bibliography",
+    "citations",
+    "external links",
+    "further reading",
+    "general references",
+    "notes",
+    "references",
+    "see also",
+    "sources",
+    "ayrıca bakınız",
+    "dipnotlar",
+    "dış bağlantılar",
+    "ileri okuma",
+    "kaynaklar",
+    "kaynakça",
+    "konuyla ilgili yayınlar",
+    "notlar",
+}
 
 
 class _ReadableHTML(HTMLParser):
@@ -102,53 +157,367 @@ def _decode(payload: bytes) -> str:
     raise ExtractionError("unsupported text encoding")
 
 
-def _html_to_markdown(text: str, source: SourceDefinition) -> tuple[str, dict[str, Any]]:
+def _html_profile(source: SourceDefinition) -> str:
+    return source.extraction.profile if source.extraction else GENERIC_HTML_PROFILE
+
+
+def _normalize_heading(value: str) -> str:
+    value = re.sub(r"\s+", " ", value).strip().rstrip(":")
+    return value.casefold()
+
+
+def _nearest_ancestor(node: Any, tag: str, root: Any) -> Any | None:
+    current = node.parent
+    while current is not None:
+        if current.tag == tag:
+            return current
+        if current.mem_id == root.mem_id:
+            break
+        current = current.parent
+    return None
+
+
+def _inside(node: Any, tags: set[str], root: Any) -> bool:
+    current = node.parent
+    while current is not None:
+        if current.tag in tags:
+            return True
+        if current.mem_id == root.mem_id:
+            break
+        current = current.parent
+    return False
+
+
+def _direct_list_text(node: Any) -> str:
+    parts: list[str] = []
+    child = node.child
+    while child is not None:
+        if child.tag not in {"dl", "ul", "ol"}:
+            value = child.text(separator=" ", strip=True)
+            if value:
+                parts.append(value)
+        child = child.next
+    return re.sub(r"\s+", " ", " ".join(parts)).strip()
+
+
+def _direct_definition_text(node: Any) -> str:
+    parts: list[str] = []
+    child = node.child
+    while child is not None:
+        if child.tag not in {
+            "blockquote",
+            "dl",
+            "ol",
+            "p",
+            "pre",
+            "table",
+            "ul",
+        }:
+            value = child.text(separator=" ", strip=True)
+            if value:
+                parts.append(value)
+        child = child.next
+    return re.sub(r"\s+", " ", " ".join(parts)).strip()
+
+
+def _list_depth(node: Any, root: Any) -> int:
+    depth = 0
+    current = node.parent
+    while current is not None:
+        if current.tag == "li":
+            depth += 1
+        if current.mem_id == root.mem_id:
+            break
+        current = current.parent
+    return depth
+
+
+def _escape_table_cell(value: str) -> str:
+    value = re.sub(r"\s+", " ", value).strip()
+    return value.replace("\\", "\\\\").replace("|", "\\|")
+
+
+def _html_table_rows(table: Any) -> list[list[str]]:
+    rows: list[list[str]] = []
+    for row in table.css("tr"):
+        nearest_table = _nearest_ancestor(row, "table", table)
+        if nearest_table is not None and nearest_table.mem_id != table.mem_id:
+            continue
+        cells = []
+        for cell in row.css("th,td"):
+            nearest_row = _nearest_ancestor(cell, "tr", row)
+            if nearest_row is not None and nearest_row.mem_id != row.mem_id:
+                continue
+            cells.append(_escape_table_cell(cell.text(separator=" ", strip=True)))
+        if cells:
+            rows.append(cells)
+    if not rows:
+        return []
+    width = max(len(row) for row in rows)
+    return [row + [""] * (width - len(row)) for row in rows]
+
+
+def _maximum_heading_run(kinds: list[str]) -> int:
+    maximum = 0
+    current = 0
+    for kind in kinds:
+        if kind == "heading":
+            current += 1
+            maximum = max(maximum, current)
+        else:
+            current = 0
+    return maximum
+
+
+def _mediawiki_math_text(node: Any) -> str:
+    math = node.css_first("math")
+    value = math.attributes.get("alttext", "") if math is not None else ""
+    value = re.sub(r"^\{\\(?:display|text)style\s*", "", value).strip()
+    if value.endswith("}"):
+        value = value[:-1].rstrip()
+    if not value:
+        value = node.text(separator=" ", strip=True)
+    delimiter = "$$" if "mwe-math-element-block" in node.attributes.get("class", "") else "$"
+    return f"{delimiter}{value}{delimiter}"
+
+
+def _html_to_markdown(
+    text: str,
+    source: SourceDefinition,
+    *,
+    title: str | None = None,
+) -> tuple[str, dict[str, Any]]:
+    profile = _html_profile(source)
     try:
         from selectolax.parser import HTMLParser as SelectolaxParser
-    except ImportError:
+    except ImportError as exc:
+        if profile == MEDIAWIKI_ARTICLE_PROFILE:
+            raise ExtractionError(
+                "mediawiki_article_v1 extraction requires the 'formats' extra"
+            ) from exc
         parser = _ReadableHTML()
         parser.feed(text)
-        return parser.markdown(), {"extractor": "stdlib.html.parser"}
+        return parser.markdown(), {
+            "extractor": "stdlib.html.parser",
+            "extraction_profile": profile,
+        }
 
     tree = SelectolaxParser(text)
-    for selector in ("script", "style", "nav", "footer", "aside", "form", "noscript"):
-        for node in tree.css(selector):
-            node.decompose()
     content_selector = source.selectors.get("content")
     root = tree.css_first(content_selector) if content_selector else None
     root = root or tree.css_first("main") or tree.css_first("article") or tree.body
     if root is None:
         raise ExtractionError("HTML has no readable content root")
+
+    original_text_characters = len(root.text(separator=" ", strip=True))
+    normalized_math_expressions = 0
+    if profile == MEDIAWIKI_ARTICLE_PROFILE:
+        for node in root.css(".mwe-math-element"):
+            node.replace_with(_mediawiki_math_text(node))
+            normalized_math_expressions += 1
+
+    remove_selectors = list(BASE_HTML_REMOVE_SELECTORS)
+    if profile == MEDIAWIKI_ARTICLE_PROFILE:
+        remove_selectors.extend(MEDIAWIKI_REMOVE_SELECTORS)
+    removed_by_selector: dict[str, dict[str, int]] = {}
+    for selector in remove_selectors:
+        nodes = root.css(selector)
+        if not nodes:
+            continue
+        removed_elements = 0
+        removed_characters = 0
+        for node in nodes:
+            removed_characters += len(node.text(separator=" ", strip=True))
+            removed_elements += 1
+            node.decompose()
+        removed_by_selector[selector] = {
+            "elements": removed_elements,
+            "text_characters": removed_characters,
+        }
+
     chunks: list[str] = []
+    kinds: list[str] = []
     tables: list[list[list[str]]] = []
-    for node in root.css("h1,h2,h3,h4,h5,h6,p,li,table"):
+    excluded_sections: list[str] = []
+    excluded_section_blocks = 0
+    excluded_section_characters = 0
+    skipping_section = False
+    block_counts: dict[str, int] = {}
+
+    if profile == MEDIAWIKI_ARTICLE_PROFILE and title:
+        normalized_title = re.sub(r"\s+", " ", title).strip()
+        if normalized_title:
+            chunks.append(f"# {normalized_title}")
+            kinds.append("title")
+            block_counts["title"] = 1
+
+    block_tags = {
+        "blockquote",
+        "dd",
+        "dt",
+        "figcaption",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "li",
+        "p",
+        "pre",
+        "table",
+    }
+    for node in root.traverse():
+        if node.tag not in block_tags:
+            continue
+
+        if node.tag == "h2":
+            heading = re.sub(r"\s+", " ", node.text(separator=" ", strip=True)).strip()
+            normalized_heading = _normalize_heading(heading)
+            if (
+                profile == MEDIAWIKI_ARTICLE_PROFILE
+                and normalized_heading in MEDIAWIKI_EXCLUDED_SECTIONS
+            ):
+                skipping_section = True
+                excluded_sections.append(heading)
+                excluded_section_blocks += 1
+                excluded_section_characters += len(heading)
+                continue
+            skipping_section = False
+
+        if skipping_section:
+            excluded_section_blocks += 1
+            excluded_section_characters += len(node.text(separator=" ", strip=True))
+            continue
+
+        if node.tag != "table" and _inside(node, {"table"}, root):
+            continue
+        if node.tag in {"p", "blockquote", "dd", "dt", "figcaption", "pre"} and _inside(
+            node, {"li"}, root
+        ):
+            continue
+
         if node.tag == "table":
-            rows = []
-            for row in node.css("tr"):
-                cells = [cell.text(separator=" ", strip=True) for cell in row.css("th,td")]
-                if cells:
-                    rows.append(cells)
+            if _inside(node, {"table"}, root):
+                continue
+            rows = _html_table_rows(node)
             if rows:
-                width = max(len(row) for row in rows)
-                padded = [row + [""] * (width - len(row)) for row in rows]
-                tables.append(padded)
-                chunks.append("| " + " | ".join(padded[0]) + " |")
-                chunks.append("| " + " | ".join(["---"] * width) + " |")
-                chunks.extend("| " + " | ".join(row) + " |" for row in padded[1:])
+                width = len(rows[0])
+                tables.append(rows)
+                table_lines = [
+                    "| " + " | ".join(rows[0]) + " |",
+                    "| " + " | ".join(["---"] * width) + " |",
+                    *["| " + " | ".join(row) + " |" for row in rows[1:]],
+                ]
+                chunks.append("\n".join(table_lines))
+                kinds.append("table")
+                block_counts["table"] = block_counts.get("table", 0) + 1
         else:
-            value = node.text(separator=" ", strip=True)
+            value = (
+                _direct_list_text(node)
+                if node.tag == "li"
+                else (
+                    _direct_definition_text(node)
+                    if node.tag in {"dd", "dt"}
+                    else re.sub(r"\s+", " ", node.text(separator=" ", strip=True)).strip()
+                )
+            )
             if not value:
                 continue
             if re.fullmatch(r"h[1-6]", node.tag):
                 value = f"{'#' * int(node.tag[1])} {value}"
+                kind = "heading"
             elif node.tag == "li":
-                value = f"- {value}"
+                value = f"{'  ' * _list_depth(node, root)}- {value}"
+                kind = "list_item"
+            elif node.tag == "dt":
+                value = f"**{value}**"
+                kind = "definition_term"
+            elif node.tag == "dd":
+                kind = "paragraph"
+            elif node.tag == "blockquote":
+                value = f"> {value}"
+                kind = "paragraph"
+            elif node.tag == "figcaption":
+                value = f"Figure: {value}"
+                kind = "caption"
+            elif node.tag == "pre":
+                value = f"```\n{value}\n```"
+                kind = "preformatted"
+            else:
+                kind = "paragraph"
             chunks.append(value)
+            kinds.append(kind)
+            block_counts[kind] = block_counts.get(kind, 0) + 1
+
+    headings_before_first_paragraph = 0
+    headings_before_first_body_block = 0
+    for kind in kinds:
+        if kind == "paragraph":
+            break
+        if kind == "heading":
+            headings_before_first_paragraph += 1
+    for kind in kinds:
+        if kind in {
+            "caption",
+            "definition_term",
+            "list_item",
+            "paragraph",
+            "preformatted",
+            "table",
+        }:
+            break
+        if kind == "heading":
+            headings_before_first_body_block += 1
+    markdown = "\n\n".join(chunks)
     return "\n\n".join(chunks), {
         "extractor": "selectolax",
+        "extraction_profile": profile,
         "content_selector": content_selector or "main/article/body",
         "tables": tables,
+        "removed_by_selector": removed_by_selector,
+        "excluded_sections": excluded_sections,
+        "diagnostics": {
+            "original_text_characters": original_text_characters,
+            "retained_markdown_characters": len(markdown),
+            "excluded_section_blocks": excluded_section_blocks,
+            "excluded_section_text_characters": excluded_section_characters,
+            "block_counts": block_counts,
+            "normalized_math_expressions": normalized_math_expressions,
+            "headings_before_first_paragraph": headings_before_first_paragraph,
+            "headings_before_first_body_block": headings_before_first_body_block,
+            "maximum_consecutive_headings": _maximum_heading_run(kinds),
+        },
     }
+
+
+def _extraction_quality_flags(canonical: str, layout: dict[str, Any]) -> list[str]:
+    flags: list[str] = []
+    token_count = len(tokens(canonical))
+    if token_count > 20_000:
+        flags.append("oversized_document")
+
+    nonempty_lines = [line.strip() for line in canonical.splitlines() if line.strip()]
+    list_lines = [line for line in nonempty_lines if re.match(r"^\s*-\s+", line)]
+    if token_count > 1_000 and len(list_lines) / max(1, len(nonempty_lines)) > 0.75:
+        flags.append("list_heavy_document")
+
+    substantive_lines = [line for line in nonempty_lines if len(line) >= 60]
+    if len(substantive_lines) >= 20:
+        duplicate_ratio = 1 - len(set(substantive_lines)) / len(substantive_lines)
+        if duplicate_ratio > 0.15:
+            flags.append("excessive_duplicate_lines")
+
+    diagnostics = layout.get("diagnostics", {})
+    if int(diagnostics.get("headings_before_first_body_block", 0)) > 2:
+        flags.append("detached_heading_run")
+    if layout.get("extraction_profile") == MEDIAWIKI_ARTICLE_PROFILE and re.search(
+        r"\b(?:Authority control databases|Otorite kontrolü)\b",
+        canonical,
+        re.IGNORECASE,
+    ):
+        flags.append("html_boilerplate_remaining")
+    return flags
 
 
 def _flatten_json(value: Any, prefix: str = "") -> list[tuple[str, str]]:
@@ -327,7 +696,7 @@ def _extract_payload(
         return _xlsx_to_markdown(path)
     text = _decode(path.read_bytes())
     if mime == "text/html" or suffix in {".html", ".htm"} or native == "html":
-        return _html_to_markdown(text, source)
+        return _html_to_markdown(text, source, title=record.title)
     if mime in {"application/json", "text/json"} or suffix == ".json" or native == "json":
         return _json_to_markdown(text)
     if mime in {"application/xml", "text/xml"} or suffix == ".xml" or native == "xml":
@@ -411,6 +780,16 @@ def _language(text: str, declared: list[Language]) -> Language:
     return Language.UNDETERMINED
 
 
+def _source_as_of(record: SourceRecord) -> date | None:
+    revision_timestamp = record.fetch_recipe.get("revision_timestamp")
+    if not isinstance(revision_timestamp, str):
+        return None
+    try:
+        return date.fromisoformat(revision_timestamp[:10])
+    except ValueError:
+        return None
+
+
 def extract_sources(
     registry: SourceRegistry,
     data_dir: Path,
@@ -439,6 +818,7 @@ def extract_sources(
             replacement_ratio = canonical.count("\ufffd") / max(1, len(canonical))
             if replacement_ratio > 0.001:
                 flags.append("encoding_replacement_noise")
+            flags.extend(_extraction_quality_flags(canonical, layout))
             digest = sha256_text(canonical)
             document_id = stable_id(
                 "doc", record.registry_source_id, record.source_version, digest, length=32
@@ -479,6 +859,7 @@ def extract_sources(
                     title=record.title or Path(urlparse(record.canonical_url).path).stem,
                     language=_language(canonical, record.languages),
                     topics=record.topics,
+                    as_of=_source_as_of(record),
                     publisher=record.publisher,
                     source_family=record.source_family,
                     authority_level=record.authority_level,

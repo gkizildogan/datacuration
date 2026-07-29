@@ -144,13 +144,15 @@ sources:
     source_family: wikipedia
     authority_level: community_reference
     languages: [en]
-    topics: [aircraft, engines, general_aviation]
+    topics: [aircraft, engines, airports, operations, safety, general_aviation]
     expected_mime_types: [text/html]
     native_format: html
     update_cadence: frozen_snapshot
     version_discovery: latest revision IDs from bounded category and title queries
     selectors:
       content: .mw-parser-output
+    extraction:
+      profile: mediawiki_article_v1
     requests_per_second: 1.0
     concurrency: 1
     max_bytes: 5242880
@@ -159,12 +161,18 @@ sources:
         - Aircraft engine
         - Aerodynamics
       category_titles:
+        - "Category:Aircraft"
         - "Category:Aircraft engines"
         - "Category:Aircraft aerodynamics"
-      max_pages: 150
-      max_total_bytes: 268435456
-      batch_size: 20
+        - "Category:Airports"
+        - "Category:Aviation safety"
+        - "Category:Air traffic control"
+      max_pages: 400
+      max_total_bytes: 536870912
+      batch_size: 50
       maxlag: 5
+      subcategory_depth: 1
+      max_subcategories: 100
     rights:
       state: open
       license_id: CC-BY-SA-4.0
@@ -184,25 +192,35 @@ sources:
     source_family: wikipedia
     authority_level: community_reference
     languages: [tr]
-    topics: [airlines, operations]
+    topics: [airlines, airports, aircraft, operations, safety, general_aviation]
     expected_mime_types: [text/html]
     native_format: html
     update_cadence: frozen_snapshot
-    version_discovery: latest revision IDs from the named list and its airline category
+    version_discovery: latest revision IDs from bounded aviation categories and one subcategory level
     selectors:
       content: .mw-parser-output
+    extraction:
+      profile: mediawiki_article_v1
     requests_per_second: 1.0
     concurrency: 1
     max_bytes: 5242880
     mediawiki:
       page_titles:
         - Türkiye merkezli havayolu şirketleri listesi
+        - Türkiye'deki havalimanları listesi
       category_titles:
+        - "Kategori:Havacılık"
+        - "Kategori:Uçaklar"
+        - "Kategori:Türkiye'deki havalimanları"
+        - "Kategori:Havacılık kazaları ve olayları"
+        - "Kategori:Hava trafik kontrolü"
         - "Kategori:Türkiye merkezli havayolu şirketleri"
-      max_pages: 40
-      max_total_bytes: 67108864
-      batch_size: 20
+      max_pages: 600
+      max_total_bytes: 536870912
+      batch_size: 50
       maxlag: 5
+      subcategory_depth: 1
+      max_subcategories: 100
     rights:
       state: open
       license_id: CC-BY-SA-4.0

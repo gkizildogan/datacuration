@@ -17,9 +17,10 @@ vllm serve AxisQuant/Qwen3.6-27b-gptq-int4 \
   --revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
   --tokenizer-revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
   --language-model-only \
-  --gpu-memory-utilization 0.90 \
+  --gpu-memory-utilization 0.85 \
   --max-model-len 8192 \
-  --max-num-seqs 1 \
+  --max-num-seqs 8 \
+  --enforce-eager \
   --reasoning-parser qwen3
 ```
 

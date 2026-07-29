@@ -8,8 +8,9 @@ from pathlib import Path
 import httpx
 
 from aviation_data.acquisition import fetch_sources
+from aviation_data.adapters.mediawiki_api import ApiResponse, discover_pages
 from aviation_data.extraction import extract_sources
-from aviation_data.models import SourceRegistry
+from aviation_data.models import MediaWikiApiConfig, SourceRegistry
 
 
 def _registry() -> SourceRegistry:
@@ -36,6 +37,7 @@ def _registry() -> SourceRegistry:
                     "update_cadence": "frozen_snapshot",
                     "version_discovery": "test revision query",
                     "selectors": {"content": ".mw-parser-output"},
+                    "extraction": {"profile": "mediawiki_article_v1"},
                     "max_bytes": 100_000,
                     "mediawiki": {
                         "page_titles": ["Aircraft engine"],
@@ -134,7 +136,9 @@ def test_mediawiki_api_fetches_revision_pinned_html(tmp_path: Path) -> None:
     documents, extraction_errors = extract_sources(registry, data_dir)
     assert not extraction_errors
     assert len(documents) == 1
+    assert documents[0].as_of == date(2026, 7, 28)
     canonical = data_dir / documents[0].canonical_path
+    assert canonical.read_text(encoding="utf-8").startswith("# Aircraft engine")
     assert "aircraft engine provides power" in canonical.read_text(encoding="utf-8").lower()
 
     manifest = [
@@ -144,3 +148,72 @@ def test_mediawiki_api_fetches_revision_pinned_html(tmp_path: Path) -> None:
         .splitlines()
     ]
     assert manifest[0]["source_version"] == "revision:456"
+
+
+def test_mediawiki_discovery_includes_one_bounded_subcategory_level() -> None:
+    requests: list[dict[str, str]] = []
+
+    async def request(endpoint: str, params: dict[str, str]) -> ApiResponse:
+        del endpoint
+        requests.append(params)
+        if params.get("list") == "categorymembers":
+            return ApiResponse(
+                data={
+                    "query": {
+                        "categorymembers": [
+                            {"pageid": 20, "title": "Category:Airports"},
+                            {"pageid": 21, "title": "Category:Aircraft"},
+                        ]
+                    }
+                },
+                request_url="https://example.test/subcategories",
+                response_headers={},
+                redirect_chain=[],
+            )
+        category = params["gcmtitle"]
+        page_id = 1 if category == "Category:Aviation" else 2
+        return ApiResponse(
+            data={
+                "query": {
+                    "pages": [
+                        {
+                            "pageid": page_id,
+                            "title": f"Page {page_id}",
+                            "fullurl": f"https://example.test/wiki/Page_{page_id}",
+                            "revisions": [
+                                {
+                                    "revid": 100 + page_id,
+                                    "timestamp": "2026-07-29T00:00:00Z",
+                                }
+                            ],
+                        }
+                    ]
+                }
+            },
+            request_url="https://example.test/pages",
+            response_headers={},
+            redirect_chain=[],
+        )
+
+    pages = asyncio.run(
+        discover_pages(
+            request,
+            "https://example.test/w/api.php",
+            MediaWikiApiConfig(
+                category_titles=["Category:Aviation"],
+                max_pages=3,
+                subcategory_depth=1,
+                max_subcategories=2,
+            ),
+        )
+    )
+
+    assert [page.page_id for page in pages] == [1, 2]
+    queried_categories = [
+        row["gcmtitle"] for row in requests if row.get("generator") == "categorymembers"
+    ]
+    assert queried_categories == [
+        "Category:Aircraft",
+        "Category:Airports",
+        "Category:Aviation",
+    ]

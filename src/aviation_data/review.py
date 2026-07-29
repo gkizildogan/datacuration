@@ -7,12 +7,18 @@ from pathlib import Path
 from aviation_data.ids import sha256_text
 from aviation_data.io import read_jsonl, write_jsonl
 from aviation_data.models import DocumentRecord, QARecord
+from aviation_data.qa_planning import qa_run_dir
 
 
 def create_extraction_review_sample(data_dir: Path, rate: float = 0.10) -> list[dict[str, object]]:
     if not 0 < rate <= 1:
         raise ValueError("rate must be in (0, 1]")
-    documents = read_jsonl(data_dir / "extracted" / "documents.jsonl", DocumentRecord)
+    accepted_path = data_dir / "curated" / "accepted_documents.jsonl"
+    if not accepted_path.exists():
+        raise FileNotFoundError(
+            f"{accepted_path} does not exist; run 'aviation-data curate' before sampling"
+        )
+    documents = read_jsonl(accepted_path, DocumentRecord)
     strata: dict[tuple[str, ...], list[DocumentRecord]] = defaultdict(list)
     for document in documents:
         key = (
@@ -30,13 +36,19 @@ def create_extraction_review_sample(data_dir: Path, rate: float = 0.10) -> list[
             selected.append(
                 {
                     "document_id": document.document_id,
+                    "title": document.title,
+                    "review_scope": "accepted_corpus",
                     "stratum": list(key),
                     "canonical_path": document.canonical_path,
+                    "source_url": document.source_url,
                     "reviewer_id": "",
                     "usable": None,
                     "format": document.native_format,
                     "language": document.language.value,
                     "topic": [topic.value for topic in document.topics],
+                    "canonical_char_count": document.canonical_char_count,
+                    "canonical_token_count": document.canonical_token_count,
+                    "quality_flags": document.quality_flags,
                     "notes": "",
                 }
             )
@@ -45,10 +57,24 @@ def create_extraction_review_sample(data_dir: Path, rate: float = 0.10) -> list[
     return selected
 
 
-def create_review_sample(data_dir: Path, rate: float = 0.15) -> list[dict[str, object]]:
+def create_review_sample(
+    data_dir: Path,
+    rate: float = 0.15,
+    *,
+    run_id: str,
+) -> list[dict[str, object]]:
     if not 0 < rate <= 1:
         raise ValueError("rate must be in (0, 1]")
-    qa_rows = read_jsonl(data_dir / "qa" / "accepted.jsonl", QARecord)
+    run_dir = qa_run_dir(data_dir, run_id)
+    accepted_path = run_dir / "accepted.jsonl"
+    if not accepted_path.is_file():
+        raise FileNotFoundError(
+            f"{accepted_path} does not exist; run 'aviation-data qa validate --run-id "
+            f"{run_id}' before sampling"
+        )
+    qa_rows = read_jsonl(accepted_path, QARecord)
+    if not qa_rows:
+        raise ValueError(f"{accepted_path} contains no accepted QA records")
     documents = {
         document.document_id: document
         for document in read_jsonl(
@@ -95,10 +121,26 @@ def create_review_sample(data_dir: Path, rate: float = 0.15) -> list[dict[str, o
             ),
         )
         strata[key].append(qa)
+    desired_unique = math.ceil(len(qa_rows) * rate)
+    allocations = {
+        key: math.floor(len(rows) * rate)
+        for key, rows in strata.items()
+    }
+    remaining = desired_unique - sum(allocations.values())
+    allocation_order = sorted(
+        strata,
+        key=lambda key: (
+            -(len(strata[key]) * rate - math.floor(len(strata[key]) * rate)),
+            key,
+        ),
+    )
+    for key in allocation_order[:remaining]:
+        allocations[key] += 1
+
     selected = []
     for key, rows in sorted(strata.items()):
         ordered = sorted(rows, key=lambda qa: sha256_text(f"review:{qa.qa_id}"))
-        count = min(len(rows), max(1, math.ceil(len(rows) * rate)))
+        count = allocations[key]
         for qa in ordered[:count]:
             for reviewer_slot in ("A", "B"):
                 selected.append(
@@ -108,6 +150,7 @@ def create_review_sample(data_dir: Path, rate: float = 0.15) -> list[dict[str, o
                         "stratum": list(key),
                         "question": qa.question,
                         "answer": qa.answer,
+                        "answer_items": qa.answer_items,
                         "evidence": [item.quote for item in qa.evidence],
                         "reviewer_id": "",
                         "clarity": None,
@@ -118,5 +161,9 @@ def create_review_sample(data_dir: Path, rate: float = 0.15) -> list[dict[str, o
                     }
                 )
     selected.sort(key=lambda item: (str(item["qa_id"]), str(item["reviewer_slot"])))
-    write_jsonl(data_dir / "qa" / "review_sample.jsonl", selected)
+    if len({str(item["qa_id"]) for item in selected}) != desired_unique:
+        raise AssertionError("review sampler did not produce the exact unique-item target")
+    if len(selected) != desired_unique * 2:
+        raise AssertionError("review sampler did not produce exactly two assignments per item")
+    write_jsonl(run_dir / "review_sample.jsonl", selected)
     return selected

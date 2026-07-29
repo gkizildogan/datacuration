@@ -1,6 +1,7 @@
 # Data dictionary
 
-All records carry `schema_version: "1.0.0"`. JSONL is UTF-8 with one complete
+Source, document, and passage records carry `schema_version: "1.0.0"`.
+QA records use `schema_version: "1.1.0"`. JSONL is UTF-8 with one complete
 record per line. Parquet columns mirror the JSON representation.
 
 ## SourceRecord
@@ -28,11 +29,14 @@ reproduce `text` exactly.
 
 ## QARecord
 
-One grounded question. It stores answer/reference/rubric, question and evidence
+One grounded question. It stores `answer_items`, answer/reference/rubric, question and evidence
 languages, cross-lingual label, primary type, answerability, exact
 EvidenceSpans, variants, provenance, group split, immutable generator
 configuration, attempts, flags, review status, and rejection reasons.
 
 An EvidenceSpan has both passage-relative and canonical-document offsets plus a
-quote checksum. Corpus-unanswerable records contain neither answer nor evidence.
-
+quote checksum. Factual and temporal records have exactly one extractive
+`answer_items` value. List/table records have source-ordered items and join them
+with `"; "` for the display answer. Definition/comparison records have no
+items and require `answer == reference_answer` plus a non-empty rubric.
+Corpus-unanswerable records contain no answer, evidence, or parent provenance.

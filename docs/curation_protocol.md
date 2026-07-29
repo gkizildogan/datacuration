@@ -12,6 +12,34 @@ No personal aircraft-owner, airman, passenger, victim, employee, address, or
 registry-owner data is intentionally curated. Current fleet, airport, company,
 and regulatory claims require an `as_of` date and field-level provenance.
 
+## Extraction policy
+
+HTML extraction uses versioned, source-specific profiles. MediaWiki sources
+must declare `mediawiki_article_v1`; the registry audit rejects a MediaWiki
+source without it. This profile:
+
+- walks the DOM in document order instead of grouping elements by tag;
+- retains the article title, prose, headings, captions, nested lists,
+  definition lists, equations, and readable tables;
+- removes edit controls, citations, reference lists, navigation templates,
+  authority-control boxes, and other non-content templates; and
+- excludes non-content sections such as References, See also, External links,
+  Kaynakça, Ayrıca bakınız, and Dış bağlantılar.
+
+Each layout artifact records the profile, removed selectors, excluded sections,
+block counts, normalized equation count, and heading-order diagnostics.
+Extraction adds automatic flags for front-loaded detached headings, excessive
+duplicate lines, remaining HTML boilerplate, oversized documents, and
+list-heavy documents. Curation quarantines structural failures and oversized
+documents. A list-heavy document is diagnostic only unless another rejection
+condition is present.
+
+MediaWiki `revision_timestamp` is copied to `DocumentRecord.as_of`, so current
+company and fleet claims retain the date of their immutable source revision.
+After changing an extraction profile, rebuild extraction and curation before
+creating a new manual sample. Old review rows are preserved but are not counted
+against changed, rejected, or unassigned document IDs.
+
 ## Taxonomy
 
 1. Regulation, standards, licensing, and passenger rights

@@ -10,9 +10,10 @@ model:
 runtime:
   vllm_version: "0.25.1"
   language_model_only: true
-  gpu_memory_utilization: 0.90
+  gpu_memory_utilization: 0.85
   max_model_len: 8192
-  max_num_seqs: 1
+  max_num_seqs: 8
+  enforce_eager: true
   reasoning_parser: qwen3
   thinking: false
 generation:

@@ -12,12 +12,12 @@ from aviation_data.acquisition import fetch_sources
 from aviation_data.curation import curate_documents
 from aviation_data.extraction import extract_sources
 from aviation_data.passages import build_passages
-from aviation_data.qa_generation import _generator_config, generate_qa
+from aviation_data.qa_generation import _generator_config, build_qa
 from aviation_data.qa_validation import validate_qa
 from aviation_data.registry import load_registry
 from aviation_data.release import package_public
 from aviation_data.reporting import build_report
-from aviation_data.review import create_review_sample
+from aviation_data.review import create_extraction_review_sample, create_review_sample
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -53,28 +53,43 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
     assert len(accepted_documents) == 3
     assert not rejected_documents
     assert 0.65 <= curation["language_token_shares"]["en"] <= 0.75
+    extraction_assignments = create_extraction_review_sample(data_dir)
+    assert {row["document_id"] for row in extraction_assignments} == {
+        document.document_id for document in accepted_documents
+    }
+    assert all(row["review_scope"] == "accepted_corpus" for row in extraction_assignments)
+    assert all(row["canonical_token_count"] > 0 for row in extraction_assignments)
 
     passages, _ = build_passages(data_dir, ROOT / "configs" / "passages.fixture.yaml")
     assert len(passages) >= 3
-    qa_rows, generation_rejections = generate_qa(
+    qa_rows, qa_build_report = build_qa(
         data_dir,
         ROOT / "configs" / "generation.yaml",
         ROOT / "prompts" / "qa_generation.md",
         backend="fixture",
         endpoint="http://127.0.0.1:8000/v1",
         target=8,
+        model_choice="primary",
+        run_id="fixture-e2e",
+        max_fill_cycles=2,
     )
     assert len(qa_rows) == 8
-    assert not generation_rejections
-    accepted_qa, rejected_qa, validation = validate_qa(data_dir)
+    assert qa_build_report["status"] == "complete"
+    accepted_qa, rejected_qa, validation = validate_qa(
+        data_dir,
+        run_id="fixture-e2e",
+    )
     assert len(accepted_qa) == 8
     assert not rejected_qa
     assert validation["evidence_offsets_valid"]
-    review_assignments = create_review_sample(data_dir)
+    review_assignments = create_review_sample(
+        data_dir,
+        run_id="fixture-e2e",
+    )
     assert len(review_assignments) % 2 == 0
     assert {row["reviewer_slot"] for row in review_assignments} == {"A", "B"}
 
-    report = build_report(data_dir)
+    report = build_report(data_dir, qa_run_id="fixture-e2e")
     assert report["overall_status"] == "fail"
     assert (
         next(gate for gate in report["gates"] if gate["name"] == "schema_and_checksum_coverage")[
@@ -84,7 +99,12 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
     )
 
     release_dir = tmp_path / "release"
-    manifest = package_public(data_dir, registry_path, release_dir)
+    manifest = package_public(
+        data_dir,
+        registry_path,
+        release_dir,
+        qa_run_id="fixture-e2e",
+    )
     assert manifest["documents"] == 3
     assert manifest["qa"] == 8
     restricted = [

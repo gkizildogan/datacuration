@@ -22,6 +22,7 @@ from aviation_data.models import (
     RightsState,
     SourceRecord,
 )
+from aviation_data.qa_planning import qa_run_dir
 from aviation_data.registry import load_registry
 
 
@@ -66,6 +67,7 @@ def package_public(
     release_dir: Path,
     *,
     force: bool = False,
+    qa_run_id: str = "benchmark",
 ) -> dict[str, Any]:
     if release_dir.exists():
         if not force:
@@ -76,7 +78,7 @@ def package_public(
     source_records = read_jsonl(data_dir / "manifests" / "source_records.jsonl", SourceRecord)
     documents = read_jsonl(data_dir / "curated" / "accepted_documents.jsonl", DocumentRecord)
     passages = read_jsonl(data_dir / "passages" / "passages.jsonl", PassageRecord)
-    qa_rows = read_jsonl(data_dir / "qa" / "accepted.jsonl", QARecord)
+    qa_rows = read_jsonl(qa_run_dir(data_dir, qa_run_id) / "accepted.jsonl", QARecord)
     source_by_id = {record.source_record_id: record for record in source_records}
 
     open_documents = []
@@ -212,7 +214,7 @@ def package_public(
             }
         )
     write_jsonl(release_dir / "restricted_extension_manifest.jsonl", restricted_manifest)
-    export_schemas(release_dir / "schemas" / "v1.0.0")
+    export_schemas(release_dir / "schemas" / "v1.1.0")
     shutil.copyfile(
         Path(__file__).resolve().parents[2] / "docs" / "annotation_guide.md",
         release_dir / "annotation_guide.md",

@@ -7,6 +7,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 SCHEMA_VERSION = "1.0.0"
+QA_SCHEMA_VERSION = "1.1.0"
 
 
 class StrictModel(BaseModel):
@@ -95,12 +96,18 @@ class MediaWikiApiConfig(StrictModel):
     max_total_bytes: int = Field(default=536_870_912, ge=1)
     batch_size: int = Field(default=20, ge=1, le=50)
     maxlag: int = Field(default=5, ge=1, le=60)
+    subcategory_depth: Literal[0, 1] = 0
+    max_subcategories: int = Field(default=50, ge=1, le=500)
 
     @model_validator(mode="after")
     def has_discovery_seeds(self) -> MediaWikiApiConfig:
         if not self.page_titles and not self.category_titles:
             raise ValueError("MediaWiki API sources need page_titles or category_titles")
         return self
+
+
+class ExtractionConfig(StrictModel):
+    profile: Literal["generic_html_v2", "mediawiki_article_v1"]
 
 
 class SourceDefinition(StrictModel):
@@ -124,6 +131,7 @@ class SourceDefinition(StrictModel):
     concurrency: int | None = Field(default=None, ge=1)
     max_bytes: int | None = Field(default=None, ge=1)
     mediawiki: MediaWikiApiConfig | None = None
+    extraction: ExtractionConfig | None = None
     rights: RightsEvidence
 
 
@@ -264,10 +272,11 @@ class GeneratorConfiguration(StrictModel):
 
 
 class QARecord(StrictModel):
-    schema_version: Literal["1.0.0"] = SCHEMA_VERSION
+    schema_version: Literal["1.1.0"] = QA_SCHEMA_VERSION
     qa_id: str
     question: str = Field(min_length=1)
     answer: str | None = None
+    answer_items: list[str] = Field(default_factory=list)
     reference_answer: str | None = None
     rubric: list[str] = Field(default_factory=list)
     question_language: Language
@@ -293,8 +302,46 @@ class QARecord(StrictModel):
         if self.answerability == Answerability.ANSWERABLE:
             if not self.answer or not self.evidence:
                 raise ValueError("answerable QA requires an answer and evidence")
+            if self.primary_type in {QAType.FACTUAL, QAType.TEMPORAL}:
+                if len(self.answer_items) != 1 or self.answer != self.answer_items[0]:
+                    raise ValueError(
+                        "factual and temporal QA require one answer_item equal to answer"
+                    )
+                if self.reference_answer is not None or self.rubric:
+                    raise ValueError(
+                        "factual and temporal QA do not allow reference_answer or rubric"
+                    )
+            elif self.primary_type == QAType.LIST_TABLE:
+                if not self.answer_items or self.answer != "; ".join(self.answer_items):
+                    raise ValueError(
+                        "list/table QA requires source-ordered answer_items joined by '; '"
+                    )
+                if self.reference_answer is not None or self.rubric:
+                    raise ValueError(
+                        "list/table QA does not allow reference_answer or rubric"
+                    )
+            elif self.primary_type in {QAType.DEFINITION, QAType.COMPARISON}:
+                if self.answer_items:
+                    raise ValueError("explanatory QA must leave answer_items empty")
+                if self.answer != self.reference_answer or not self.rubric:
+                    raise ValueError(
+                        "explanatory QA requires answer == reference_answer and a rubric"
+                    )
         elif self.answer is not None or self.evidence:
             raise ValueError("corpus-unanswerable QA must not contain answer or evidence")
+        elif self.answer_items or self.reference_answer is not None or self.rubric:
+            raise ValueError(
+                "corpus-unanswerable QA must not contain answer items, reference answer, or rubric"
+            )
+        elif (
+            self.acceptable_variants
+            or self.evidence_languages
+            or self.provenance_passage_ids
+            or self.source_document_ids
+        ):
+            raise ValueError(
+                "corpus-unanswerable QA must not expose answer/evidence provenance"
+            )
         expected_cross_lingual = any(
             language != self.question_language for language in self.evidence_languages
         )

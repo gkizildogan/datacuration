@@ -1,0 +1,144 @@
+{
+  "$defs": {
+    "Language": {
+      "enum": [
+        "en",
+        "tr",
+        "mul",
+        "und"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "Topic": {
+      "enum": [
+        "regulation",
+        "airlines",
+        "airports",
+        "aircraft",
+        "engines",
+        "operations",
+        "safety",
+        "general_aviation"
+      ],
+      "title": "Topic",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "canonical_char_end": {
+      "minimum": 0,
+      "title": "Canonical Char End",
+      "type": "integer"
+    },
+    "canonical_char_start": {
+      "minimum": 0,
+      "title": "Canonical Char Start",
+      "type": "integer"
+    },
+    "checksum": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Checksum",
+      "type": "string"
+    },
+    "document_id": {
+      "title": "Document Id",
+      "type": "string"
+    },
+    "document_version": {
+      "title": "Document Version",
+      "type": "string"
+    },
+    "language": {
+      "$ref": "#/$defs/Language"
+    },
+    "page_number": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Page Number"
+    },
+    "passage_id": {
+      "title": "Passage Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "section_path": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Section Path",
+      "type": "array"
+    },
+    "table_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Table Id"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    },
+    "token_count": {
+      "minimum": 0,
+      "title": "Token Count",
+      "type": "integer"
+    },
+    "tokenizer_id": {
+      "default": "regex-word-v1",
+      "title": "Tokenizer Id",
+      "type": "string"
+    },
+    "tokenizer_revision": {
+      "default": "local-v1",
+      "title": "Tokenizer Revision",
+      "type": "string"
+    },
+    "topics": {
+      "items": {
+        "$ref": "#/$defs/Topic"
+      },
+      "title": "Topics",
+      "type": "array"
+    },
+    "variant_group_id": {
+      "title": "Variant Group Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "passage_id",
+    "document_id",
+    "document_version",
+    "variant_group_id",
+    "language",
+    "topics",
+    "canonical_char_start",
+    "canonical_char_end",
+    "text",
+    "token_count",
+    "checksum"
+  ],
+  "title": "PassageRecord",
+  "type": "object"
+}

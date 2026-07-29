@@ -1,462 +1,315 @@
-# Production pilot TODO
+# QA v1.1 production run TODO
 
-Complete these items before starting the real 500-document/1,500-QA pilot.
-Do not change a gate merely to make the report pass; supply and verify the
-underlying evidence first.
+This is the remaining runbook for rebuilding the corpus and completing Task 6
+from scratch. Do not mix QA v1.0 and v1.1 records.
 
-## 1. Set the project contact
+## 1. Prepare an empty production data root
 
-Edit `configs/sources.yaml` under `project`:
+- Preserve the current `data/` directory in a durable, read-only archive.
+- Confirm the archived v1.0 baseline contains its `READ_ONLY.json` marker and
+  the original generated, accepted, rejected, raw-response, and validation
+  artifacts.
+- Create a new empty `data/` directory for the production rebuild.
+- Do not copy old QA JSONL files into the new data root.
+- Choose and record:
+  - the snapshot date;
+  - the production QA run ID;
+  - the primary and fallback comparison run IDs;
+  - the vLLM and dense-retrieval endpoints;
+  - the two independent reviewer identities.
 
-```yaml
-project:
-  name: bilingual-aviation-corpus
-  contact: aviation-data@example.edu
-  user_agent: bilingual-aviation-corpus/0.1 (+mailto:aviation-data@example.edu)
+Suggested shell variables:
+
+```bash
+SNAPSHOT_DATE=YYYY-MM-DD
+QA_RUN_ID=production-v1.1
+PRIMARY_RUN_ID=primary-comparison-v1.1
+FALLBACK_RUN_ID=fallback-comparison-v1.1
+VLLM_ENDPOINT=http://127.0.0.1:8000/v1
+DENSE_ENDPOINT=http://127.0.0.1:8001/v1
+DENSE_MODEL=intfloat/multilingual-e5-base
+DENSE_REVISION=d128750597153bb5987e10b1c3493a34e5a4502a
 ```
 
-Use a monitored institutional or project mailbox. The same address should
-appear in `contact` and `user_agent`.
+## 2. Verify frozen configuration
 
-Verify:
+- Confirm the project contact and user agent are monitored and current.
+- Confirm primary/fallback model revisions, tokenizer revisions, container
+  digest, generation seed, and prompt are final.
+- Confirm the production tokenizer files and checksums still match
+  `configs/passages.yaml`.
+- Confirm the English and Turkish bounded MediaWiki sources, one-level
+  subcategory limits, page limits, byte limits, and one-request-per-second
+  policy.
 
 ```bash
 uv run aviation-data rights audit --strict
+uv run pytest -q
+uv run ruff check src tests
 ```
 
-Expected result: no `placeholder_contact` warning. Network acquisition remains
-disabled unless `fetch` is explicitly run with `--network`.
-
-## 2. Record the exact vLLM container digest
-
-The model repository revisions are already frozen in
-`configs/generation.yaml`. The remaining placeholder is:
-
-```yaml
-model:
-  container_digest: REPLACE_WITH_SHA256_DIGEST
-```
-
-On the RTX 3090 host, pull or build the vLLM 0.19 image that will actually run
-the benchmark. Start the container using the command documented in
-`containers/README.md`.
-
-For a running container, capture the exact image ID:
+## 3. Acquire a new revision-pinned corpus snapshot
 
 ```bash
-docker inspect --format '{{.Image}}' <container-name-or-id>
+uv run aviation-data fetch \
+  --network \
+  --snapshot "$SNAPSHOT_DATE"
+
+uv run aviation-data extract
+uv run aviation-data curate
 ```
 
-Alternatively, inspect a locally tagged image:
+- Inspect `data/manifests/fetch_errors.json`; resolve every material error.
+- Inspect `data/extracted/errors.json`; resolve every material extraction
+  failure.
+- Inspect `data/curated/turkish_snapshot.json`.
+- Require `status: frozen` and a Turkish token share between 0.25 and 0.35.
+- Check that every frozen Turkish title has an immutable revision ID.
+- If the report says `needs_more_pages`, acquire the next deterministic batch
+  of 50 pages and repeat extraction and curation.
+- If it says `overshoot`, adjust the bounded source mix and rebuild from the
+  empty data root.
+- Review the accepted/rejected document counts and quality-flag breakdown.
+
+## 4. Complete extraction review
 
 ```bash
-docker image inspect --format '{{.Id}}' <image-name:tag>
+uv run aviation-data review extraction-sample --rate 0.10
+uv run aviation-data review extraction --reviewer-id REVIEWER_ID
 ```
 
-The result must look like `sha256:` followed by 64 lowercase hexadecimal
-characters. Copy the complete value into `container_digest`. Also record the
-image name, repository digest, build command, CUDA/driver version, and serving
-command in the release notes.
+- Complete every extraction assignment.
+- Require unique assigned document IDs, non-empty reviewer IDs, and JSON
+  boolean `usable` values.
+- Require the manual usable-extraction rate to be at least 0.95.
 
-Verify the fail-closed configuration without making a model request:
+## 5. Build production passages
 
 ```bash
-uv run python -c \
-  "import yaml; from pathlib import Path; from aviation_data.qa_generation import _generator_config; c=yaml.safe_load(Path('configs/generation.yaml').read_text()); p=Path('prompts/qa_generation.md').read_text(); print(_generator_config(c, p, 'vllm'))"
+uv run aviation-data passages build --config configs/passages.yaml
 ```
 
-Then run the isolated model pilots:
+- Confirm the production tokenizer is reported as pinned and production-ready.
+- Confirm passage and canonical offsets reproduce the exact stored text.
+- Confirm the passage report has no checksum or tokenizer failures.
+
+## 6. Run the fixture-backed v1.1 preflight
+
+Use an isolated run ID:
+
+```bash
+uv run aviation-data qa build \
+  --backend fixture \
+  --run-id fixture-preflight-v1.1 \
+  --target 1500 \
+  --max-fill-cycles 8
+```
+
+- If it fails, inspect
+  `data/qa/experiments/fixture-preflight-v1.1/capacity_report.json`.
+- Do not proceed until all language/type strata have sufficient capacity under:
+  - at most four uses per passage;
+  - at most one item of each type per passage;
+  - exact 50/50 question-language allocation;
+  - exact 90/10 answerability allocation;
+  - the answerable type targets;
+  - at least 135 cross-lingual answerable tasks;
+  - 150 safe deterministic mutations.
+- Confirm the fixture run produces exactly 1,500 accepted records with clean
+  quota diagnostics.
+
+## 7. Run the 200-item primary-model smoke pilot
+
+Start vLLM with the pinned primary model and exact container configuration.
+The QA command will verify that the configured model ID is actually served.
+
+```bash
+uv run aviation-data qa build \
+  --backend vllm \
+  --model-choice primary \
+  --run-id primary-smoke-v1.1 \
+  --endpoint "$VLLM_ENDPOINT" \
+  --target 200 \
+  --dense-endpoint "$DENSE_ENDPOINT" \
+  --dense-model "$DENSE_MODEL" \
+  --dense-revision "$DENSE_REVISION"
+```
+
+Inspect the run artifacts and require:
+
+- JSON-schema success at least 0.99;
+- record-construction success at least 0.95;
+- evidence-offset validity exactly 1.00;
+- automatic validation acceptance at least 0.80;
+- duplicate plus near-duplicate rate at most 0.05;
+- no translated, calculated, inferred, or reordered closed answers;
+- no unanswerable item marked unsupported from dense similarity alone.
+
+## 8. Compare primary and fallback on the same 400-task manifest
+
+Run the primary model:
 
 ```bash
 uv run aviation-data qa generate \
   --backend vllm \
   --model-choice primary \
-  --run-id primary-pilot \
+  --run-id "$PRIMARY_RUN_ID" \
+  --endpoint "$VLLM_ENDPOINT" \
   --target 400
 
+uv run aviation-data qa validate \
+  --run-id "$PRIMARY_RUN_ID" \
+  --dense-endpoint "$DENSE_ENDPOINT" \
+  --dense-model "$DENSE_MODEL" \
+  --dense-revision "$DENSE_REVISION"
+```
+
+Restart or reconfigure vLLM with the pinned fallback model, then run:
+
+```bash
 uv run aviation-data qa generate \
   --backend vllm \
   --model-choice fallback \
-  --run-id fallback-pilot \
+  --run-id "$FALLBACK_RUN_ID" \
+  --endpoint "$VLLM_ENDPOINT" \
   --target 400
-```
 
-Restart or reconfigure the model server between commands so the requested model
-ID is actually served. Do not copy an experiment into the benchmark path until
-schema stability, grounding, repetition, and English/Turkish quality have been
-compared on the identical task set.
-
-## 3. Install and configure the local pinned tokenizer
-
-Status: completed on 2026-07-29. The tokenizer-only assets are installed at
-`/home/goksu/llmodels/aviation/qwen36-tokenizer-e4a111c`, and the production
-configuration verifies their SHA-256 checksums before loading them.
-
-Production passages must use the exact tokenizer associated with the served
-model. Tests use `configs/passages.fixture.yaml`; production uses the pinned
-Hugging Face tokenizer in `configs/passages.yaml`.
-
-Download only tokenizer assets from the frozen primary model revision:
-
-```bash
-hf download AxisQuant/Qwen3.6-27b-gptq-int4 \
-  --revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
-  --include 'tokenizer*' \
-  --include '*.jinja' \
-  --include 'special_tokens_map.json' \
-  --local-dir /home/goksu/llmodels/aviation/qwen36-tokenizer-e4a111c
-```
-
-Use a durable path outside the Git repository. Confirm that `tokenizer.json`
-and `tokenizer_config.json` exist, then edit `configs/passages.yaml`:
-
-```yaml
-tokenizer:
-  mode: huggingface_local
-  id: AxisQuant/Qwen3.6-27b-gptq-int4
-  revision: e4a111caa43e97606b7a5fa20849bbcc051aa4f0
-  local_path: /home/goksu/llmodels/aviation/qwen36-tokenizer-e4a111c
-  checksums:
-    tokenizer.json: f399b3cd12fa270d51457bb749fb30863521e8359b8a27059c71b6c2f7d6dd6c
-    tokenizer_config.json: 9cf04fffe3d8c3b85e439fb35c7acad0761ab51c422a8c4256d9f887c3a0be7d
-```
-
-The runtime containing `transformers` must be available when building
-passages. The code loads only local files and requires a fast tokenizer with
-offset mappings.
-
-Rebuild passages and all downstream QA after changing tokenization:
-
-```bash
-uv run aviation-data passages build
-uv run aviation-data qa generate --backend vllm --target 1500
-uv run aviation-data qa validate
-uv run aviation-data report
-```
-
-Expected gate: `production_tokenizer_pinned` passes and the passage report names
-the immutable tokenizer revision.
-
-## 4. Freeze the airline cohort
-
-Status: completed for the top-10 pilot cohort. Both rankings contain 10
-entries, the fleet source is revision-pinned, the cohort is frozen, and the
-`airline_cohort_frozen` report gate passes.
-
-Edit `configs/airline_cohort.yaml`. Obtain citable, dated rankings for:
-
-- the top 10 airlines by annual passenger volume; and
-- the top 10 airlines by active fleet size.
-
-For each ranking, replace the placeholder source, set the ranking year and
-snapshot date, and add at least 10 entries. Recommended entry structure:
-
-```yaml
-ranking_inputs:
-  passenger_volume:
-    source: https://example.org/citable-ranking
-    year: 2025
-    metric: annual_passengers
-    tie_policy: include_all_ties_at_rank_10
-    snapshot_date: 2026-07-29
-    top_10:
-      - rank: 1
-        airline: Example Air
-        value: 123456789
-        unit: passengers
-        tied: false
-```
-
-Use the same structure for `fleet_size`, with the appropriate metric and unit.
-Include all ties at rank 10, even if that creates more than 10 entries.
-
-Create the final cohort as the union of both rankings plus:
-
-- Turkish Airlines
-- SunExpress
-- Pegasus Airlines
-- AJet
-- Corendon Airlines
-
-Document aliases and entity IDs so the same airline is not counted twice.
-Every fleet fact needs an `as_of` date and field-level citation. Keep official
-fleet pages and annual-report binaries manifest-only unless their exact reuse
-terms permit redistribution.
-
-After reviewing the completed file, change:
-
-```yaml
-status: frozen
-```
-
-Verify:
-
-```bash
-uv run aviation-data report
-```
-
-Expected gate: `airline_cohort_frozen` passes. The current report checks
-`status: frozen` and at least 10 entries in each ranking, so source quality,
-ties, aliases, and citations still require human review.
-
-## 5. Implement or configure live-source adapters
-
-The bounded `mediawiki_api` adapter is implemented and approved alongside
-`file` and `direct`. Disabled portfolio entries deliberately use unimplemented
-adapter names such as `wikimedia_dump`, `wikidata_dump`, `bulk_index`, and
-`github_release`.
-
-### Bounded Wikipedia pilot (implemented)
-
-Do not enable `wikipedia_en_dump` or `wikipedia_tr_dump` for this pilot. The
-enabled API sources in `configs/sources.yaml` query only:
-
-- at most 150 English articles from `Category:Aircraft engines`,
-  `Category:Aircraft aerodynamics`, and two explicit topic pages; and
-- at most 40 Turkish articles from
-  `Kategori:Türkiye merkezli havayolu şirketleri` and its named list page.
-
-Each article is stored separately as rendered HTML and pinned to its exact
-MediaWiki revision ID, timestamp, permanent URL, and history URL. The configured
-5 MiB limit applies to each API response/article; `max_pages` is a hard source
-cap. English is additionally capped at 256 MiB total and Turkish at 64 MiB.
-The adapter uses a contact-bearing user agent, serial requests, a
-one-request-per-second rate, `maxlag=5`, retry/backoff, and the existing
-content-addressed store. The Action API path follows Wikimedia's API access
-policy directly; it does not apply the generic crawler `robots.txt` `/w/`
-indexing rule to intentional `api.php` requests.
-
-To disable either scoped source, change only its `enabled` value:
-
-```yaml
-- source_id: wikipedia_en_aviation_api
-  enabled: false
-```
-
-Offline fixture acquisition skips all network entries even when they are
-enabled. To acquire the frozen live snapshot explicitly:
-
-```bash
-uv run aviation-data rights audit --strict
-uv run aviation-data fetch --network --snapshot 2026-07-29
-uv run aviation-data extract
-```
-
-Review the fetched titles and curation report before passage/QA generation.
-Reduce `max_pages`, remove a category, or add explicit `page_titles` if the
-English set is still broader than desired. Use the actual acquisition date for
-each refresh; the manifest, rather than the mutable category, freezes the exact
-revision set that was retrieved.
-
-### Fast path for an exact immutable asset URL
-
-If a reviewed source already has an exact file URL:
-
-1. Change its adapter to `direct`.
-2. Put only exact asset URLs in `seed_urls`; do not use a landing page.
-3. Set an appropriate `max_bytes`.
-4. Confirm the exact publication's license evidence and release flags.
-5. Set `enabled: true`.
-6. Run the strict rights audit before fetching.
-
-Example:
-
-```yaml
-adapter: direct
-seed_urls:
-  - https://publisher.example/releases/2026-07/document.xml
-enabled: true
-max_bytes: 104857600
-```
-
-### Required path for dump indexes, releases, and sitemaps
-
-For each discovery adapter:
-
-1. Add an adapter module under `src/aviation_data/adapters/`.
-2. Resolve the seed/index into version-specific immutable asset URLs.
-3. Filter assets using the registry's `bulk_patterns`.
-4. Preserve discovery-page URL, asset URL, version, and checksums.
-5. Integrate discovery into `Fetcher.run` in
-   `src/aviation_data/acquisition.py`.
-6. Add the adapter name to `implemented_adapters` in
-   `src/aviation_data/registry.py` only after implementation and tests.
-7. Add tests using local fixtures or `httpx.MockTransport`; CI must not depend
-   on live websites.
-
-Adapter-specific requirements:
-
-- `mediawiki_api`: keep title/category discovery bounded with `max_pages`, use
-  namespace-zero category members only, request exact revisions with `oldid`,
-  and preserve title, page ID, revision ID/timestamp, permanent URL, and history
-  URL. This adapter is implemented.
-- `wikimedia_dump`: read `dumpstatus.json`, freeze the dump date, select the
-  multistream article XML and matching index files, and retain revision IDs.
-- `wikidata_dump`: freeze the dated JSON dump and checksum.
-- `bulk_index`: extract only expected file links, reject unexpected hosts or
-  MIME types, and preserve publication/amendment metadata.
-- `github_release`: resolve a tag or commit to its immutable commit SHA and
-  verify every selected asset.
-- `sitemap`: obey robots and published crawl limits, and use it only when no
-  bulk/API source exists.
-
-Important limitation: very large Wikimedia/Wikidata dumps must not be enabled
-until acquisition finalization hashes and moves the partial file without
-loading the entire completed payload into memory. The current implementation
-streams downloads with byte limits but calls `read_bytes()` before
-content-addressed finalization.
-
-For every source, review these fields before enabling it:
-
-```yaml
-rights:
-  state: open | manifest_only | blocked
-  license_id: ...
-  license_url: ...
-  terms_url: ...
-  reviewed_on: YYYY-MM-DD
-  attribution: ...
-  release_source: true | false
-  release_derived_text: true | false
-  release_qa: true | false
-```
-
-Never promote a source to `open` solely because it is publicly accessible.
-
-Verify each enabled batch:
-
-```bash
-uv run aviation-data rights audit --strict
-uv run aviation-data fetch --snapshot YYYY-MM-DD --network
-uv run aviation-data extract
-uv run aviation-data curate
-```
-
-Inspect `data/manifests/fetch_errors.json`,
-`data/extracted/errors.json`, and `data/curated/curation_report.json` before
-continuing.
-
-## 6. Supply extraction and QA human reviews
-
-### Extraction review
-
-Generate a stratified extraction sample:
-
-```bash
-uv run aviation-data review extraction-sample --rate 0.10
-```
-
-This creates:
-
-```text
-data/reports/extraction_review_sample.jsonl
-```
-
-Assign reviewers and complete every row. `usable` must be a JSON boolean, not a
-string:
-
-```json
-{
-  "document_id": "doc_...",
-  "reviewer_id": "reviewer-01",
-  "usable": true,
-  "format": "pdf",
-  "language": "tr",
-  "topic": ["safety"],
-  "notes": "Headings and table are complete."
-}
-```
-
-After completion and quality control, save the finalized rows as:
-
-```text
-data/reports/extraction_reviews.jsonl
-```
-
-The report uses this finalized file, not the assignment template.
-
-### QA double review
-
-After automatic validation, generate the deterministic 15% stratified sample:
-
-```bash
-uv run aviation-data qa review-sample --rate 0.15
-```
-
-This creates two assignments (`reviewer_slot` A and B) per selected QA item:
-
-```text
-data/qa/review_sample.jsonl
-```
-
-Assign two different independent reviewers to every QA item. Complete all four
-dimensions using JSON booleans:
-
-```json
-{
-  "qa_id": "qa_...",
-  "reviewer_slot": "A",
-  "reviewer_id": "reviewer-01",
-  "clarity": true,
-  "correctness": true,
-  "evidence_sufficiency": true,
-  "language_quality": true,
-  "notes": ""
-}
-```
-
-Save the finalized assignments as:
-
-```text
-data/qa/human_reviews.jsonl
-```
-
-Keep both reviewer rows for each QA item. Adjudicate disagreements and preserve
-the original independent decisions. Before the research release, add an
-explicit adjudication-import command and adjudicated-label file; the current
-report computes correctness and Cohen's kappa from the independent review rows
-but does not update `QARecord.review_status` from adjudications.
-
-For the 1,500-QA pilot, target approximately 225 double-reviewed QA items. For
-the final 20,000-QA benchmark, review 3,000 items, producing 6,000 independent
-assignment rows before adjudication.
-
-Verify:
-
-```bash
-uv run aviation-data report
-```
-
-Expected gates:
-
-- `usable_extraction_manual_sample` is at least 0.95;
-- `human_correctness_and_grounding` is at least 0.95; and
-- `reviewer_agreement_kappa` is at least 0.70.
-
-## 7. Final pilot sequence
-
-Run the full frozen pilot from an empty data directory:
-
-```bash
-uv run aviation-data rights audit --strict
-uv run aviation-data fetch --snapshot YYYY-MM-DD --network
-uv run aviation-data extract
-uv run aviation-data curate
-uv run aviation-data passages build
-uv run aviation-data qa generate --backend vllm --target 1500
 uv run aviation-data qa validate \
-  --dense-endpoint http://127.0.0.1:8001/v1 \
-  --dense-model intfloat/multilingual-e5-base \
-  --dense-revision d128750597153bb5987e10b1c3493a34e5a4502a
-uv run aviation-data review extraction-sample --rate 0.10
-uv run aviation-data qa review-sample --rate 0.15
-# Complete and finalize both review files here.
-uv run aviation-data evaluate retrieval --backend bm25
-uv run aviation-data evaluate retrieval --backend dense
-uv run aviation-data report
-uv run aviation-data package --public
+  --run-id "$FALLBACK_RUN_ID" \
+  --dense-endpoint "$DENSE_ENDPOINT" \
+  --dense-model "$DENSE_MODEL" \
+  --dense-revision "$DENSE_REVISION"
 ```
 
-Do not begin the 5,000-document/20,000-QA collection or publish to GitHub,
-Hugging Face, or Zenodo until every pilot gate reports `pass` and the generated
-public package's `rights_boundary_verified` field is `true`.
+- Verify both task manifests contain exactly 200 English and 200 Turkish
+  questions.
+- Verify their task-manifest hashes and task rows are identical.
+- Generate the deterministic 15% review sample for each run:
+
+```bash
+uv run aviation-data qa review-sample --run-id "$PRIMARY_RUN_ID" --rate 0.15
+uv run aviation-data qa review-sample --run-id "$FALLBACK_RUN_ID" --rate 0.15
+```
+
+- Blind-review the same strata from both runs.
+- Select the model with the higher four-dimension human pass rate.
+- Break ties using higher automatic acceptance, then lower duplication.
+- Record the selection decision and supporting metrics.
+
+## 9. Build the final 1,500-item QA run
+
+Start vLLM with the selected pinned model.
+
+For a primary-model selection:
+
+```bash
+uv run aviation-data qa build \
+  --backend vllm \
+  --model-choice primary \
+  --run-id "$QA_RUN_ID" \
+  --endpoint "$VLLM_ENDPOINT" \
+  --target 1500 \
+  --dense-endpoint "$DENSE_ENDPOINT" \
+  --dense-model "$DENSE_MODEL" \
+  --dense-revision "$DENSE_REVISION" \
+  --max-fill-cycles 8
+```
+
+Use `--model-choice fallback` instead if the fallback won the controlled
+comparison.
+
+Require:
+
+- exactly 1,500 accepted records;
+- exactly 750 English and 750 Turkish questions;
+- exactly 1,350 answerable and 150 corpus-unanswerable questions;
+- answerable type counts of 540 factual, 405 definition, 203 list/table,
+  135 comparison, and 67 temporal;
+- at least 135 cross-lingual answerable questions;
+- clean quota diagnostics;
+- zero evidence-offset failures;
+- no schema-invalid rows in the accepted set;
+- no unsafe or jointly supported mutations;
+- separate non-empty valid-pool, rejected, and quota-overflow diagnostics as
+  applicable.
+
+## 10. Create and complete the final QA review sample
+
+```bash
+uv run aviation-data qa review-sample \
+  --run-id "$QA_RUN_ID" \
+  --rate 0.15
+```
+
+- Confirm exactly 225 unique QA items and 450 assignment rows.
+- Confirm each QA item has reviewer slots A and B.
+- Assign two different independent reviewer IDs to every QA item.
+- Complete `clarity`, `correctness`, `evidence_sufficiency`, and
+  `language_quality` with JSON booleans.
+- Save the finalized rows at:
+
+```text
+data/qa/experiments/<QA_RUN_ID>/human_reviews.jsonl
+```
+
+- Do not overwrite the independent decisions during adjudication.
+
+## 11. Run the Task 6 report
+
+```bash
+uv run aviation-data report --qa-run-id "$QA_RUN_ID"
+```
+
+Require:
+
+- accepted QA count exactly 1,500;
+- QA balance diagnostics clean;
+- review sample exactly 225 unique items and 450 rows;
+- completed independent double review;
+- human correctness/grounding at least 0.95;
+- Cohen's kappa at least 0.70;
+- exact evidence-offset validity of 1.00;
+- immutable model, tokenizer, prompt, planner, passage, and container
+  provenance in the run manifest.
+
+## 12. Promote the passing run
+
+Do not promote a smoke, comparison, incomplete, or fixture run.
+
+```bash
+uv run aviation-data qa promote --run-id "$QA_RUN_ID"
+```
+
+- Confirm the previous benchmark artifacts were archived.
+- Confirm `data/qa/current_run.json` names the selected v1.1 run.
+- Confirm the promoted legacy QA files all use `schema_version: "1.1.0"`.
+- Confirm no v1.0 QA record was migrated or mixed into v1.1.
+
+## 13. Build and inspect the public package
+
+```bash
+uv run aviation-data package \
+  --public \
+  --qa-run-id benchmark \
+  --output release/public-v1.1
+```
+
+- Inspect the package manifest, license shards, schema files, model/prompt
+  manifest, and checksums.
+- Confirm `rights_boundary_verified: true`.
+- Confirm internal mutation provenance, parent answers, raw model responses,
+  review identities, and restricted source bytes are absent from the public
+  package.
+- Run the final report once more against the promoted benchmark:
+
+```bash
+uv run aviation-data report --qa-run-id benchmark
+```
+
+## 14. Release decision
+
+- Do not publish until every Task 6 gate passes.
+- Record the snapshot date, selected model, all immutable revisions/digests,
+  run ID, manifest hashes, review metrics, and promotion archive.
+- Keep Wikipedia source-family diversification outside Task 6 as a separately
+  tracked follow-up; do not weaken the v1.1 QA gates to compensate for it.

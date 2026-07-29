@@ -29,30 +29,29 @@ stages:
     outs:
       - data/passages
   qa_generate:
-    cmd: uv run aviation-data qa generate --backend fixture --target 8
+    cmd: uv run aviation-data qa generate --backend fixture --run-id dvc-fixture-v2 --target 8
     deps:
       - data/passages
       - configs/generation.yaml
       - prompts/qa_generation.md
     outs:
-      - data/qa/generated.jsonl
+      - data/qa/experiments/dvc-fixture-v2/generated.jsonl
   qa_validate:
-    cmd: uv run aviation-data qa validate
+    cmd: uv run aviation-data qa validate --run-id dvc-fixture-v2
     deps:
-      - data/qa/generated.jsonl
+      - data/qa/experiments/dvc-fixture-v2/generated.jsonl
       - data/passages
     outs:
-      - data/qa/accepted.jsonl
-      - data/qa/rejected.jsonl
+      - data/qa/experiments/dvc-fixture-v2/accepted.jsonl
+      - data/qa/experiments/dvc-fixture-v2/rejected.jsonl
   report:
-    cmd: uv run aviation-data report
+    cmd: uv run aviation-data report --qa-run-id dvc-fixture-v2
     deps:
       - data/curated
-      - data/qa
+      - data/qa/experiments/dvc-fixture-v2
     outs:
-      - data/reports/pilot_report.json
-      - data/reports/pilot_report.md
+      - data/qa/experiments/dvc-fixture-v2/pilot_report.json
+      - data/qa/experiments/dvc-fixture-v2/pilot_report.md
 
 vars:
   - snapshot: "2026-07-29"
-

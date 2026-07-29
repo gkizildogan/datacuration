@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import math
 import re
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -10,7 +11,7 @@ import yaml
 
 from aviation_data.ids import normalized_for_hash, normalized_tokens, stable_id
 from aviation_data.io import read_jsonl, write_json, write_jsonl, write_parquet_if_available
-from aviation_data.models import DocumentRecord, Topic
+from aviation_data.models import DocumentRecord, Language, SourceRecord, Topic
 
 
 def _shingles(text: str, width: int = 5) -> set[str]:
@@ -207,6 +208,107 @@ def _quota_report(
     }
 
 
+def _freeze_turkish_snapshot(
+    accepted: list[DocumentRecord],
+    data_dir: Path,
+    config: dict[str, Any],
+) -> tuple[list[DocumentRecord], list[DocumentRecord], dict[str, Any]]:
+    targets = config.get("language_token_targets", {"tr": 0.30})
+    target = float(targets.get("tr", 0.30))
+    tolerance = float(config.get("quota_tolerance", 0.05))
+    lower, upper = target - tolerance, target + tolerance
+    turkish_wikipedia = sorted(
+        [
+            document
+            for document in accepted
+            if document.language == Language.TURKISH
+            and document.source_family == "wikipedia"
+        ],
+        key=lambda document: (document.title.casefold(), document.document_id),
+    )
+    if not turkish_wikipedia:
+        return accepted, [], {
+            "status": "not_available",
+            "target_range": [lower, upper],
+            "selected_pages": 0,
+        }
+    turkish_ids = {document.document_id for document in turkish_wikipedia}
+    fixed = [document for document in accepted if document.document_id not in turkish_ids]
+    fixed_tokens = sum(document.canonical_token_count for document in fixed)
+    fixed_turkish_tokens = sum(
+        document.canonical_token_count
+        for document in fixed
+        if document.language == Language.TURKISH
+    )
+    selected = []
+    selected_tokens = 0
+    status = "needs_more_pages"
+    for document in turkish_wikipedia:
+        selected.append(document)
+        selected_tokens += document.canonical_token_count
+        share = (fixed_turkish_tokens + selected_tokens) / max(
+            1, fixed_tokens + selected_tokens
+        )
+        if share >= lower:
+            status = "frozen" if share <= upper else "overshoot"
+            break
+    if status == "needs_more_pages":
+        selected = turkish_wikipedia
+        selected_tokens = sum(document.canonical_token_count for document in selected)
+    selected_ids = {document.document_id for document in selected}
+    overflow = [
+        document.model_copy(
+            update={
+                "accepted": False,
+                "quality_flags": sorted(
+                    {*document.quality_flags, "turkish_snapshot_quota_overflow"}
+                ),
+            }
+        )
+        for document in turkish_wikipedia
+        if document.document_id not in selected_ids
+    ]
+    final = [*fixed, *selected]
+    final.sort(key=lambda document: document.document_id)
+    source_records = {
+        record.source_record_id: record
+        for record in read_jsonl(
+            data_dir / "manifests" / "source_records.jsonl", SourceRecord
+        )
+    }
+    share = (fixed_turkish_tokens + selected_tokens) / max(
+        1, fixed_tokens + selected_tokens
+    )
+    report = {
+        "status": status,
+        "target_range": [lower, upper],
+        "selected_pages": len(selected),
+        "available_pages": len(turkish_wikipedia),
+        "selected_token_share": round(share, 6),
+        "batch_size": 50,
+        "next_page_target": (
+            math.ceil(len(turkish_wikipedia) / 50) * 50 + 50
+            if status == "needs_more_pages"
+            else None
+        ),
+        "frozen_title_revision_set": [
+            {
+                "title": document.title,
+                "document_id": document.document_id,
+                "source_record_id": document.source_record_id,
+                "source_version": (
+                    source_records[document.source_record_id].source_version
+                    if document.source_record_id in source_records
+                    else None
+                ),
+            }
+            for document in selected
+        ],
+    }
+    write_json(data_dir / "curated" / "turkish_snapshot.json", report)
+    return final, overflow, report
+
+
 def curate_documents(
     data_dir: Path,
     sampling_config_path: Path,
@@ -246,7 +348,11 @@ def curate_documents(
             in {
                 "very_short",
                 "encoding_replacement_noise",
+                "detached_heading_run",
+                "excessive_duplicate_lines",
                 "exact_duplicate",
+                "html_boilerplate_remaining",
+                "oversized_document",
                 "possible_personal_data",
                 "current_airline_claim_missing_as_of",
             }
@@ -262,7 +368,14 @@ def curate_documents(
         )
         (accepted if accepted_value else rejected).append(updated)
     config = yaml.safe_load(sampling_config_path.read_text(encoding="utf-8"))
+    accepted, snapshot_overflow, turkish_snapshot = _freeze_turkish_snapshot(
+        accepted,
+        data_dir,
+        config,
+    )
+    rejected.extend(snapshot_overflow)
     stats = _quota_report(accepted, config, data_dir)
+    stats["turkish_snapshot"] = turkish_snapshot
     output = data_dir / "curated"
     write_jsonl(output / "documents.jsonl", [*accepted, *rejected])
     write_jsonl(output / "accepted_documents.jsonl", accepted)

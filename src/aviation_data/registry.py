@@ -101,6 +101,21 @@ def audit_registry(registry: SourceRegistry) -> list[dict[str, str]]:
                     "message": "A bounded MediaWiki source must use exactly one API endpoint.",
                 }
             )
+        if source.adapter == "mediawiki_api" and (
+            source.extraction is None
+            or source.extraction.profile != "mediawiki_article_v1"
+        ):
+            issues.append(
+                {
+                    "severity": "error",
+                    "source_id": source.source_id,
+                    "code": "missing_mediawiki_extraction_profile",
+                    "message": (
+                        "MediaWiki API sources must use the versioned "
+                        "mediawiki_article_v1 extraction profile."
+                    ),
+                }
+            )
         if source.adapter != "mediawiki_api" and source.mediawiki is not None:
             issues.append(
                 {

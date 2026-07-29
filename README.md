@@ -18,9 +18,9 @@ uv run aviation-data fetch --snapshot 2026-07-29
 uv run aviation-data extract
 uv run aviation-data curate
 uv run aviation-data passages build
-uv run aviation-data qa generate --backend fixture --target 8
-uv run aviation-data qa validate
-uv run aviation-data report
+uv run aviation-data qa build --backend fixture --run-id fixture-v2 --target 8
+uv run aviation-data qa review-sample --run-id fixture-v2
+uv run aviation-data report --qa-run-id fixture-v2
 uv run aviation-data package --public
 ```
 
@@ -30,9 +30,11 @@ fetched. A manifest-only source may be fetched locally, but its binary,
 canonical text, passages, and QA are excluded from a public package.
 
 The enabled Wikipedia sources are bounded Action API queries, not encyclopedia
-dumps. They currently cap English aircraft-engine/aerodynamics coverage at 150
-pages/256 MiB and Turkish airline coverage at 40 pages/64 MiB. Each page is
-revision-pinned. The much larger `wikipedia_en_dump` and `wikipedia_tr_dump`
+dumps. They currently cap English aviation coverage at 400 pages/512 MiB and
+Turkish aviation coverage at 600 pages/512 MiB, including one bounded
+subcategory level. Each page is revision-pinned. Turkish curation
+freezes the smallest deterministic title prefix that reaches the 25–35% token
+range. The much larger `wikipedia_en_dump` and `wikipedia_tr_dump`
 entries remain disabled. Set either scoped API source's `enabled` field to
 `false` to omit it, or lower its `mediawiki.max_pages` value for a smaller
 snapshot.
@@ -40,13 +42,15 @@ snapshot.
 The model backend is configured with:
 
 ```bash
-uv run aviation-data qa generate \
+uv run aviation-data qa build \
   --backend vllm \
+  --run-id production-v2 \
   --endpoint http://127.0.0.1:8000/v1 \
   --target 1500
 ```
 
-It refuses to run until the model revision and container digest in
+It refuses to run until the endpoint serves the configured model ID and the
+model revision and container digest in
 `configs/generation.yaml` are immutable pins. Raw responses, parsed records,
 rejections, retries, prompt hashes, and passage inputs are checkpointed.
 
