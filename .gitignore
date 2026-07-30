@@ -6,7 +6,10 @@ __pycache__/
 .coverage
 htmlcov/
 data/
+data-relevance-filtered/
+data-superseded-*/
 release/
 .env
 *.part
 data-archive/
+datatoprocess/

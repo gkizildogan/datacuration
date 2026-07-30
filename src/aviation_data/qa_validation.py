@@ -126,8 +126,7 @@ def _split_components(
     for node in parent:
         members.setdefault(find(node), []).append(node)
     component_ids = {
-        root: stable_id("splitgroup", *sorted(group), length=24)
-        for root, group in members.items()
+        root: stable_id("splitgroup", *sorted(group), length=24) for root, group in members.items()
     }
     output = {}
     for qa in qa_rows:
@@ -178,16 +177,13 @@ def _token_sequence_in(needle: str, haystack: str) -> bool:
     left = normalized_tokens(needle)
     right = normalized_tokens(haystack)
     return bool(left) and any(
-        right[index : index + len(left)] == left
-        for index in range(len(right) - len(left) + 1)
+        right[index : index + len(left)] == left for index in range(len(right) - len(left) + 1)
     )
 
 
 def _lexical_support_score(question: str, passage: str) -> float:
     query = {
-        token
-        for token in normalized_tokens(question)
-        if token not in STOPWORDS and len(token) > 2
+        token for token in normalized_tokens(question) if token not in STOPWORDS and len(token) > 2
     }
     if not query:
         return 0.0
@@ -280,9 +276,7 @@ def _validate_evidence(
             reasons.append("canonical_document_missing")
         else:
             canonical = canonical_path.read_text(encoding="utf-8")
-            canonical_quote = canonical[
-                evidence.canonical_char_start : evidence.canonical_char_end
-            ]
+            canonical_quote = canonical[evidence.canonical_char_start : evidence.canonical_char_end]
             if canonical_quote != evidence.quote:
                 reasons.append("canonical_evidence_offset_mismatch")
         if sha256_text(evidence.quote) != evidence.quote_sha256:
@@ -334,9 +328,7 @@ def _validate_evidence(
         }
         evidence_content = set(normalized_tokens(evidence_text))
         overlap = (
-            len(answer_content & evidence_content) / len(answer_content)
-            if answer_content
-            else 0.0
+            len(answer_content & evidence_content) / len(answer_content) if answer_content else 0.0
         )
         if overlap < 0.5:
             reasons.append("explanatory_reference_weakly_grounded")
@@ -506,10 +498,7 @@ def _rejection_breakdown(
         for document_id in row.get("document_ids", []):
             dimensions["document"][str(document_id)] += 1
         dimensions["construction_stage"][str(row.get("construction_stage", "validation"))] += 1
-    return {
-        key: dict(sorted(counter.items()))
-        for key, counter in dimensions.items()
-    }
+    return {key: dict(sorted(counter.items())) for key, counter in dimensions.items()}
 
 
 def validate_qa(
@@ -543,12 +532,10 @@ def validate_qa(
                     "detail": exc.errors(include_url=False),
                 }
             )
-    passage_rows = read_jsonl(
-        run_dir / "passage_snapshot.jsonl", PassageRecord
-    ) or read_jsonl(data_dir / "passages" / "passages.jsonl", PassageRecord)
-    document_rows = read_jsonl(
-        data_dir / "curated" / "accepted_documents.jsonl", DocumentRecord
+    passage_rows = read_jsonl(run_dir / "passage_snapshot.jsonl", PassageRecord) or read_jsonl(
+        data_dir / "passages" / "passages.jsonl", PassageRecord
     )
+    document_rows = read_jsonl(data_dir / "curated" / "accepted_documents.jsonl", DocumentRecord)
     passages = {passage.passage_id: passage for passage in passage_rows}
     documents = {document.document_id: document for document in document_rows}
     component_groups = _split_components(qa_rows, documents)
@@ -563,17 +550,14 @@ def validate_qa(
             candidate.passage_char_start,
             candidate.passage_char_end,
         ): candidate
-        for candidate in read_jsonl(
-            run_dir / "evidence_candidates.jsonl", EvidenceCandidate
-        )
+        for candidate in read_jsonl(run_dir / "evidence_candidates.jsonl", EvidenceCandidate)
     }
 
     dense_ready = all((dense_endpoint, dense_model, dense_revision))
     if dense_ready and not re.fullmatch(r"[0-9a-f]{40}", str(dense_revision)):
         raise ValueError("dense_revision must be an immutable 40-hex commit")
     production_unanswerables = any(
-        qa.answerability == Answerability.CORPUS_UNANSWERABLE
-        and qa.generator.backend != "fixture"
+        qa.answerability == Answerability.CORPUS_UNANSWERABLE and qa.generator.backend != "fixture"
         for qa in qa_rows
     )
     if production_unanswerables and not dense_ready:
@@ -635,8 +619,7 @@ def validate_qa(
                 reasons.append("unanswerable_mutation_provenance_missing")
             else:
                 lexical_scores = [
-                    _lexical_support_score(qa.question, passage.text)
-                    for passage in passage_rows
+                    _lexical_support_score(qa.question, passage.text) for passage in passage_rows
                 ]
                 dense_scores = None
                 if dense_passage_vectors is not None:
@@ -761,16 +744,12 @@ def validate_qa(
     write_jsonl(run_dir / "quota_overflow.jsonl", overflow)
     write_jsonl(run_dir / "validation_rejections.jsonl", diagnostics)
 
-    rejection_counts = Counter(
-        reason for qa in rejected for reason in qa.rejection_reasons
-    )
+    rejection_counts = Counter(reason for qa in rejected for reason in qa.rejection_reasons)
     exact_counts = {
         "question_language": dict(
             sorted(Counter(qa.question_language.value for qa in accepted).items())
         ),
-        "answerability": dict(
-            sorted(Counter(qa.answerability.value for qa in accepted).items())
-        ),
+        "answerability": dict(sorted(Counter(qa.answerability.value for qa in accepted).items())),
         "answerable_type": dict(
             sorted(
                 Counter(
@@ -781,10 +760,21 @@ def validate_qa(
             )
         ),
         "answerable_cross_lingual": sum(
-            qa.cross_lingual
-            for qa in accepted
-            if qa.answerability == Answerability.ANSWERABLE
+            qa.cross_lingual for qa in accepted if qa.answerability == Answerability.ANSWERABLE
         ),
+    }
+    language_counts = exact_counts["question_language"]
+    language_total = sum(language_counts.values())
+    language_shares = {
+        language: round(language_counts.get(language, 0) / language_total, 6)
+        if language_total
+        else 0.0
+        for language in ("en", "tr")
+    }
+    language_tolerance = 0.05
+    language_within_tolerance = {
+        language: abs(share - 0.5) <= language_tolerance
+        for language, share in language_shares.items()
     }
     stats = {
         "schema_version": "1.1.0",
@@ -793,9 +783,8 @@ def validate_qa(
         "schema_valid": len(qa_rows),
         "valid_pool": len(valid_pool),
         "accepted": len(accepted),
-        "rejected": len(rejected) + sum(
-            "schema_invalid" in row.get("reasons", []) for row in diagnostics
-        ),
+        "rejected": len(rejected)
+        + sum("schema_invalid" in row.get("reasons", []) for row in diagnostics),
         "quota_overflow": len(overflow),
         "evidence_offsets_valid": not any(
             reason
@@ -819,15 +808,26 @@ def validate_qa(
             else 0.0
         ),
         "rejection_breakdown": _rejection_breakdown(diagnostics),
-        "split_counts": dict(
-            sorted(Counter(qa.split.value for qa in accepted).items())
-        ),
+        "split_counts": dict(sorted(Counter(qa.split.value for qa in accepted).items())),
         "quota_diagnostics": {
             "target": quota_plan,
             "actual": exact_counts,
             "deficits": deficits,
             "issues": deficits,
             "clean": not deficits and len(accepted) == int(quota_plan["target"]),
+        },
+        "accepted_qa_language_balance": {
+            "blocking": False,
+            "reference_shares": {"en": 0.5, "tr": 0.5},
+            "tolerance_points": language_tolerance,
+            "counts": language_counts,
+            "shares": language_shares,
+            "within_tolerance": language_within_tolerance,
+            "status": (
+                "within_tolerance"
+                if all(language_within_tolerance.values())
+                else "outside_tolerance"
+            ),
         },
         "dense_unanswerable_check": {
             "enabled": bool(dense_ready),

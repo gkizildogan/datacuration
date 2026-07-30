@@ -224,19 +224,14 @@ def _candidate(
     start, end = _limit_span(passage.text, start, end)
     anchor = passage.text[start:end]
     token_count = len(tokens(anchor))
-    extractive_list_items = [
-        item for item in (list_items or []) if item in anchor
-    ]
+    extractive_list_items = [item for item in (list_items or []) if item in anchor]
     if (
         token_count < MIN_ANCHOR_TOKENS
         or not compatible_types
         or anchor.lstrip().startswith("#")
         or _is_separator(anchor)
         or anchor.rstrip().endswith(":")
-        or (
-            QAType.LIST_TABLE in compatible_types
-            and len(extractive_list_items) < 2
-        )
+        or (QAType.LIST_TABLE in compatible_types and len(extractive_list_items) < 2)
     ):
         return None
     anchor_id = stable_id(
@@ -284,13 +279,8 @@ def build_evidence_candidates(passages: list[PassageRecord]) -> list[EvidenceCan
             cursor = index + 1
             while cursor < len(lines):
                 next_line = lines[cursor][2]
-                if (
-                    is_table
-                    and "|" in next_line
-                    and not next_line.lstrip().startswith("#")
-                ) or (
-                    is_list
-                    and re.match(r"\s*(?:[-*+]|\d+[.)])\s+", next_line)
+                if (is_table and "|" in next_line and not next_line.lstrip().startswith("#")) or (
+                    is_list and re.match(r"\s*(?:[-*+]|\d+[.)])\s+", next_line)
                 ):
                     group.append(lines[cursor])
                 else:
@@ -425,8 +415,8 @@ def quota_plan(target: int) -> dict[str, Any]:
         for qa_type, _ in TYPE_WEIGHTS
     }
     english_by_type = {key: math.floor(value) for key, value in english_raw.items()}
-    remaining_english = (
-        answerable_by_language[Language.ENGLISH.value] - sum(english_by_type.values())
+    remaining_english = answerable_by_language[Language.ENGLISH.value] - sum(
+        english_by_type.values()
     )
     type_order = {qa_type.value: index for index, (qa_type, _) in enumerate(TYPE_WEIGHTS)}
     for key in sorted(
@@ -730,9 +720,7 @@ def plan_tasks(
             )
 
     # Designated parent questions must contain the exact mutation source.
-    mutation_by_parent = {
-        task.parent_task_id: task for task in tasks if task.kind == "mutation"
-    }
+    mutation_by_parent = {task.parent_task_id: task for task in tasks if task.kind == "mutation"}
     tasks = [
         task.model_copy(
             update={
@@ -862,9 +850,7 @@ def extend_task_manifest(
     valid_parent_questions: dict[str, str],
 ) -> list[PlannedTask]:
     tasks = read_jsonl(run_dir / "task_manifest.jsonl", PlannedTask)
-    selected_anchors = {
-        task.anchor_id for task in tasks if task.kind == "model"
-    }
+    selected_anchors = {task.anchor_id for task in tasks if task.kind == "model"}
     passage_uses: Counter[str] = Counter()
     document_uses: Counter[str] = Counter()
     passage_types: set[tuple[str, QAType]] = set()
@@ -959,9 +945,7 @@ def extend_task_manifest(
             document_uses[candidate.document_id] += 1
             passage_types.add((candidate.passage_id, qa_type))
 
-    used_parent_ids = {
-        task.parent_task_id for task in tasks if task.kind == "mutation"
-    }
+    used_parent_ids = {task.parent_task_id for task in tasks if task.kind == "mutation"}
     all_model_tasks = [task for task in [*tasks, *additions] if task.kind == "model"]
     for deficit in deficits:
         needed = int(deficit["deficit"])

@@ -685,6 +685,29 @@ def _pdf_to_markdown(path: Path) -> tuple[str, dict[str, Any]]:
 def _extract_payload(
     path: Path, record: SourceRecord, source: SourceDefinition
 ) -> tuple[str, dict[str, Any]]:
+    profile = source.extraction.profile if source.extraction else None
+    if profile == "dhmi_workbook_v1":
+        from aviation_data.adapters.dhmi_workbook import extract_dhmi_workbook
+
+        return extract_dhmi_workbook(path)
+    if profile == "shgm_abbreviations_v1":
+        from aviation_data.adapters.shgm_abbreviations import extract_shgm_abbreviations
+
+        return extract_shgm_abbreviations(path)
+    if profile == "easa_toc_section_v1":
+        from aviation_data.adapters.easa_sections import extract_easa_section
+
+        if source.extraction is None or source.extraction.selection_seed is None:
+            raise ExtractionError("easa_toc_section_v1 requires a deterministic selection seed")
+        return extract_easa_section(
+            path,
+            seed=source.extraction.selection_seed,
+            checksum=record.sha256,
+        )
+    if profile == "faa_purpose_applicability_v1":
+        from aviation_data.adapters.faa_sections import extract_faa_sections
+
+        return extract_faa_sections(path)
     mime = record.detected_mime.casefold()
     suffix = Path(urlparse(record.canonical_url).path).suffix.casefold()
     native = record.native_format.casefold()
@@ -831,6 +854,7 @@ def extract_sources(
             canonical_path.write_text(canonical, encoding="utf-8", newline="\n")
             plain = re.sub(r"^#{1,6}\s+", "", canonical, flags=re.MULTILINE)
             plain_path.write_text(plain, encoding="utf-8", newline="\n")
+            structured_artifact = layout.pop("_structured_artifact", None)
             write_json(layout_path, layout)
             canonical_relative = canonical_path.relative_to(data_dir).as_posix()
             artifact_paths = {
@@ -839,6 +863,12 @@ def extract_sources(
                 "canonical_text": plain_path.relative_to(data_dir).as_posix(),
                 "layout_json": layout_path.relative_to(data_dir).as_posix(),
             }
+            if structured_artifact is not None:
+                structured_path = artifact_dir / str(structured_artifact["filename"])
+                write_json(structured_path, structured_artifact["value"])
+                artifact_paths[str(structured_artifact["key"])] = structured_path.relative_to(
+                    data_dir
+                ).as_posix()
             for table_name, rows in _table_rows(layout):
                 safe_name = re.sub(r"[^A-Za-z0-9_.-]+", "_", table_name)
                 table_path = artifact_dir / f"{safe_name}.parquet"

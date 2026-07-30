@@ -40,6 +40,22 @@ After changing an extraction profile, rebuild extraction and curation before
 creating a new manual sample. Old review rows are preserved but are not counted
 against changed, rejected, or unassigned document IDs.
 
+Optional local authority files use four additional versioned profiles:
+
+- `dhmi_workbook_v1` emits readable worksheet tables and a structured workbook
+  artifact with header hierarchies, row types, formulas, cached values, and
+  notes.
+- `shgm_abbreviations_v1` emits abbreviation aliases, Turkish meanings, source
+  text, and page provenance.
+- `easa_toc_section_v1` deterministically selects one eligible CS-E/AMC
+  bookmark section using the configured seed and file checksum.
+- `faa_purpose_applicability_v1` extracts the real PURPOSE and APPLICABILITY
+  sections after the final Contents page.
+
+FAA, DHMI, and SHGM remain `manifest_only`. Their canonical and structured
+artifacts are internal and are filtered before passage construction. EASA
+remains open and may contribute passages and QA.
+
 ## Taxonomy
 
 1. Regulation, standards, licensing, and passenger rights
@@ -52,10 +68,14 @@ against changed, rejected, or unassigned document IDs.
 8. General aviation, rotorcraft, balloons, and unmanned aircraft
 
 Every major topic must contribute at least 5% of accepted canonical tokens.
-English/Turkish token share targets 70/30, with a tolerance of five percentage
-points at the pilot gate. No source family may exceed 40% of canonical tokens.
-Sampling is tracked across topic, language, publisher, authority, native format,
-and publication period.
+English/Turkish corpus token shares are non-blocking observations against a
+70/30 reference, with a reporting tolerance of five percentage points. Reports
+show all accepted documents separately from QA-eligible documents. Topic
+minimums and the 40% source-family cap are evaluated only on QA-eligible
+documents, so restricted sources cannot satisfy public diversity gates.
+Sampling is tracked across topic, language, publisher, authority, native
+format, and publication period. QA planning remains 50/50 by question language;
+accepted-QA shares are reported with a five-point balance tolerance.
 
 ## Frozen airline cohort
 
@@ -80,5 +100,7 @@ The 500-document/1,500-QA pilot must reach 100% schema/checksum validity, zero
 unclear-rights binaries in public output, 95% usable extraction in a stratified
 manual sample, 99% structured generation success after retry, 100% answerable
 evidence-offset validity, 95% human correctness/grounding, reviewer kappa of
-0.70, and quotas within five percentage points. Missing human review data is
-reported as `not_evaluated`, never silently passed.
+0.70, and clean topic, source-family, and QA planning gates. Corpus and accepted
+QA language observations are reported but do not reject otherwise valid
+records. Missing human review data is reported as `not_evaluated`, never
+silently passed.

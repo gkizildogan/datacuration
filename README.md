@@ -24,20 +24,25 @@ uv run aviation-data report --qa-run-id fixture-v2
 uv run aviation-data package --public
 ```
 
-By default `fetch` accepts only local `file:` seeds. Add `--network` to enable
-HTTP sources after reviewing `configs/sources.yaml`. A blocked source is never
-fetched. A manifest-only source may be fetched locally, but its binary,
-canonical text, passages, and QA are excluded from a public package.
+By default `fetch` imports local `file:` seeds and matching `local_glob`
+sources. Place optional authority files under the ignored `datatoprocess/`
+directory using the configured uppercase prefixes (`DHMI*.xlsx`, `SHGM*.pdf`,
+`EASA*.pdf`, and `FAA*.pdf`). Each unique checksum becomes one immutable
+source/document version. Add `--network` to also enable HTTP sources after
+reviewing `configs/sources.yaml`. A blocked source is never fetched. A
+manifest-only source may produce internal canonical and structured artifacts,
+but its binary, derived text, passages, and QA are excluded from public output.
 
 The enabled Wikipedia sources are bounded Action API queries, not encyclopedia
 dumps. They currently cap English aviation coverage at 400 pages/512 MiB and
 Turkish aviation coverage at 600 pages/512 MiB, including one bounded
 subcategory level. Each page is revision-pinned. Turkish curation
-freezes the smallest deterministic title prefix that reaches the 25–35% token
-range. The much larger `wikipedia_en_dump` and `wikipedia_tr_dump`
-entries remain disabled. Set either scoped API source's `enabled` field to
-`false` to omit it, or lower its `mediawiki.max_pages` value for a smaller
-snapshot.
+does not trim documents to a language quota: corpus language ratios are
+reported against a 70/30 reference with a five-point tolerance. The much
+larger `wikipedia_en_dump` and `wikipedia_tr_dump` entries remain disabled. Set
+either scoped API source's `enabled` field to `false` to omit it, lower its
+`mediawiki.max_pages` value for a smaller snapshot, or increase the existing
+400/600 caps for later scaling.
 
 The model backend is configured with:
 

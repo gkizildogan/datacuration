@@ -80,9 +80,7 @@ def _gate(name: str, actual: Any, threshold: Any, passed: bool | None) -> dict[s
 def _read_qa_v11(path: Path) -> tuple[list[QARecord], int]:
     rows = read_jsonl(path)
     compatible = [
-        QARecord.model_validate(row)
-        for row in rows
-        if row.get("schema_version") == "1.1.0"
+        QARecord.model_validate(row) for row in rows if row.get("schema_version") == "1.1.0"
     ]
     return compatible, len(rows) - len(compatible)
 
@@ -100,15 +98,9 @@ def build_report(
         data_dir / "curated" / "accepted_documents.jsonl", DocumentRecord
     )
     passages = read_jsonl(data_dir / "passages" / "passages.jsonl", PassageRecord)
-    generated_qa, incompatible_generated = _read_qa_v11(
-        qa_dir / "generated.jsonl"
-    )
-    accepted_qa, incompatible_accepted = _read_qa_v11(
-        qa_dir / "accepted.jsonl"
-    )
-    rejected_qa, incompatible_rejected = _read_qa_v11(
-        qa_dir / "rejected.jsonl"
-    )
+    generated_qa, incompatible_generated = _read_qa_v11(qa_dir / "generated.jsonl")
+    accepted_qa, incompatible_accepted = _read_qa_v11(qa_dir / "accepted.jsonl")
+    rejected_qa, incompatible_rejected = _read_qa_v11(qa_dir / "rejected.jsonl")
     qa_validation = (
         read_json(qa_dir / "validation_report.json")
         if (qa_dir / "validation_report.json").exists()
@@ -149,20 +141,14 @@ def build_report(
         bool(sampled_qa_ids)
         and len(review_sample) == len(sampled_qa_ids) * 2
         and all(review_assignment_counts[qa_id] == 2 for qa_id in sampled_qa_ids)
-        and all(
-            sample_slots_by_qa.get(qa_id) == {"A", "B"} for qa_id in sampled_qa_ids
-        )
+        and all(sample_slots_by_qa.get(qa_id) == {"A", "B"} for qa_id in sampled_qa_ids)
         and len(human_rows) == len(review_sample)
         and all(len(reviewer_ids_by_qa.get(qa_id, set())) == 2 for qa_id in sampled_qa_ids)
     )
-    extraction_assignments = read_jsonl(
-        data_dir / "reports" / "extraction_review_sample.jsonl"
-    )
+    extraction_assignments = read_jsonl(data_dir / "reports" / "extraction_review_sample.jsonl")
     extraction_reviews = read_jsonl(data_dir / "reports" / "extraction_reviews.jsonl")
     accepted_ids = {document.document_id for document in accepted_documents}
-    assignment_id_counts = Counter(
-        str(row.get("document_id")) for row in extraction_assignments
-    )
+    assignment_id_counts = Counter(str(row.get("document_id")) for row in extraction_assignments)
     assigned_ids = {
         document_id for document_id in assignment_id_counts if document_id in accepted_ids
     }
@@ -187,8 +173,7 @@ def build_report(
         and all(count == 1 for count in reviewed_id_counts.values())
     )
     manual_extraction_rate = (
-        sum(bool(row["usable"]) for row in valid_extraction_reviews)
-        / len(valid_extraction_reviews)
+        sum(bool(row["usable"]) for row in valid_extraction_reviews) / len(valid_extraction_reviews)
         if extraction_review_complete
         else None
     )
@@ -295,7 +280,7 @@ def build_report(
             bool(passage_report.get("tokenizer", {}).get("production_ready")),
         ),
         _gate(
-            "language_and_topic_quotas",
+            "topic_and_releasable_source_family_gates",
             len(quota_issues),
             0,
             not quota_issues,
@@ -314,9 +299,7 @@ def build_report(
                 "submitted_rows": len(human_rows),
             },
             {"unique_items": 225, "assignment_rows": 450},
-            double_review_complete
-            and len(sampled_qa_ids) == 225
-            and len(review_sample) == 450,
+            double_review_complete and len(sampled_qa_ids) == 225 and len(review_sample) == 450,
         ),
         _gate(
             "airline_cohort_frozen",
@@ -366,6 +349,18 @@ def build_report(
         "language_qa_counts": dict(
             sorted(Counter(qa.question_language.value for qa in accepted_qa).items())
         ),
+        "accepted_qa_language_balance": qa_validation.get(
+            "accepted_qa_language_balance",
+            {
+                "blocking": False,
+                "reference_shares": {"en": 0.5, "tr": 0.5},
+                "tolerance_points": 0.05,
+                "counts": {},
+                "shares": {},
+                "within_tolerance": {},
+                "status": "not_evaluated",
+            },
+        ),
         "human_review": human,
         "qa_review_sample": {
             "unique_sampled_items": len(sampled_qa_ids),
@@ -382,8 +377,7 @@ def build_report(
             "review_complete": extraction_review_complete,
             "missing_document_ids": sorted(assigned_ids - set(reviewed_id_counts)),
             "stale_review_rows": sum(
-                str(row.get("document_id")) not in assigned_ids
-                for row in extraction_reviews
+                str(row.get("document_id")) not in assigned_ids for row in extraction_reviews
             ),
             "manual_usable_rate": manual_extraction_rate,
         },

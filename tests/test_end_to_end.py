@@ -26,6 +26,16 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
     data_dir = tmp_path / "data"
     registry_path = ROOT / "configs" / "sources.yaml"
     registry = load_registry(registry_path)
+    registry = registry.model_copy(
+        update={
+            "sources": [
+                source.model_copy(update={"enabled": False})
+                if source.adapter == "local_glob"
+                else source
+                for source in registry.sources
+            ]
+        }
+    )
     source_records, fetch_errors = asyncio.run(
         fetch_sources(
             registry,
@@ -35,7 +45,13 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
             allow_network=False,
         )
     )
+    fixture_source_ids = {
+        "fixture_airport_markdown_en",
+        "fixture_safety_html_tr",
+        "fixture_aircraft_json_en",
+    }
     assert len(source_records) == 3
+    assert fixture_source_ids == {record.registry_source_id for record in source_records}
     assert not fetch_errors
     assert all(record.rights.state.value == "open" for record in source_records)
 
@@ -52,7 +68,12 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
     )
     assert len(accepted_documents) == 3
     assert not rejected_documents
-    assert 0.65 <= curation["language_token_shares"]["en"] <= 0.75
+    assert curation["language_observation"]["blocking"] is False
+    assert set(curation["language_observation"]["views"]) == {
+        "all_accepted",
+        "qa_eligible",
+    }
+    assert not any(issue["code"] == "language_quota" for issue in curation["quota_issues"])
     extraction_assignments = create_extraction_review_sample(data_dir)
     assert {row["document_id"] for row in extraction_assignments} == {
         document.document_id for document in accepted_documents
@@ -62,6 +83,7 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
 
     passages, _ = build_passages(data_dir, ROOT / "configs" / "passages.fixture.yaml")
     assert len(passages) >= 3
+    restricted_document_ids: set[str] = set()
     qa_rows, qa_build_report = build_qa(
         data_dir,
         ROOT / "configs" / "generation.yaml",
@@ -80,8 +102,20 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
         run_id="fixture-e2e",
     )
     assert len(accepted_qa) == 8
-    assert not rejected_qa
+    assert all(
+        not restricted_document_ids.intersection(qa.source_document_ids)
+        for qa in [*accepted_qa, *rejected_qa]
+    )
     assert validation["evidence_offsets_valid"]
+    assert validation["accepted_qa_language_balance"] == {
+        "blocking": False,
+        "reference_shares": {"en": 0.5, "tr": 0.5},
+        "tolerance_points": 0.05,
+        "counts": {"en": 4, "tr": 4},
+        "shares": {"en": 0.5, "tr": 0.5},
+        "within_tolerance": {"en": True, "tr": True},
+        "status": "within_tolerance",
+    }
     review_assignments = create_review_sample(
         data_dir,
         run_id="fixture-e2e",
@@ -91,6 +125,7 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
 
     report = build_report(data_dir, qa_run_id="fixture-e2e")
     assert report["overall_status"] == "fail"
+    assert report["accepted_qa_language_balance"]["status"] == "within_tolerance"
     assert (
         next(gate for gate in report["gates"] if gate["name"] == "schema_and_checksum_coverage")[
             "status"

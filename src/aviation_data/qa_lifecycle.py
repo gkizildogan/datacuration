@@ -63,10 +63,7 @@ def preserve_legacy_baseline(
         "baseline_id": baseline_id,
         "read_only": True,
         "created_at": datetime.now(UTC).isoformat(),
-        "artifacts": {
-            name: file_sha256(baseline_dir / name)
-            for name in sorted(copied)
-        },
+        "artifacts": {name: file_sha256(baseline_dir / name) for name in sorted(copied)},
     }
     write_json(marker, manifest)
     return manifest
@@ -77,12 +74,8 @@ def _validate_reviews(
     reviews: list[dict[str, Any]],
 ) -> list[str]:
     issues = []
-    sample_keys = Counter(
-        (str(row.get("qa_id")), str(row.get("reviewer_slot"))) for row in sample
-    )
-    review_keys = Counter(
-        (str(row.get("qa_id")), str(row.get("reviewer_slot"))) for row in reviews
-    )
+    sample_keys = Counter((str(row.get("qa_id")), str(row.get("reviewer_slot"))) for row in sample)
+    review_keys = Counter((str(row.get("qa_id")), str(row.get("reviewer_slot"))) for row in reviews)
     if sample_keys != review_keys:
         issues.append("human review rows do not exactly match review assignments")
     sample_slots: dict[str, set[str]] = defaultdict(set)

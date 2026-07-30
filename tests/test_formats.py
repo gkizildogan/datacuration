@@ -203,16 +203,8 @@ def test_mediawiki_quality_flag_targets_front_loaded_heading_failure() -> None:
     </div>
     """
 
-    broken_markdown, broken_layout = _html_to_markdown(
-        broken_markup, source, title="Broken"
-    )
-    valid_markdown, valid_layout = _html_to_markdown(
-        valid_markup, source, title="Valid"
-    )
+    broken_markdown, broken_layout = _html_to_markdown(broken_markup, source, title="Broken")
+    valid_markdown, valid_layout = _html_to_markdown(valid_markup, source, title="Valid")
 
-    assert "detached_heading_run" in _extraction_quality_flags(
-        broken_markdown, broken_layout
-    )
-    assert "detached_heading_run" not in _extraction_quality_flags(
-        valid_markdown, valid_layout
-    )
+    assert "detached_heading_run" in _extraction_quality_flags(broken_markdown, broken_layout)
+    assert "detached_heading_run" not in _extraction_quality_flags(valid_markdown, valid_layout)

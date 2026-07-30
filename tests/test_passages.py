@@ -3,9 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import yaml
 
+from aviation_data.io import write_jsonl
 from aviation_data.models import DocumentRecord, Language, RightsState, Topic
-from aviation_data.passages import TokenCounter, passage_document
+from aviation_data.passages import TokenCounter, build_passages, passage_document
 
 
 def _document() -> DocumentRecord:
@@ -77,3 +79,59 @@ def test_local_tokenizer_rejects_checksum_mismatch(tmp_path: Path) -> None:
                 },
             }
         )
+
+
+def test_build_passages_excludes_manifest_only_documents(tmp_path: Path) -> None:
+    data_dir = tmp_path / "data"
+    open_document = _document().model_copy(
+        update={
+            "document_id": "doc_open",
+            "variant_group_id": "variant-open",
+            "canonical_path": "canonical/open.md",
+        }
+    )
+    restricted_document = _document().model_copy(
+        update={
+            "document_id": "doc_restricted",
+            "variant_group_id": "variant-restricted",
+            "canonical_path": "canonical/restricted.md",
+            "rights_state": RightsState.MANIFEST_ONLY,
+            "release_derived_text": False,
+            "release_qa": False,
+        }
+    )
+    for document in (open_document, restricted_document):
+        path = data_dir / document.canonical_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            "# Aviation\n\nA sufficiently detailed aviation passage for rights testing.",
+            encoding="utf-8",
+        )
+    write_jsonl(
+        data_dir / "curated" / "accepted_documents.jsonl",
+        [open_document, restricted_document],
+    )
+    config_path = tmp_path / "passages.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "target_tokens": 10,
+                "max_tokens": 30,
+                "overlap_tokens": 4,
+                "max_table_tokens": 50,
+                "tokenizer": {
+                    "mode": "regex_fixture",
+                    "id": "regex-word-v1",
+                    "revision": "local-v1",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    passages, report = build_passages(data_dir, config_path)
+
+    assert {passage.document_id for passage in passages} == {"doc_open"}
+    assert report["accepted_documents"] == 2
+    assert report["documents"] == 1
+    assert report["rights_excluded_documents"] == 1

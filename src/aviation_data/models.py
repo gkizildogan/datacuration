@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from datetime import UTC, date, datetime
 from enum import StrEnum
 from typing import Any, Literal
@@ -92,7 +93,13 @@ class RegistryProject(StrictModel):
 class MediaWikiApiConfig(StrictModel):
     page_titles: list[str] = Field(default_factory=list)
     category_titles: list[str] = Field(default_factory=list)
+    excluded_category_titles: list[str] = Field(default_factory=list)
+    excluded_category_patterns: list[str] = Field(default_factory=list)
+    excluded_page_category_titles: list[str] = Field(default_factory=list)
+    excluded_page_category_patterns: list[str] = Field(default_factory=list)
     max_pages: int = Field(default=200, ge=1, le=5_000)
+    max_candidate_pages: int | None = Field(default=None, ge=1, le=5_000)
+    max_pages_per_category: int = Field(default=50, ge=1, le=500)
     max_total_bytes: int = Field(default=536_870_912, ge=1)
     batch_size: int = Field(default=20, ge=1, le=50)
     maxlag: int = Field(default=5, ge=1, le=60)
@@ -103,11 +110,37 @@ class MediaWikiApiConfig(StrictModel):
     def has_discovery_seeds(self) -> MediaWikiApiConfig:
         if not self.page_titles and not self.category_titles:
             raise ValueError("MediaWiki API sources need page_titles or category_titles")
+        if self.max_candidate_pages is not None and self.max_candidate_pages < self.max_pages:
+            raise ValueError("max_candidate_pages must be greater than or equal to max_pages")
+        for pattern in [
+            *self.excluded_category_patterns,
+            *self.excluded_page_category_patterns,
+        ]:
+            try:
+                re.compile(pattern)
+            except re.error as exc:
+                raise ValueError(f"invalid excluded category pattern {pattern!r}: {exc}") from exc
         return self
 
 
 class ExtractionConfig(StrictModel):
-    profile: Literal["generic_html_v2", "mediawiki_article_v1"]
+    profile: Literal[
+        "generic_html_v2",
+        "mediawiki_article_v1",
+        "dhmi_workbook_v1",
+        "shgm_abbreviations_v1",
+        "easa_toc_section_v1",
+        "faa_purpose_applicability_v1",
+    ]
+    selection_seed: int | None = None
+
+    @model_validator(mode="after")
+    def valid_profile_settings(self) -> ExtractionConfig:
+        if self.profile == "easa_toc_section_v1" and self.selection_seed is None:
+            raise ValueError("easa_toc_section_v1 requires selection_seed")
+        if self.profile != "easa_toc_section_v1" and self.selection_seed is not None:
+            raise ValueError("selection_seed is only valid for easa_toc_section_v1")
+        return self
 
 
 class SourceDefinition(StrictModel):
@@ -317,9 +350,7 @@ class QARecord(StrictModel):
                         "list/table QA requires source-ordered answer_items joined by '; '"
                     )
                 if self.reference_answer is not None or self.rubric:
-                    raise ValueError(
-                        "list/table QA does not allow reference_answer or rubric"
-                    )
+                    raise ValueError("list/table QA does not allow reference_answer or rubric")
             elif self.primary_type in {QAType.DEFINITION, QAType.COMPARISON}:
                 if self.answer_items:
                     raise ValueError("explanatory QA must leave answer_items empty")
@@ -339,9 +370,7 @@ class QARecord(StrictModel):
             or self.provenance_passage_ids
             or self.source_document_ids
         ):
-            raise ValueError(
-                "corpus-unanswerable QA must not expose answer/evidence provenance"
-            )
+            raise ValueError("corpus-unanswerable QA must not expose answer/evidence provenance")
         expected_cross_lingual = any(
             language != self.question_language for language in self.evidence_languages
         )

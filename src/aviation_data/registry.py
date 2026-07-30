@@ -18,7 +18,7 @@ def source_index(registry: SourceRegistry) -> dict[str, SourceDefinition]:
 
 def audit_registry(registry: SourceRegistry) -> list[dict[str, str]]:
     issues: list[dict[str, str]] = []
-    implemented_adapters = {"file", "direct", "mediawiki_api"}
+    implemented_adapters = {"file", "direct", "local_glob", "mediawiki_api"}
     contact = registry.project.contact.casefold()
     if "replace-with" in contact or contact.endswith("@example.org"):
         issues.append(
@@ -102,8 +102,7 @@ def audit_registry(registry: SourceRegistry) -> list[dict[str, str]]:
                 }
             )
         if source.adapter == "mediawiki_api" and (
-            source.extraction is None
-            or source.extraction.profile != "mediawiki_article_v1"
+            source.extraction is None or source.extraction.profile != "mediawiki_article_v1"
         ):
             issues.append(
                 {
@@ -125,6 +124,18 @@ def audit_registry(registry: SourceRegistry) -> list[dict[str, str]]:
                     "message": "Only the mediawiki_api adapter accepts mediawiki configuration.",
                 }
             )
+        if source.adapter == "local_glob":
+            for pattern in source.seed_urls:
+                path = Path(pattern)
+                if path.is_absolute() or ".." in path.parts:
+                    issues.append(
+                        {
+                            "severity": "error",
+                            "source_id": source.source_id,
+                            "code": "unsafe_local_glob",
+                            "message": "Local glob patterns must be project-relative without '..'.",
+                        }
+                    )
         if not rights.license_url or not rights.terms_url or not rights.attribution:
             issues.append(
                 {

@@ -100,9 +100,7 @@ Airport Alpha opened in 2018, whereas Airport Beta opened in 2024.
         for candidate in candidates
     )
     prose = next(
-        candidate
-        for candidate in candidates
-        if "Airport Alpha opened" in candidate.anchor_text
+        candidate for candidate in candidates if "Airport Alpha opened" in candidate.anchor_text
     )
     assert QAType.TEMPORAL in prose.compatible_types
     assert QAType.COMPARISON in prose.compatible_types
@@ -129,9 +127,7 @@ def test_1500_quota_plan_is_exact() -> None:
     }
     assert plan["answerable_cross_lingual"] == 135
     assert sum(row["count"] for row in plan["answerable_strata"]) == 1350
-    assert sum(
-        row["count"] for row in plan["answerable_strata"] if row["cross_lingual"]
-    ) == 135
+    assert sum(row["count"] for row in plan["answerable_strata"] if row["cross_lingual"]) == 135
 
 
 def test_task_specific_schemas_do_not_expose_unrelated_answer_fields() -> None:
@@ -234,12 +230,8 @@ def test_review_sample_has_exact_unique_and_assignment_counts(tmp_path: Path) ->
                 question=f"What fact is stated for item {index}?",
                 answer="fact",
                 answer_items=["fact"],
-                question_language=(
-                    Language.ENGLISH if index % 2 == 0 else Language.TURKISH
-                ),
-                evidence_languages=(
-                    [Language.ENGLISH] if index % 2 == 0 else [Language.TURKISH]
-                ),
+                question_language=(Language.ENGLISH if index % 2 == 0 else Language.TURKISH),
+                evidence_languages=([Language.ENGLISH] if index % 2 == 0 else [Language.TURKISH]),
                 primary_type=QAType.FACTUAL,
                 answerability=Answerability.ANSWERABLE,
                 evidence=[_evidence()],

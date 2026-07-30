@@ -149,8 +149,7 @@ def _token_sequence_in(needle: str, haystack: str) -> bool:
     left = [item.casefold() for item in tokens(needle)]
     right = [item.casefold() for item in tokens(haystack)]
     return bool(left) and any(
-        right[index : index + len(left)] == left
-        for index in range(len(right) - len(left) + 1)
+        right[index : index + len(left)] == left for index in range(len(right) - len(left) + 1)
     )
 
 
@@ -201,11 +200,9 @@ def _fixture_response(task: PlannedTask, candidate: EvidenceCandidate) -> ModelR
     question = _fixture_question(task, candidate, subject)
     if _is_closed(task.qa_type):
         if task.qa_type == QAType.LIST_TABLE:
-            answer_items = [
-                item
-                for item in candidate.list_items
-                if item in candidate.anchor_text
-            ][:3]
+            answer_items = [item for item in candidate.list_items if item in candidate.anchor_text][
+                :3
+            ]
             if not answer_items:
                 return RejectedResponse(
                     kind="reject",
@@ -599,15 +596,11 @@ def generate_qa(
     records, records_by_task = _recover_records(run_dir)
     raw_path = run_dir / "raw_responses.jsonl"
     terminal_rows = [
-        row
-        for row in read_jsonl(raw_path)
-        if row.get("status") in {"accepted", "rejected"}
+        row for row in read_jsonl(raw_path) if row.get("status") in {"accepted", "rejected"}
     ]
     completed = {str(row["task_id"]) for row in terminal_rows}
     rejections: list[dict[str, Any]] = read_jsonl(run_dir / "generation_rejections.jsonl")
-    model_tasks = [
-        task for task in tasks if task.kind == "model" and task.task_id not in completed
-    ]
+    model_tasks = [task for task in tasks if task.kind == "model" and task.task_id not in completed]
     max_retries = int(config["generation"]["max_retries"])
     timeout = float(config["generation"]["timeout_seconds"])
     max_output_tokens = int(config["generation"]["max_output_tokens"])
@@ -678,8 +671,7 @@ def generate_qa(
 
     # Mutations are constructed only from successfully generated parent questions.
     mutation_provenance = {
-        str(row["task_id"]): row
-        for row in read_jsonl(run_dir / "mutation_provenance.jsonl")
+        str(row["task_id"]): row for row in read_jsonl(run_dir / "mutation_provenance.jsonl")
     }
     for task in [item for item in tasks if item.kind == "mutation"]:
         if task.task_id in completed or task.task_id in mutation_provenance:
@@ -738,13 +730,9 @@ def generate_qa(
     records.sort(key=lambda item: (task_order.get(item.qa_id, 10**12), item.qa_id))
     write_jsonl(run_dir / "generated.jsonl", records)
     terminal = [
-        row
-        for row in read_jsonl(raw_path)
-        if row.get("status") in {"accepted", "rejected"}
+        row for row in read_jsonl(raw_path) if row.get("status") in {"accepted", "rejected"}
     ]
-    terminal_model = [
-        row for row in terminal if row.get("construction_stage") == "model"
-    ]
+    terminal_model = [row for row in terminal if row.get("construction_stage") == "model"]
     write_json(
         run_dir / "generation_report.json",
         {
@@ -756,8 +744,7 @@ def generate_qa(
             "constructed": len(records),
             "rejected": len(rejections),
             "json_schema_success_rate": (
-                sum(bool(row.get("schema_valid")) for row in terminal_model)
-                / len(terminal_model)
+                sum(bool(row.get("schema_valid")) for row in terminal_model) / len(terminal_model)
                 if terminal_model
                 else 0.0
             ),
@@ -838,22 +825,17 @@ def build_qa(
         if cycle >= max_fill_cycles:
             break
 
-        valid_ids = {
-            qa.qa_id for qa in read_jsonl(run_dir / "valid_pool.jsonl", QARecord)
-        }
+        valid_ids = {qa.qa_id for qa in read_jsonl(run_dir / "valid_pool.jsonl", QARecord)}
         valid_parent_questions = {
             str(row["task_id"]): QARecord.model_validate(row["record"]).question
             for row in read_jsonl(run_dir / "raw_responses.jsonl")
             if row.get("status") == "accepted"
             and isinstance(row.get("record"), dict)
             and str(row.get("qa_id")) in valid_ids
-            and QARecord.model_validate(row["record"]).answerability
-            == Answerability.ANSWERABLE
+            and QARecord.model_validate(row["record"]).answerability == Answerability.ANSWERABLE
         }
         run_manifest = read_json(run_dir / "run_manifest.json")
-        candidates = read_jsonl(
-            run_dir / "evidence_candidates.jsonl", EvidenceCandidate
-        )
+        candidates = read_jsonl(run_dir / "evidence_candidates.jsonl", EvidenceCandidate)
         additions = extend_task_manifest(
             run_dir,
             candidates,

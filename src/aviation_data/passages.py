@@ -350,7 +350,14 @@ def passage_document(
 
 
 def build_passages(data_dir: Path, config_path: Path) -> tuple[list[PassageRecord], dict[str, Any]]:
-    documents = read_jsonl(data_dir / "curated" / "accepted_documents.jsonl", DocumentRecord)
+    accepted_documents = read_jsonl(
+        data_dir / "curated" / "accepted_documents.jsonl", DocumentRecord
+    )
+    documents = [
+        document
+        for document in accepted_documents
+        if document.release_derived_text and document.release_qa
+    ]
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     token_counter = TokenCounter(config.get("tokenizer"))
     passages: list[PassageRecord] = []
@@ -359,7 +366,9 @@ def build_passages(data_dir: Path, config_path: Path) -> tuple[list[PassageRecor
         passages.extend(passage_document(document, canonical, config, token_counter))
     passages.sort(key=lambda item: (item.document_id, item.canonical_char_start))
     stats = {
+        "accepted_documents": len(accepted_documents),
         "documents": len(documents),
+        "rights_excluded_documents": len(accepted_documents) - len(documents),
         "passages": len(passages),
         "average_tokens": round(
             sum(passage.token_count for passage in passages) / max(1, len(passages)), 2

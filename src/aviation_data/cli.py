@@ -314,10 +314,14 @@ def _reviewer_id(value: str | None) -> str:
 
 def _review_answer() -> bool | None:
     while True:
-        value = typer.prompt(
-            "Usable? [t/true, f/false, q/quit]",
-            show_default=False,
-        ).strip().casefold()
+        value = (
+            typer.prompt(
+                "Usable? [t/true, f/false, q/quit]",
+                show_default=False,
+            )
+            .strip()
+            .casefold()
+        )
         if value in {"t", "true"}:
             return True
         if value in {"f", "false"}:
@@ -454,11 +458,7 @@ def extraction_review(
         completed_by_id[document_id] = completed
         write_jsonl(
             progress_path,
-            [
-                completed_by_id[item_id]
-                for item_id in assignment_ids
-                if item_id in completed_by_id
-            ],
+            [completed_by_id[item_id] for item_id in assignment_ids if item_id in completed_by_id],
         )
 
     finalized = [completed_by_id[document_id] for document_id in assignment_ids]

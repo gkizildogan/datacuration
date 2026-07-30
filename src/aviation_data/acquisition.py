@@ -21,6 +21,7 @@ from aviation_data.adapters.mediawiki_api import (
     ApiResponse,
     MediaWikiApiError,
     discover_pages,
+    excluded_page_category_matches,
     render_page,
 )
 from aviation_data.ids import stable_id
@@ -33,6 +34,9 @@ class AcquisitionError(RuntimeError):
 
 
 def detect_mime(path_or_url: str, payload: bytes, header: str | None = None) -> str:
+    suffix = Path(urlparse(path_or_url).path).suffix.casefold()
+    if suffix == ".xlsx" and payload.startswith(b"PK\x03\x04"):
+        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     if header:
         value = header.split(";", maxsplit=1)[0].strip().casefold()
         if value and value != "application/octet-stream":
@@ -143,6 +147,7 @@ class Fetcher:
         self.semaphores: dict[str, asyncio.Semaphore] = {}
         self.robots: dict[str, RobotFileParser] = {}
         self.errors: list[dict[str, str]] = []
+        self.mediawiki_exclusions: list[dict[str, object]] = []
         self.existing = read_jsonl(data_dir / "manifests" / "source_records.jsonl", SourceRecord)
         self.by_snapshot_key = {
             (record.registry_source_id, record.request_url, record.snapshot_date): record
@@ -224,6 +229,71 @@ class Fetcher:
             },
             redirects=[],
         )
+
+    def _local_glob_matches(self, pattern: str) -> list[Path]:
+        relative = Path(pattern)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise AcquisitionError(
+                f"local glob must be project-relative without path traversal: {pattern}"
+            )
+        matches = []
+        for candidate in self.project_root.glob(pattern):
+            resolved = candidate.resolve()
+            if not resolved.is_relative_to(self.project_root):
+                raise AcquisitionError(f"local glob match escapes project root: {candidate}")
+            if resolved.is_file():
+                matches.append(resolved)
+        return sorted(set(matches), key=lambda path: path.relative_to(self.project_root).as_posix())
+
+    def _fetch_local_glob(
+        self,
+        source: SourceDefinition,
+        pattern: str,
+        snapshot: date,
+        known_versions: set[tuple[str, str]],
+    ) -> list[SourceRecord]:
+        records = []
+        for path in self._local_glob_matches(pattern):
+            payload = path.read_bytes()
+            max_bytes = source.max_bytes or self.registry.project.default_max_bytes
+            if len(payload) > max_bytes:
+                raise AcquisitionError(f"{path} exceeds byte limit {max_bytes}")
+            digest = hashlib.sha256(payload).hexdigest()
+            version_key = (source.source_id, digest)
+            if version_key in known_versions:
+                continue
+            known_versions.add(version_key)
+            _, storage_path = self._save_payload(payload)
+            relative_path = path.relative_to(self.project_root).as_posix()
+            concrete_url = f"file:{relative_path}"
+            profile = source.extraction.profile if source.extraction else None
+            records.append(
+                _record(
+                    source,
+                    snapshot,
+                    concrete_url,
+                    payload,
+                    detect_mime(relative_path, payload),
+                    storage_path,
+                    status=200,
+                    headers={
+                        "last-modified": datetime.fromtimestamp(
+                            path.stat().st_mtime, UTC
+                        ).isoformat(),
+                        "x-source-version": digest,
+                    },
+                    redirects=[],
+                    source_version=digest,
+                    title=path.stem,
+                    fetch_recipe={
+                        "configured_glob": pattern,
+                        "concrete_relative_path": relative_path,
+                        "checksum": digest,
+                        "extraction_profile": profile,
+                    },
+                )
+            )
+        return records
 
     async def _fetch_http(
         self,
@@ -497,6 +567,8 @@ class Fetcher:
                 continue
 
             for page in pages:
+                if len(records) >= config.max_pages:
+                    break
                 source_version = f"revision:{page.revision_id}"
                 previous = next(
                     (
@@ -526,6 +598,22 @@ class Fetcher:
                     continue
                 try:
                     rendered = await render_page(request, endpoint, config, page)
+                    matched_categories = excluded_page_category_matches(
+                        rendered.categories,
+                        config,
+                    )
+                    if matched_categories and not page.explicit_title:
+                        self.mediawiki_exclusions.append(
+                            {
+                                "source_id": source.source_id,
+                                "title": page.title,
+                                "revision_id": page.revision_id,
+                                "url": page.permanent_url,
+                                "discovery_categories": list(page.discovery_categories),
+                                "matched_categories": matched_categories,
+                            }
+                        )
+                        continue
                     max_bytes = source.max_bytes or self.registry.project.default_max_bytes
                     if len(rendered.html) > max_bytes:
                         raise AcquisitionError(f"rendered page exceeds byte limit {max_bytes}")
@@ -567,7 +655,10 @@ class Fetcher:
                                 "revision_id": page.revision_id,
                                 "revision_timestamp": page.revision_timestamp,
                                 "history_url": page.history_url,
-                                "discovery_categories": config.category_titles,
+                                "configured_category_roots": config.category_titles,
+                                "discovery_categories": list(page.discovery_categories),
+                                "explicit_page_title": page.explicit_title,
+                                "mediawiki_categories": list(rendered.categories),
                                 "access_policy": (
                                     "https://www.mediawiki.org/wiki/Wikimedia_APIs/Access_policy"
                                 ),
@@ -587,6 +678,9 @@ class Fetcher:
 
     async def run(self, snapshot: date) -> tuple[list[SourceRecord], list[dict[str, str]]]:
         records: list[SourceRecord] = list(self.existing)
+        known_local_versions = {
+            (record.registry_source_id, record.sha256) for record in self.existing
+        }
         async with httpx.AsyncClient(
             headers={"User-Agent": self.registry.project.user_agent},
             transport=self.transport,
@@ -599,6 +693,26 @@ class Fetcher:
                     if not self.allow_network:
                         continue
                     tasks.append(self._fetch_mediawiki_source(client, source, snapshot))
+                    continue
+                if source.adapter == "local_glob":
+                    for pattern in source.seed_urls:
+                        try:
+                            records.extend(
+                                self._fetch_local_glob(
+                                    source,
+                                    pattern,
+                                    snapshot,
+                                    known_local_versions,
+                                )
+                            )
+                        except Exception as exc:
+                            self.errors.append(
+                                {
+                                    "source_id": source.source_id,
+                                    "url": pattern,
+                                    "error": f"{type(exc).__name__}: {exc}",
+                                }
+                            )
                     continue
                 for url in source.seed_urls:
                     if urlparse(url).scheme in {"http", "https"} and not self.allow_network:
@@ -623,8 +737,32 @@ class Fetcher:
                 item.source_record_id,
             ),
         )
+        local_source_ids = {
+            source.source_id for source in self.registry.sources if source.adapter == "local_glob"
+        }
+        seen_local_versions: set[tuple[str, str]] = set()
+        deduplicated = []
+        for record in ordered:
+            version_key = (record.registry_source_id, record.sha256)
+            if record.registry_source_id in local_source_ids:
+                if version_key in seen_local_versions:
+                    continue
+                seen_local_versions.add(version_key)
+            deduplicated.append(record)
+        ordered = deduplicated
         write_jsonl(self.data_dir / "manifests" / "source_records.jsonl", ordered)
         write_json(self.data_dir / "manifests" / "fetch_errors.json", self.errors)
+        write_json(
+            self.data_dir / "manifests" / "mediawiki_exclusions.json",
+            sorted(
+                self.mediawiki_exclusions,
+                key=lambda item: (
+                    str(item["source_id"]),
+                    str(item["title"]).casefold(),
+                    int(item["revision_id"]),
+                ),
+            ),
+        )
         return ordered, self.errors
 
     async def _fetch_one(

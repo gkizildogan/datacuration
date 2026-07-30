@@ -122,10 +122,7 @@ def create_review_sample(
         )
         strata[key].append(qa)
     desired_unique = math.ceil(len(qa_rows) * rate)
-    allocations = {
-        key: math.floor(len(rows) * rate)
-        for key, rows in strata.items()
-    }
+    allocations = {key: math.floor(len(rows) * rate) for key, rows in strata.items()}
     remaining = desired_unique - sum(allocations.values())
     allocation_order = sorted(
         strata,

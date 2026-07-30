@@ -158,16 +158,64 @@ sources:
     max_bytes: 5242880
     mediawiki:
       page_titles:
+        - Aircraft
         - Aircraft engine
         - Aerodynamics
+        - Flight dynamics
+        - Lift (force)
+        - Drag (physics)
+        - Aircraft flight control system
+        - Jet engine
+        - Turbofan
+        - Airport
+        - Runway
+        - Aviation safety
+        - Air traffic control
+        - Air traffic controller
       category_titles:
         - "Category:Aircraft"
         - "Category:Aircraft engines"
         - "Category:Aircraft aerodynamics"
+        - "Category:Aircraft systems"
+        - "Category:Aircraft components"
+        - "Category:Aircraft maintenance"
+        - "Category:Aircraft performance"
+        - "Category:Regulation of aircraft"
         - "Category:Airports"
+        - "Category:Airport infrastructure"
         - "Category:Aviation safety"
+        - "Category:Aircraft emergency systems"
+        - "Category:Aircraft recorders"
+        - "Category:Aircraft collision avoidance systems"
+        - "Category:Runway safety"
         - "Category:Air traffic control"
+        - "Category:Air traffic control systems"
+        - "Category:Flight planning"
+        - "Category:Instrument flight rules"
+      excluded_category_titles:
+        - "Category:Air traffic controllers"
+        - "Category:Aviation safety pioneers"
+        - "Category:Works about aircraft"
+        - "Category:Military air traffic control"
+        - "Category:Aircraft related to spaceflight"
+        - "Category:Aircraft stubs"
+        - "Category:Aircraft engine stubs"
+        - "Category:Airport stubs"
+      excluded_category_patterns:
+        - '(?i)(?:^| )(?:people|persons|victims|controllers|pioneers|aviators|pilots|inventors|engineers|designers)(?:$| )'
+        - '(?i)(?:films?|fiction|fictional|television|novels?|conspiracy|video games?|computer games?|mobile games?|game franchises?|biograph(?:y|ies|ical)|autobiograph(?:y|ies|ical)|memoirs?|travel books?)(?:$| )'
+        - '(?i)(?:stubs?|templates?|images?)(?:$| )'
+      excluded_page_category_titles:
+        - "Category:Military aviation"
+        - "Category:Military air traffic control"
+      excluded_page_category_patterns:
+        - '(?i)(?:^| )\d{3,4} (?:births|deaths)(?:$| )'
+        - '(?i)(?:^| )(?:living people|missing people|unidentified people|people|persons|victims)(?:$| )'
+        - '(?i)(?:^| )(?:controllers|aviators|pilots|pioneers|inventors|designers)(?:$| )'
+        - '(?i)(?:films?|fiction|fictional|television|novels?|conspiracy|video games?|computer games?|mobile games?|game franchises?|biograph(?:y|ies|ical)|autobiograph(?:y|ies|ical)|memoirs?|travel books?)(?:$| )'
       max_pages: 400
+      max_candidate_pages: 800
+      max_pages_per_category: 50
       max_total_bytes: 536870912
       batch_size: 50
       maxlag: 5
@@ -206,16 +254,64 @@ sources:
     max_bytes: 5242880
     mediawiki:
       page_titles:
+        - Uçak
+        - Aerodinamik
+        - Uçak motoru
+        - Jet motoru
+        - Havalimanı
+        - Pist (havacılık)
+        - Havacılık güvenliği
+        - Hava trafik kontrolü
+        - Hava trafik kontrolörü
         - Türkiye merkezli havayolu şirketleri listesi
         - Türkiye'deki havalimanları listesi
       category_titles:
         - "Kategori:Havacılık"
+        - "Kategori:Sivil havacılık"
+        - "Kategori:Hava ulaşımı altyapısı"
+        - "Kategori:Hava araçları"
         - "Kategori:Uçaklar"
+        - "Kategori:Tahrik sistemlerine göre hava araçları"
+        - "Kategori:Hava aracı parçaları"
         - "Kategori:Türkiye'deki havalimanları"
         - "Kategori:Havacılık kazaları ve olayları"
+        - "Kategori:Havacılık güvenliği"
+        - "Kategori:Uçuş güvenliği"
         - "Kategori:Hava trafik kontrolü"
+        - "Kategori:Hava trafik hizmeti"
+        - "Kategori:Havacılık endüstrisi"
+        - "Kategori:Havacılık hukuku"
+        - "Kategori:Havacılıkta iletişim"
+        - "Kategori:Havacılık meteorolojisi"
+        - "Kategori:Radyo seyrüseferi"
+        - "Kategori:Havacılık terimleri"
         - "Kategori:Türkiye merkezli havayolu şirketleri"
+      excluded_category_titles:
+        - "Kategori:Havacılık kişileri"
+        - "Kategori:Havacılık kazalarında ve olaylarında ölen kişiler"
+        - "Kategori:Hava kazalarında ölen liderler"
+        - "Kategori:Havacılık kazaları ve olayları ile ilgili filmler"
+        - "Kategori:Havacılık kazaları ve olayları ile ilgili komplo teorileri"
+        - "Kategori:Kurguda havacılık kazaları ve olayları"
+        - "Kategori:Kurguda havacılık"
+        - "Kategori:Konusu uçakta geçen filmler"
+        - "Kategori:Askerî havacılık"
+        - "Kategori:Havacılık taslakları"
+        - "Kategori:Uçak taslakları"
+      excluded_category_patterns:
+        - '(?i)(?:^| )(?:kişi(?:ler)?|insan(?:lar)?|kurban(?:lar)?|kontrolör(?:ler)?|havacı(?:lar)?|pilot(?:lar)?|öncü(?:ler)?|mucit(?:ler)?|mühendis(?:ler)?|tasarımcı(?:lar)?)(?:ı|i|u|ü)?(?:$| )'
+        - '(?i)(?:film|kurgu|televizyon|dizi|roman|komplo|video oyun|bilgisayar oyun|mobil oyun|oyun serileri|biyograf|otobiyograf|anı kitap|gezi kitap)'
+        - '(?i)(?:^| )(?:taslak(?:lar)?|şablon(?:lar)?|resim(?:ler)?)(?:ı|i)?(?:$| )'
+      excluded_page_category_titles:
+        - "Kategori:Askerî havacılık"
+      excluded_page_category_patterns:
+        - '(?i)(?:doğumlular|ölenler|yaşayan insanlar|kayıp kişiler)'
+        - '(?i)(?:^| )(?:kişi(?:ler)?|insan(?:lar)?|kurban(?:lar)?)(?:ı|i|u|ü)?(?:$| )'
+        - '(?i)(?:^| )(?:kontrolör(?:ler)?|havacı(?:lar)?|pilot(?:lar)?|öncü(?:ler)?|mucit(?:ler)?|tasarımcı(?:lar)?)(?:ı|i|u|ü)?(?:$| )'
+        - '(?i)(?:film|kurgu|televizyon|dizi|roman|komplo|video oyun|bilgisayar oyun|mobil oyun|oyun serileri|biyograf|otobiyograf|anı kitap|gezi kitap)'
       max_pages: 600
+      max_candidate_pages: 1200
+      max_pages_per_category: 50
       max_total_bytes: 536870912
       batch_size: 50
       maxlag: 5
@@ -258,19 +354,21 @@ sources:
       release_qa: true
 
   - source_id: easa_easy_access_rules
-    enabled: false
-    adapter: bulk_index
-    seed_urls: ["https://www.easa.europa.eu/en/easy-access-rules-xml-export"]
+    enabled: true
+    adapter: local_glob
+    seed_urls: ["datatoprocess/EASA*.pdf"]
     publisher: European Union Aviation Safety Agency
     source_family: easa
     authority_level: supranational_authority
     languages: [en]
     topics: [regulation, aircraft, engines, operations, safety, general_aviation]
-    expected_mime_types: [application/xml, application/pdf, application/zip]
-    native_format: mixed
-    update_cadence: monthly
-    version_discovery: publication title, amendment, file URL, and Last-Modified
-    bulk_patterns: ["*.xml", "*.zip", "*.pdf"]
+    expected_mime_types: [application/pdf]
+    native_format: pdf
+    update_cadence: manual_snapshot
+    version_discovery: local filename and content checksum
+    extraction:
+      profile: easa_toc_section_v1
+      selection_seed: 20260729
     rights:
       state: open
       license_id: LicenseRef-EASA-Reuse
@@ -283,19 +381,20 @@ sources:
       release_qa: true
 
   - source_id: faa_handbooks
-    enabled: false
-    adapter: bulk_index
-    seed_urls: ["https://www.faa.gov/regulations_policies/handbooks_manuals"]
+    enabled: true
+    adapter: local_glob
+    seed_urls: ["datatoprocess/FAA*.pdf"]
     publisher: Federal Aviation Administration
     source_family: faa
     authority_level: national_authority
     languages: [en]
     topics: [regulation, aircraft, engines, operations, safety, general_aviation]
-    expected_mime_types: [application/pdf, application/zip]
+    expected_mime_types: [application/pdf]
     native_format: pdf
-    update_cadence: monthly
-    version_discovery: publication number, edition, revision date, and file checksum
-    bulk_patterns: ["*.pdf", "*.zip"]
+    update_cadence: manual_snapshot
+    version_discovery: local filename and content checksum
+    extraction:
+      profile: faa_purpose_applicability_v1
     rights:
       state: manifest_only
       license_id: LicenseRef-FAA-Per-Publication-Review
@@ -362,18 +461,20 @@ sources:
       release_qa: false
 
   - source_id: shgm_legislation_manifest
-    enabled: false
-    adapter: sitemap
-    seed_urls: ["https://mevzuat.shgm.gov.tr/index.php/yonetmelik/"]
+    enabled: true
+    adapter: local_glob
+    seed_urls: ["datatoprocess/SHGM*.pdf"]
     publisher: Sivil Havacılık Genel Müdürlüğü
     source_family: shgm
     authority_level: national_authority
     languages: [tr]
     topics: [regulation]
-    expected_mime_types: [text/html, application/pdf]
-    native_format: mixed
-    update_cadence: monthly
-    version_discovery: page links and publication dates
+    expected_mime_types: [application/pdf]
+    native_format: pdf
+    update_cadence: manual_snapshot
+    version_discovery: local filename and content checksum
+    extraction:
+      profile: shgm_abbreviations_v1
     rights:
       state: manifest_only
       license_id: LicenseRef-SHGM-Unclear
@@ -386,19 +487,20 @@ sources:
       release_qa: false
 
   - source_id: dhmi_statistics_manifest
-    enabled: false
-    adapter: bulk_index
-    seed_urls: ["https://www.dhmi.gov.tr/Sayfalar/Istatistikler.aspx"]
+    enabled: true
+    adapter: local_glob
+    seed_urls: ["datatoprocess/DHMI*.xlsx"]
     publisher: Devlet Hava Meydanları İşletmesi
     source_family: dhmi
     authority_level: national_authority
     languages: [tr]
     topics: [airlines, airports, operations]
-    expected_mime_types: [text/html, application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet]
-    native_format: mixed
-    update_cadence: monthly
-    version_discovery: table title, reporting period, file URL, and checksum
-    bulk_patterns: ["*.xlsx", "*.xls", "*.pdf"]
+    expected_mime_types: [application/vnd.openxmlformats-officedocument.spreadsheetml.sheet]
+    native_format: xlsx
+    update_cadence: manual_snapshot
+    version_discovery: local filename and content checksum
+    extraction:
+      profile: dhmi_workbook_v1
     rights:
       state: manifest_only
       license_id: LicenseRef-DHMI-Unclear

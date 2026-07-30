@@ -12,6 +12,9 @@ headers; retrieval/snapshot/version metadata; SHA-256 and byte size; detected
 MIME and content-addressed path; authority, language, and topics; exact rights
 evidence; and the fetch recipe.
 
+For `local_glob` acquisition, the fetch recipe also records the configured
+glob, concrete project-relative path, checksum, and extraction profile.
+
 ## DocumentRecord
 
 One independently identifiable source work/version. Stable document,
@@ -19,6 +22,10 @@ version/entity/variant/duplicate groups support deduplication and leakage-safe
 splits. Canonical text has a checksum, character/token counts, language/topics,
 native MIME/format, dates, rights and attribution, derivation links, artifact
 paths, quality flags, and acceptance status.
+
+Source-specific structured JSON artifacts are registered under descriptive
+`artifact_paths` keys. DHMI, SHGM, EASA, and FAA artifacts use
+`schema_version: "1.0.0"` and name their versioned extraction profile.
 
 ## PassageRecord
 
