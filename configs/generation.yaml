@@ -10,9 +10,10 @@ model:
 runtime:
   vllm_version: "0.25.1"
   language_model_only: true
-  gpu_memory_utilization: 0.85
+  gpu_memory_utilization: 0.8
   max_model_len: 8192
-  max_num_seqs: 8
+  # Keep two in-flight requests on the 24 GiB GPU; leave headroom for TEI.
+  max_num_seqs: 2
   enforce_eager: true
   reasoning_parser: qwen3
   thinking: false

@@ -197,18 +197,58 @@ def _dense_embeddings(
     headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
     embeddings: list[list[float]] = []
     with httpx.Client(headers=headers, timeout=180) as client:
-        for start in range(0, len(texts), 32):
+        # The embedding service shares the 24 GiB GPU with the quantized
+        # generation model; even small batches can exhaust the remaining VRAM.
+        for start in range(0, len(texts), 1):
             response = client.post(
                 f"{endpoint.rstrip('/')}/embeddings",
                 json={
                     "model": model,
-                    "input": texts[start : start + 32],
+                    "input": texts[start : start + 1],
                     "encoding_format": "float",
                 },
             )
             response.raise_for_status()
             rows = sorted(response.json()["data"], key=lambda item: item["index"])
             embeddings.extend(row["embedding"] for row in rows)
+    return embeddings
+
+
+def _dense_passage_embeddings(
+    run_dir: Path,
+    endpoint: str,
+    model: str,
+    revision: str,
+    passages: list[PassageRecord],
+    api_key: str | None,
+) -> list[list[float]]:
+    cache_path = run_dir / "dense_passage_embeddings.json"
+    passage_ids = [passage.passage_id for passage in passages]
+    if cache_path.is_file():
+        cached = read_json(cache_path)
+        if (
+            cached.get("model") == model
+            and cached.get("revision") == revision
+            and cached.get("passage_ids") == passage_ids
+            and isinstance(cached.get("embeddings"), list)
+            and len(cached["embeddings"]) == len(passage_ids)
+        ):
+            return cached["embeddings"]
+    embeddings = _dense_embeddings(
+        endpoint,
+        model,
+        [passage.text for passage in passages],
+        api_key,
+    )
+    write_json(
+        cache_path,
+        {
+            "model": model,
+            "revision": revision,
+            "passage_ids": passage_ids,
+            "embeddings": embeddings,
+        },
+    )
     return embeddings
 
 
@@ -565,10 +605,12 @@ def validate_qa(
             "production unanswerable validation requires dense endpoint/model/revision"
         )
     dense_passage_vectors = (
-        _dense_embeddings(
+        _dense_passage_embeddings(
+            run_dir,
             str(dense_endpoint),
             str(dense_model),
-            [passage.text for passage in passage_rows],
+            str(dense_revision),
+            passage_rows,
             dense_api_key,
         )
         if dense_ready
