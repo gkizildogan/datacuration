@@ -17,9 +17,9 @@ vllm serve AxisQuant/Qwen3.6-27b-gptq-int4 \
   --revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
   --tokenizer-revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
   --language-model-only \
-  --gpu-memory-utilization 0.85 \
-  --max-model-len 8192 \
-  --max-num-seqs 8 \
+  --gpu-memory-utilization 0.75 \
+  --max-model-len 4096 \
+  --max-num-seqs 2 \
   --enforce-eager \
   --reasoning-parser qwen3
 ```
@@ -37,7 +37,27 @@ aviation-data qa generate --backend vllm --target 400 \
   --model-choice fallback --run-id fallback-pilot
 ```
 
-The fallback is frozen at
-`3dec12a2e68033ba440364493c074f6b3c6995f6`. Do not copy an experiment file into
-the benchmark path until its schema stability, grounding, repetition, and
-English/Turkish quality review is recorded.
+The fallback checkpoint is `cyankiwi/Qwen3.5-9B-AWQ-4bit` at the frozen
+repository revision `156edc4bbeb8d1910ee7be9196bafaf1bc052156`. The fallback
+uses its own tokenizer at the same revision and disables thinking through
+`chat_template_kwargs.enable_thinking=false`.
+
+Serve the fallback checkpoint with:
+
+```bash
+vllm serve cyankiwi/Qwen3.5-9B-AWQ-4bit \
+  --revision 156edc4bbeb8d1910ee7be9196bafaf1bc052156 \
+  --tokenizer cyankiwi/Qwen3.5-9B-AWQ-4bit \
+  --tokenizer-revision 156edc4bbeb8d1910ee7be9196bafaf1bc052156 \
+  --served-model-name cyankiwi/Qwen3.5-9B-AWQ-4bit \
+  --language-model-only \
+  --gpu-memory-utilization 0.75 \
+  --max-model-len 4096 \
+  --max-num-seqs 2 \
+  --enforce-eager \
+  --reasoning-parser qwen3
+```
+
+Do not copy an experiment file into the benchmark path until its schema
+stability, grounding, repetition, and English/Turkish quality review is
+recorded.

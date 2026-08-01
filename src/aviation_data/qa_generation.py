@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from collections.abc import Callable
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from datetime import UTC, datetime
 from pathlib import Path
@@ -98,7 +99,9 @@ def _generator_config(
     model_id = str(model[model_choice])
     revision = str(model["revision"] if model_choice == "primary" else model["fallback_revision"])
     tokenizer_revision = str(
-        model["tokenizer_revision"] if model_choice == "primary" else model["fallback_revision"]
+        model["tokenizer_revision"]
+        if model_choice == "primary"
+        else model.get("fallback_tokenizer_revision", model["fallback_revision"])
     )
     digest = str(model["container_digest"])
     if not re.fullmatch(r"[0-9a-f]{40}", revision):
@@ -107,6 +110,13 @@ def _generator_config(
         raise ValueError("model.tokenizer_revision must be an immutable 40-hex commit")
     if not re.fullmatch(r"sha256:[0-9a-f]{64}", digest):
         raise ValueError("model.container_digest must be an immutable sha256 digest")
+    runtime = dict(config["runtime"])
+    reasoning_parsers = runtime.get("reasoning_parser")
+    if isinstance(reasoning_parsers, dict):
+        runtime["reasoning_parser"] = reasoning_parsers[model_choice]
+    runtime["chat_template_kwargs"] = runtime.pop(
+        f"{model_choice}_chat_template_kwargs", {"enable_thinking": False}
+    )
     return GeneratorConfiguration(
         backend="vllm",
         model_id=model_id,
@@ -118,7 +128,7 @@ def _generator_config(
         temperature=float(generation["temperature"]),
         seed=int(generation["seed"]),
         settings={
-            **config["runtime"],
+            **runtime,
             "model_choice": model_choice,
             "max_output_tokens": generation["max_output_tokens"],
             "planner_version": "qa-quota-planner-v2",
@@ -281,6 +291,7 @@ def _vllm_response(
             "do_not_calculate_or_infer": True,
         },
     }
+    chat_template_kwargs = dict(generator.settings.get("chat_template_kwargs", {}))
     response = client.post(
         f"{endpoint.rstrip('/')}/chat/completions",
         json={
@@ -292,7 +303,7 @@ def _vllm_response(
             "temperature": generator.temperature,
             "seed": generator.seed + task.index * 10 + attempt,
             "max_tokens": max_output_tokens,
-            "chat_template_kwargs": {"enable_thinking": False},
+            "chat_template_kwargs": chat_template_kwargs,
             "response_format": _response_schema(task.qa_type),
         },
     )
@@ -778,6 +789,7 @@ def build_qa(
     dense_revision: str | None = None,
     dense_api_key: str | None = None,
     max_fill_cycles: int = 8,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> tuple[list[QARecord], dict[str, Any]]:
     from aviation_data.qa_validation import validate_qa
 
@@ -801,6 +813,8 @@ def build_qa(
             dense_revision=dense_revision,
             dense_api_key=dense_api_key,
         )
+        if progress_callback is not None:
+            progress_callback(cycle, len(accepted))
         history.append(
             {
                 "cycle": cycle,

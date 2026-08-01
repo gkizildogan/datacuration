@@ -250,6 +250,9 @@ def qa_build(
     config_path: Annotated[Path, typer.Option("--config")] = Path("configs/generation.yaml"),
     prompt_path: Annotated[Path, typer.Option("--prompt")] = Path("prompts/qa_generation.md"),
 ) -> None:
+    def report_progress(cycle: int, qa_count: int) -> None:
+        typer.echo(f"QA build progress: cycle={cycle} qa_count={qa_count}/{target}")
+
     try:
         records, build_report = build_qa(
             data_dir,
@@ -265,6 +268,7 @@ def qa_build(
             dense_revision=dense_revision,
             dense_api_key=os.environ.get("DENSE_API_KEY"),
             max_fill_cycles=max_fill_cycles,
+            progress_callback=report_progress,
         )
     except CapacityError as exc:
         _echo({"run_id": run_id, "status": "insufficient_capacity", "report": exc.report})

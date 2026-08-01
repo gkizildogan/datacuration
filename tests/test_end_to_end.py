@@ -174,6 +174,19 @@ def test_vllm_backend_accepts_only_immutable_container_digest(tmp_path: Path) ->
         _generator_config(config, prompt, "vllm")
 
 
+def test_fallback_uses_qwen_awq_and_pinned_tokenizer() -> None:
+    config = yaml.safe_load((ROOT / "configs" / "generation.yaml").read_text())
+    prompt = (ROOT / "prompts" / "qa_generation.md").read_text()
+
+    generator = _generator_config(config, prompt, "vllm", model_choice="fallback")
+
+    assert generator.model_id == "cyankiwi/Qwen3.5-9B-AWQ-4bit"
+    assert generator.model_revision == config["model"]["fallback_revision"]
+    assert generator.tokenizer_revision == config["model"]["fallback_tokenizer_revision"]
+    assert generator.settings["reasoning_parser"] == "qwen3"
+    assert generator.settings["chat_template_kwargs"] == {"enable_thinking": False}
+
+
 def test_airline_cohort_gate_requires_two_top_ten_rankings(tmp_path: Path) -> None:
     entries = [{"rank": rank, "airline": f"Airline {rank}"} for rank in range(1, 11)]
     cohort_path = tmp_path / "airline_cohort.yaml"

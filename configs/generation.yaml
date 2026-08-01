@@ -1,22 +1,30 @@
 model:
   primary: AxisQuant/Qwen3.6-27b-gptq-int4
-  fallback: glenic/Qwen3.6-27B-AWQ
-  # Verified from the repository history on 2026-07-29.
+  fallback: cyankiwi/Qwen3.5-9B-AWQ-4bit
+  # Primary verified from the repository history on 2026-07-29.
   revision: e4a111caa43e97606b7a5fa20849bbcc051aa4f0
   tokenizer_revision: e4a111caa43e97606b7a5fa20849bbcc051aa4f0
-  fallback_revision: 3dec12a2e68033ba440364493c074f6b3c6995f6
+  # Fallback repository main revision resolved from Hugging Face on 2026-08-01.
+  fallback_revision: 156edc4bbeb8d1910ee7be9196bafaf1bc052156
+  fallback_tokenizer: cyankiwi/Qwen3.5-9B-AWQ-4bit
+  fallback_tokenizer_revision: 156edc4bbeb8d1910ee7be9196bafaf1bc052156
   # vllm/vllm-openai:v0.25.1, repository digest verified on 2026-07-29.
   container_digest: sha256:e4f88a835143cd22aee2397a26ec6bb80b3a4a6fe0c882bcbc63822904766089
 runtime:
   vllm_version: "0.25.1"
   language_model_only: true
-  gpu_memory_utilization: 0.8
-  max_model_len: 8192
+  gpu_memory_utilization: 0.75
+  max_model_len: 4096
   # Keep two in-flight requests on the 24 GiB GPU; leave headroom for TEI.
   max_num_seqs: 2
   enforce_eager: true
-  reasoning_parser: qwen3
-  thinking: false
+  reasoning_parser:
+    primary: qwen3
+    fallback: qwen3
+  primary_chat_template_kwargs:
+    enable_thinking: false
+  fallback_chat_template_kwargs:
+    enable_thinking: false
 generation:
   temperature: 0.2
   seed: 20260729

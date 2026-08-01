@@ -660,8 +660,8 @@ docker run -d \
   --revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
   --tokenizer-revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
   --language-model-only \
-  --gpu-memory-utilization 0.8 \
-  --max-model-len 8192 \
+  --gpu-memory-utilization 0.75 \
+  --max-model-len 4096 \
   --max-num-seqs 2 \
   --enforce-eager \
   --reasoning-parser qwen3
@@ -790,22 +790,29 @@ If `aviation-vllm-fallback` does not exist, create it:
 ```bash
 docker run -d \
   --name aviation-vllm-fallback \
+  --restart unless-stopped \
   --gpus all \
   --ipc=host \
   -p 8000:8000 \
   -v aviation-vllm-cache:/root/.cache/huggingface \
   --entrypoint vllm \
   vllm/vllm-openai@sha256:e4f88a835143cd22aee2397a26ec6bb80b3a4a6fe0c882bcbc63822904766089 \
-  serve glenic/Qwen3.6-27B-AWQ \
-  --revision 3dec12a2e68033ba440364493c074f6b3c6995f6 \
-  --tokenizer-revision 3dec12a2e68033ba440364493c074f6b3c6995f6 \
+  serve cyankiwi/Qwen3.5-9B-AWQ-4bit \
+  --revision 156edc4bbeb8d1910ee7be9196bafaf1bc052156 \
+  --tokenizer cyankiwi/Qwen3.5-9B-AWQ-4bit \
+  --tokenizer-revision 156edc4bbeb8d1910ee7be9196bafaf1bc052156 \
+  --served-model-name cyankiwi/Qwen3.5-9B-AWQ-4bit \
   --language-model-only \
-  --gpu-memory-utilization 0.85 \
-  --max-model-len 8192 \
-  --max-num-seqs 8 \
+  --gpu-memory-utilization 0.75 \
+  --max-model-len 4096 \
+  --max-num-seqs 2 \
   --enforce-eager \
   --reasoning-parser qwen3
 ```
+
+The fallback uses the pre-quantized Qwen3.5 9B AWQ checkpoint. Its chat template
+receives `enable_thinking=false`; keep the served model ID aligned with
+`configs/generation.yaml` so the vLLM preflight check succeeds.
 
 If it already exists:
 
