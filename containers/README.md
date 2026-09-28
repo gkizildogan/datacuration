@@ -18,7 +18,7 @@ vllm serve RedHatAI/Qwen3.8-27B-INT4 \
   --tokenizer-revision c063053e004e9783631651df95cf55d0bbf88b32 \
   --language-model-only \
   --gpu-memory-utilization 0.80 \
-  --max-model-len 4096 \
+  --max-model-len 8192 \
   --max-num-seqs 2 \
   --enforce-eager \
   --reasoning-parser qwen3
@@ -60,7 +60,7 @@ vllm serve cyankiwi/Qwen3.5-9B-AWQ-4bit \
   --served-model-name cyankiwi/Qwen3.5-9B-AWQ-4bit \
   --language-model-only \
   --gpu-memory-utilization 0.80 \
-  --max-model-len 4096 \
+  --max-model-len 8192 \
   --max-num-seqs 2 \
   --enforce-eager \
   --reasoning-parser qwen3

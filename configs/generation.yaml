@@ -21,7 +21,13 @@ runtime:
   # too tight in practice; raised to 0.80 (19.2 GiB) on 2026-09-28 for a
   # ~1.9 GiB KV-cache margin. Fallback (Qwen3.5-9B-AWQ-4bit) fits easily too.
   gpu_memory_utilization: 0.80
-  max_model_len: 4096
+  # Primary raised from 4096 to 8192 on 2026-09-28: the qa_generation_v3 system
+  # prompt alone is ~3,240 tokens, so 4096 minus the 768-token output budget
+  # left <100 tokens for the task payload and every request failed with HTTP
+  # 400. The 0.80 KV cache holds 25,941 tokens (3.17x concurrency at 8192).
+  max_model_len:
+    primary: 8192
+    fallback: 8192
   # Keep two in-flight requests on the 24 GiB GPU; leave headroom for TEI.
   max_num_seqs: 2
   enforce_eager: true

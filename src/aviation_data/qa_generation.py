@@ -116,6 +116,9 @@ def _generator_config(
     reasoning_parsers = runtime.get("reasoning_parser")
     if isinstance(reasoning_parsers, dict):
         runtime["reasoning_parser"] = reasoning_parsers[model_choice]
+    max_model_lens = runtime.get("max_model_len")
+    if isinstance(max_model_lens, dict):
+        runtime["max_model_len"] = max_model_lens[model_choice]
     runtime["chat_template_kwargs"] = runtime.pop(
         f"{model_choice}_chat_template_kwargs", {"enable_thinking": False}
     )

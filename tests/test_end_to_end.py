@@ -184,6 +184,7 @@ def test_fallback_uses_qwen_awq_and_pinned_tokenizer() -> None:
     assert generator.model_revision == config["model"]["fallback_revision"]
     assert generator.tokenizer_revision == config["model"]["fallback_tokenizer_revision"]
     assert generator.settings["reasoning_parser"] == "qwen3"
+    assert generator.settings["max_model_len"] == config["runtime"]["max_model_len"]["fallback"]
     assert generator.settings["chat_template_kwargs"] == {"enable_thinking": False}
 
 
