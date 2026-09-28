@@ -4,9 +4,9 @@ overlap_tokens: 80
 max_table_tokens: 1200
 tokenizer:
   mode: huggingface_local
-  id: AxisQuant/Qwen3.6-27b-gptq-int4
-  revision: e4a111caa43e97606b7a5fa20849bbcc051aa4f0
-  local_path: /home/goksu/llmodels/aviation/qwen36-tokenizer-e4a111c
+  id: RedHatAI/Qwen3.8-27B-INT4
+  revision: c063053e004e9783631651df95cf55d0bbf88b32
+  local_path: /home/goksu/llmodels/aviation/qwen38-tokenizer-c063053
   checksums:
-    tokenizer.json: f399b3cd12fa270d51457bb749fb30863521e8359b8a27059c71b6c2f7d6dd6c
-    tokenizer_config.json: 9cf04fffe3d8c3b85e439fb35c7acad0761ab51c422a8c4256d9f887c3a0be7d
+    tokenizer.json: 06b9509352d2af50381ab2247e083b80d32d5c0aba91c272ca9ff729b6a0e523
+    tokenizer_config.json: 5f7aa0d810000c4a0940b35c8f16e56c3439260fccc13a321826ebc3ccf2501f

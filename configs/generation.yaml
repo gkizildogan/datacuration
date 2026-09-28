@@ -1,10 +1,11 @@
 model:
-  primary: AxisQuant/Qwen3.6-27b-gptq-int4
+  primary: RedHatAI/Qwen3.8-27B-INT4
   fallback: cyankiwi/Qwen3.5-9B-AWQ-4bit
-  # Primary verified from the repository history on 2026-07-29.
-  revision: e4a111caa43e97606b7a5fa20849bbcc051aa4f0
-  tokenizer_revision: e4a111caa43e97606b7a5fa20849bbcc051aa4f0
-  # Fallback repository main revision resolved from Hugging Face on 2026-08-01.
+  # Primary resolved from Hugging Face repository history on 2026-09-28.
+  revision: c063053e004e9783631651df95cf55d0bbf88b32
+  tokenizer_revision: c063053e004e9783631651df95cf55d0bbf88b32
+  # Fallback repository main revision resolved from Hugging Face on 2026-08-01;
+  # reconfirmed unchanged (still the latest commit) on 2026-09-28.
   fallback_revision: 156edc4bbeb8d1910ee7be9196bafaf1bc052156
   fallback_tokenizer: cyankiwi/Qwen3.5-9B-AWQ-4bit
   fallback_tokenizer_revision: 156edc4bbeb8d1910ee7be9196bafaf1bc052156
@@ -13,7 +14,13 @@ model:
 runtime:
   vllm_version: "0.25.1"
   language_model_only: true
-  gpu_memory_utilization: 0.75
+  # Primary weights (model.safetensors) are 18,603,387,656 bytes = 17.32 GiB
+  # (not 18.6 GiB -- that figure was decimal GB, gpu-memory-utilization and
+  # nvidia-smi both use binary GiB). 0.75 (18 GiB) leaves only ~0.7 GiB for KV
+  # cache once TEI's ~3.35 GiB is subtracted from the 24 GiB card, which is
+  # too tight in practice; raised to 0.80 (19.2 GiB) on 2026-09-28 for a
+  # ~1.9 GiB KV-cache margin. Fallback (Qwen3.5-9B-AWQ-4bit) fits easily too.
+  gpu_memory_utilization: 0.80
   max_model_len: 4096
   # Keep two in-flight requests on the 24 GiB GPU; leave headroom for TEI.
   max_num_seqs: 2

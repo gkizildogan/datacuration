@@ -6,7 +6,7 @@ from pathlib import Path
 
 from aviation_data.ids import sha256_text
 from aviation_data.io import read_jsonl, write_jsonl
-from aviation_data.models import DocumentRecord, QARecord
+from aviation_data.models import DocumentRecord, PassageRecord, QARecord
 from aviation_data.qa_planning import qa_run_dir
 
 
@@ -81,6 +81,13 @@ def create_review_sample(
             data_dir / "curated" / "accepted_documents.jsonl", DocumentRecord
         )
     }
+    section_paths = {
+        passage.passage_id: passage.section_path
+        for passage in (
+            read_jsonl(run_dir / "passage_snapshot.jsonl", PassageRecord)
+            or read_jsonl(data_dir / "passages" / "passages.jsonl", PassageRecord)
+        )
+    }
     strata: dict[tuple[str, ...], list[QARecord]] = defaultdict(list)
     for qa in qa_rows:
         key = (
@@ -149,6 +156,9 @@ def create_review_sample(
                         "answer": qa.answer,
                         "answer_items": qa.answer_items,
                         "evidence": [item.quote for item in qa.evidence],
+                        "section_paths": [
+                            section_paths.get(item.passage_id, []) for item in qa.evidence
+                        ],
                         "reviewer_id": "",
                         "clarity": None,
                         "correctness": None,

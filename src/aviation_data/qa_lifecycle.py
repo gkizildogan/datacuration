@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import os
 import shutil
 import tempfile
@@ -109,6 +110,10 @@ def promote_qa_run(
     run_id: str,
     *,
     airline_cohort_path: Path,
+    qa_target: int = 1500,
+    review_sample_rate: float = 0.15,
+    min_correct_and_grounded_rate: float = 0.95,
+    min_cohens_kappa: float = 0.70,
 ) -> dict[str, Any]:
     if run_id == "benchmark":
         raise ValueError("benchmark is already the promoted legacy path")
@@ -118,21 +123,27 @@ def promote_qa_run(
     sample = read_jsonl(run_dir / "review_sample.jsonl")
     reviews = read_jsonl(run_dir / "human_reviews.jsonl")
     unique_sample = {str(row.get("qa_id")) for row in sample if row.get("qa_id")}
+    expected_unique = math.ceil(qa_target * review_sample_rate)
+    expected_assignments = expected_unique * 2
     issues = []
-    if len(accepted) != 1_500:
-        issues.append(f"accepted QA count is {len(accepted)}, expected exactly 1500")
+    if len(accepted) != qa_target:
+        issues.append(f"accepted QA count is {len(accepted)}, expected exactly {qa_target}")
     if not validation.get("quota_diagnostics", {}).get("clean"):
         issues.append("QA quota diagnostics are not clean")
-    if len(unique_sample) != 225 or len(sample) != 450:
+    if len(unique_sample) != expected_unique or len(sample) != expected_assignments:
         issues.append(
             f"review sample has {len(unique_sample)} unique items/{len(sample)} rows; "
-            "expected 225/450"
+            f"expected {expected_unique}/{expected_assignments}"
         )
     issues.extend(_validate_reviews(sample, reviews))
     report = build_report(
         data_dir,
         airline_cohort_path,
         qa_run_id=run_id,
+        qa_target=qa_target,
+        review_sample_rate=review_sample_rate,
+        min_correct_and_grounded_rate=min_correct_and_grounded_rate,
+        min_cohens_kappa=min_cohens_kappa,
     )
     required_gates = {
         "accepted_qa_count",

@@ -16,7 +16,8 @@ Important behavior:
 
 - `datatoprocess/` is separate from `data/`. The fresh-start procedure below
   does not move or delete the downloaded DHMI, SHGM, EASA, or FAA files.
-- Existing `data/` is moved into `data-archive/`, not deleted.
+- `data/` is reused in place; nothing is archived or wiped for you. If you
+  want a clean rebuild, move or delete `data/` yourself before step 2.
 - Corpus language ratios are observations against a 70% English / 30% Turkish
   reference. They do not reject documents.
 - QA planning remains 50% English / 50% Turkish.
@@ -59,59 +60,73 @@ Inside `tmux`, press `Ctrl-b` and then `d` to detach. Reconnect later with:
 tmux attach -t aviation-build
 ```
 
-## 2. Move the previous generated data aside
+## 2. Prepare data/ and the run configuration
 
-This is the fresh-start step. It preserves the previous `data/` tree in a
-timestamped archive and leaves `datatoprocess/` untouched.
+`data/` is used in place; this step does not move or delete anything in it.
+`datatoprocess/` is untouched either way.
 
 ```bash
 cd /home/goksu/projects/datacuration
-
-PIPELINE_RUN_LABEL=$(date +%Y%m%d-%H%M%S)
-PIPELINE_SNAPSHOT_DATE=$(date +%F)
-
-mkdir -p data-archive
-if [ -e data ]; then
-  mv data "data-archive/data-before-$PIPELINE_RUN_LABEL"
-fi
 mkdir -p data
 ```
 
-Show the archived directory and the new empty data root:
-
-```bash
-find data-archive -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
-find data -maxdepth 2 -print
-```
-
-Create a run-variable file. It is stored under ignored `data/`, so it will not
-be committed:
+Everything about this run — the run label, the snapshot date, every run ID,
+and the model/service endpoints — lives in `data/run.env`, generated once
+here. `PIPELINE_RUN_LABEL` and `PIPELINE_SNAPSHOT_DATE` are the only values
+stamped at creation time; every other run ID is written as a `${...}`
+reference to `PIPELINE_RUN_LABEL`, so they all stay in sync with it for the
+life of the file — including if you later hand-edit `PIPELINE_RUN_LABEL`
+yourself and re-`source` it:
 
 ```bash
 cat > data/run.env <<EOF
-PIPELINE_RUN_LABEL=$PIPELINE_RUN_LABEL
-PIPELINE_SNAPSHOT_DATE=$PIPELINE_SNAPSHOT_DATE
-QA_RUN_ID=production-v1.1-$PIPELINE_RUN_LABEL
-FIXTURE_RUN_ID=fixture-preflight-v1.1-$PIPELINE_RUN_LABEL
-SMOKE_RUN_ID=primary-smoke-v1.1-$PIPELINE_RUN_LABEL
-PRIMARY_RUN_ID=primary-comparison-v1.1-$PIPELINE_RUN_LABEL
-FALLBACK_RUN_ID=fallback-comparison-v1.1-$PIPELINE_RUN_LABEL
+PIPELINE_RUN_LABEL=$(date +%Y%m%d-%H%M%S)
+PIPELINE_SNAPSHOT_DATE=$(date +%F)
+QA_RUN_ID=production-v1.1-\${PIPELINE_RUN_LABEL}
+FIXTURE_RUN_ID=fixture-preflight-v1.1-\${PIPELINE_RUN_LABEL}
+SMOKE_RUN_ID=primary-smoke-v1.1-\${PIPELINE_RUN_LABEL}
+PRIMARY_RUN_ID=primary-comparison-v1.1-\${PIPELINE_RUN_LABEL}
+FALLBACK_RUN_ID=fallback-comparison-v1.1-\${PIPELINE_RUN_LABEL}
 MODEL_CHOICE=primary
 VLLM_ENDPOINT=http://127.0.0.1:8000/v1
 DENSE_ENDPOINT=http://127.0.0.1:8001/v1
 DENSE_MODEL=intfloat/multilingual-e5-base
 DENSE_REVISION=d128750597153bb5987e10b1c3493a34e5a4502a
 EXTRACTION_REVIEWER_ID=replace-with-your-name
-QA_REVIEWER_A=replace-with-first-reviewer
-QA_REVIEWER_B=replace-with-second-reviewer
-PUBLIC_OUTPUT=release/public-$PIPELINE_RUN_LABEL
+QA_TARGET=1500
+QA_REVIEW_SAMPLE_RATE=0.15
+QA_MIN_CORRECT_RATE=0.95
+QA_MIN_KAPPA=0.70
+PUBLIC_OUTPUT=release/public-\${PIPELINE_RUN_LABEL}
 EOF
 
 nano data/run.env
 ```
 
-In `nano`, replace the three `replace-with-...` values. Save with `Ctrl-o`,
-press Enter, and exit with `Ctrl-x`.
+In `nano`, replace the `replace-with-...` value. Save with `Ctrl-o`, press
+Enter, and exit with `Ctrl-x`. It is stored under ignored `data/`, so it will
+not be committed.
+
+`QA_TARGET`, `QA_REVIEW_SAMPLE_RATE`, `QA_MIN_CORRECT_RATE`, and
+`QA_MIN_KAPPA` are the numbers `aviation-data qa promote` (and `report`)
+check the run against: the exact accepted-QA count, the review sample's
+unique-item/assignment-row counts (`ceil(QA_TARGET * QA_REVIEW_SAMPLE_RATE)`
+unique items, doubled for A/B), the minimum human/LLM-reviewer correctness
+rate, and the minimum Cohen's kappa. The defaults above are the production
+values. For a faster local or colleague test run, lower `QA_TARGET` (e.g. to
+`20`) and `QA_REVIEW_SAMPLE_RATE` (e.g. to `0.5`, so there are enough review
+items to be meaningful) before step 10; `qa build`, `qa review-sample`,
+`report`, and `qa promote` all read `$QA_TARGET` / `$QA_REVIEW_SAMPLE_RATE`
+from here in every step below, so changing them here is enough — you do not
+need to edit any command. `QA_MIN_CORRECT_RATE` / `QA_MIN_KAPPA` can be
+lowered the same way if you want a small test run to promote even with noisy
+LLM-reviewer agreement; do not lower them for a real production run.
+
+The final QA double review (step 15) no longer needs two human reviewer
+names: it is done by the project's two LLM reviewers (primary and fallback
+model), so there is nothing to fill in for `QA_REVIEWER_A`/`QA_REVIEWER_B`.
+The extraction-usability spot check in step 8 is still a human review and
+still needs `EXTRACTION_REVIEWER_ID`.
 
 Load the variables in every new terminal:
 
@@ -573,7 +588,7 @@ assert report["passages"] == len(passages)
 PY
 ```
 
-## 10. Run the fixture-backed 1,500-item QA preflight
+## 10. Run the fixture-backed QA preflight (target: `$QA_TARGET` items)
 
 This checks planning capacity and the complete QA lifecycle without calling a
 model server:
@@ -584,19 +599,19 @@ source data/run.env
 uv run aviation-data qa build \
   --backend fixture \
   --run-id "$FIXTURE_RUN_ID" \
-  --target 1500 \
+  --target "$QA_TARGET" \
   --max-fill-cycles 8
 ```
 
 Check the fixture validation:
 
 ```bash
-uv run python - "$FIXTURE_RUN_ID" <<'PY'
+uv run python - "$FIXTURE_RUN_ID" "$QA_TARGET" <<'PY'
 from pathlib import Path
 import json
 import sys
 
-run_id = sys.argv[1]
+run_id, target = sys.argv[1], int(sys.argv[2])
 run_dir = Path("data/qa/experiments") / run_id
 validation = json.loads(
     (run_dir / "validation_report.json").read_text(encoding="utf-8")
@@ -608,11 +623,11 @@ print(json.dumps(validation["quota_diagnostics"], indent=2))
 print(json.dumps(validation["accepted_qa_language_balance"], indent=2))
 
 assert build["status"] == "complete"
-assert validation["accepted"] == 1500
+assert validation["accepted"] == target
 assert validation["quota_diagnostics"]["clean"] is True
 assert validation["accepted_qa_language_balance"]["counts"] == {
-    "en": 750,
-    "tr": 750,
+    "en": target // 2,
+    "tr": target - target // 2,
 }
 PY
 ```
@@ -656,11 +671,11 @@ docker run -d \
   -v aviation-vllm-cache:/root/.cache/huggingface \
   --entrypoint vllm \
   vllm/vllm-openai@sha256:e4f88a835143cd22aee2397a26ec6bb80b3a4a6fe0c882bcbc63822904766089 \
-  serve AxisQuant/Qwen3.6-27b-gptq-int4 \
-  --revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
-  --tokenizer-revision e4a111caa43e97606b7a5fa20849bbcc051aa4f0 \
+  serve RedHatAI/Qwen3.8-27B-INT4 \
+  --revision c063053e004e9783631651df95cf55d0bbf88b32 \
+  --tokenizer-revision c063053e004e9783631651df95cf55d0bbf88b32 \
   --language-model-only \
-  --gpu-memory-utilization 0.75 \
+  --gpu-memory-utilization 0.80 \
   --max-model-len 4096 \
   --max-num-seqs 2 \
   --enforce-eager \
@@ -803,7 +818,7 @@ docker run -d \
   --tokenizer-revision 156edc4bbeb8d1910ee7be9196bafaf1bc052156 \
   --served-model-name cyankiwi/Qwen3.5-9B-AWQ-4bit \
   --language-model-only \
-  --gpu-memory-utilization 0.75 \
+  --gpu-memory-utilization 0.80 \
   --max-model-len 4096 \
   --max-num-seqs 2 \
   --enforce-eager \
@@ -905,8 +920,9 @@ for run_id in sys.argv[1:]:
 PY
 ```
 
-Use independent human review plus these metrics to choose `primary` or
-`fallback`. Update `MODEL_CHOICE` in `data/run.env`, then reload it:
+Use these metrics (and spot-checking output by eye, if you like) to choose
+`primary` or `fallback`. Update `MODEL_CHOICE` in `data/run.env`, then reload
+it:
 
 ```bash
 nano data/run.env
@@ -930,7 +946,7 @@ docker start aviation-vllm-fallback
 curl -fsS http://127.0.0.1:8000/v1/models
 ```
 
-## 14. Build the final 1,500-item QA run
+## 14. Build the final QA run (target: `$QA_TARGET` items)
 
 ```bash
 source data/run.env
@@ -940,7 +956,7 @@ uv run aviation-data qa build \
   --model-choice "$MODEL_CHOICE" \
   --run-id "$QA_RUN_ID" \
   --endpoint "$VLLM_ENDPOINT" \
-  --target 1500 \
+  --target "$QA_TARGET" \
   --dense-endpoint "$DENSE_ENDPOINT" \
   --dense-model "$DENSE_MODEL" \
   --dense-revision "$DENSE_REVISION" \
@@ -949,15 +965,17 @@ uv run aviation-data qa build \
 
 The build is checkpointed. Rerun the exact command if it is interrupted.
 
-Check final counts and balance:
+Check final counts and balance. Planning always splits questions 50/50
+EN/TR and answerability 90/10 answerable/corpus-unanswerable, regardless of
+`QA_TARGET`:
 
 ```bash
-uv run python - "$QA_RUN_ID" <<'PY'
+uv run python - "$QA_RUN_ID" "$QA_TARGET" <<'PY'
 from pathlib import Path
 import json
 import sys
 
-run_id = sys.argv[1]
+run_id, target = sys.argv[1], int(sys.argv[2])
 run_dir = Path("data/qa/experiments") / run_id
 validation = json.loads(
     (run_dir / "validation_report.json").read_text(encoding="utf-8")
@@ -971,12 +989,13 @@ print("Rejection reasons:", validation["rejection_reasons"])
 
 actual = validation["quota_diagnostics"]["actual"]
 assert build["status"] == "complete"
-assert validation["accepted"] == 1500
+assert validation["accepted"] == target
 assert validation["quota_diagnostics"]["clean"] is True
-assert actual["question_language"] == {"en": 750, "tr": 750}
+assert actual["question_language"] == {"en": target // 2, "tr": target - target // 2}
+answerable = round(target * 0.9)
 assert actual["answerability"] == {
-    "answerable": 1350,
-    "corpus_unanswerable": 150,
+    "answerable": answerable,
+    "corpus_unanswerable": target - answerable,
 }
 assert validation["evidence_offsets_valid"] is True
 PY
@@ -984,24 +1003,28 @@ PY
 
 ## 15. Create and complete the final QA review
 
-Create exactly 225 unique review items and 450 A/B assignments:
+Create the review sample. Unique items are `ceil(QA_TARGET *
+QA_REVIEW_SAMPLE_RATE)`; there are twice as many A/B assignment rows. With
+the defaults (1500, 0.15) that is exactly 225 unique items / 450 rows:
 
 ```bash
 uv run aviation-data qa review-sample \
   --run-id "$QA_RUN_ID" \
-  --rate 0.15
+  --rate "$QA_REVIEW_SAMPLE_RATE"
 ```
 
 Check the assignment counts and show the first row:
 
 ```bash
-uv run python - "$QA_RUN_ID" <<'PY'
+uv run python - "$QA_RUN_ID" "$QA_TARGET" "$QA_REVIEW_SAMPLE_RATE" <<'PY'
 from collections import Counter
+from math import ceil
 from pathlib import Path
 import json
 import sys
 
-run_id = sys.argv[1]
+run_id, target, rate = sys.argv[1], int(sys.argv[2]), float(sys.argv[3])
+expected_unique = ceil(target * rate)
 path = Path("data/qa/experiments") / run_id / "review_sample.jsonl"
 rows = [
     json.loads(line)
@@ -1011,71 +1034,69 @@ rows = [
 qa_ids = {row["qa_id"] for row in rows}
 slots = Counter(row["reviewer_slot"] for row in rows)
 
-print("Unique QA items:", len(qa_ids))
+print("Unique QA items:", len(qa_ids), "(expected", expected_unique, ")")
 print("Assignment rows:", len(rows))
 print("Slots:", dict(slots))
 print(json.dumps(rows[0], indent=2, ensure_ascii=False))
 
-assert len(qa_ids) == 225
-assert len(rows) == 450
-assert slots == {"A": 225, "B": 225}
+assert len(qa_ids) == expected_unique
+assert len(rows) == expected_unique * 2
+assert slots == {"A": expected_unique, "B": expected_unique}
 PY
 ```
 
-Two genuinely independent people are required for the promotion gate. Split
-the assignments into reviewer files:
+Two independent *LLM* reviewers are required for the promotion gate: the
+project's primary model reviews slot A, and the fallback model reviews slot
+B, each grading against `prompts/qa_review.md`
+(`clarity`/`correctness`/`evidence_sufficiency`/`language_quality`, plus
+`notes`). There is no manual editing step.
+
+Run slot A with the **primary** container serving on `$VLLM_ENDPOINT`:
 
 ```bash
-uv run python - "$QA_RUN_ID" <<'PY'
-from pathlib import Path
-import json
-import sys
+source data/run.env
+docker stop aviation-vllm-fallback 2>/dev/null || true
+docker start aviation-vllm
+curl -fsS http://127.0.0.1:8000/v1/models
 
-run_id = sys.argv[1]
-run_dir = Path("data/qa/experiments") / run_id
-rows = [
-    json.loads(line)
-    for line in (run_dir / "review_sample.jsonl")
-    .read_text(encoding="utf-8")
-    .splitlines()
-    if line.strip()
-]
-
-for slot in ("A", "B"):
-    output = run_dir / f"reviewer_{slot}.jsonl"
-    selected = [row for row in rows if row["reviewer_slot"] == slot]
-    output.write_text(
-        "\n".join(json.dumps(row, ensure_ascii=False) for row in selected) + "\n",
-        encoding="utf-8",
-    )
-    print(output, len(selected))
-PY
+uv run aviation-data qa llm-review \
+  --run-id "$QA_RUN_ID" \
+  --reviewer-slot A \
+  --backend vllm \
+  --endpoint "$VLLM_ENDPOINT"
 ```
 
-Reviewer A edits:
+Then swap to the **fallback** container and run slot B:
 
 ```bash
-nano "data/qa/experiments/$QA_RUN_ID/reviewer_A.jsonl"
+docker stop aviation-vllm
+docker start aviation-vllm-fallback
+curl -fsS http://127.0.0.1:8000/v1/models
+
+uv run aviation-data qa llm-review \
+  --run-id "$QA_RUN_ID" \
+  --reviewer-slot B \
+  --backend vllm \
+  --endpoint "$VLLM_ENDPOINT"
 ```
 
-Reviewer B edits:
+The slot-B command's JSON output includes `"merged": true` once both
+`llm_review_A.jsonl` and `llm_review_B.jsonl` exist: they are combined and
+written to `data/qa/experiments/$QA_RUN_ID/human_reviews.jsonl` automatically
+(the file name is unchanged, only who filled it in). Either command can be
+rerun with the same run ID to resume/redo a slot; rerunning re-reviews every
+row in that slot from scratch and re-merges.
+
+Restart the model you will use for the rest of the run (see step 13 for
+picking `MODEL_CHOICE`):
 
 ```bash
-nano "data/qa/experiments/$QA_RUN_ID/reviewer_B.jsonl"
+docker stop aviation-vllm-fallback
+docker start aviation-vllm
+curl -fsS http://127.0.0.1:8000/v1/models
 ```
 
-For every row, each reviewer must:
-
-- set `reviewer_id` to their own non-empty identity;
-- replace `clarity: null` with `clarity: true` or `clarity: false`;
-- replace `correctness: null` with a JSON boolean;
-- replace `evidence_sufficiency: null` with a JSON boolean;
-- replace `language_quality: null` with a JSON boolean;
-- add a short `notes` value when something fails.
-
-Do not copy one reviewer's decisions into the other file.
-
-Merge and validate the independent review files:
+Check the merged review file:
 
 ```bash
 uv run python - "$QA_RUN_ID" <<'PY'
@@ -1095,10 +1116,7 @@ def read_jsonl(path: Path):
     ]
 
 sample = read_jsonl(run_dir / "review_sample.jsonl")
-reviews = [
-    *read_jsonl(run_dir / "reviewer_A.jsonl"),
-    *read_jsonl(run_dir / "reviewer_B.jsonl"),
-]
+reviews = read_jsonl(run_dir / "human_reviews.jsonl")
 dimensions = (
     "clarity",
     "correctness",
@@ -1108,7 +1126,7 @@ dimensions = (
 
 sample_keys = {(row["qa_id"], row["reviewer_slot"]) for row in sample}
 review_keys = {(row["qa_id"], row["reviewer_slot"]) for row in reviews}
-assert len(reviews) == 450
+assert len(reviews) == len(sample)
 assert review_keys == sample_keys
 assert all(row["reviewer_id"].strip() for row in reviews)
 assert all(
@@ -1120,20 +1138,24 @@ reviewers_by_qa = defaultdict(set)
 for row in reviews:
     reviewers_by_qa[row["qa_id"]].add(row["reviewer_id"])
 assert all(len(reviewers) == 2 for reviewers in reviewers_by_qa.values())
-
-reviews.sort(key=lambda row: (row["qa_id"], row["reviewer_slot"]))
-(run_dir / "human_reviews.jsonl").write_text(
-    "\n".join(json.dumps(row, ensure_ascii=False) for row in reviews) + "\n",
-    encoding="utf-8",
-)
-print("Wrote", run_dir / "human_reviews.jsonl")
+print("Reviewer identities:", sorted({row["reviewer_id"] for row in reviews}))
+print("human_reviews.jsonl rows:", len(reviews))
 PY
 ```
 
 ## 16. Build the pilot report and show every failing gate
 
+Pass the same `QA_TARGET`/`QA_REVIEW_SAMPLE_RATE`/`QA_MIN_CORRECT_RATE`/
+`QA_MIN_KAPPA` here that you will pass to `qa promote` in step 17, so the
+gate statuses shown here match what promotion will actually check:
+
 ```bash
-uv run aviation-data report --qa-run-id "$QA_RUN_ID"
+uv run aviation-data report \
+  --qa-run-id "$QA_RUN_ID" \
+  --qa-target "$QA_TARGET" \
+  --review-sample-rate "$QA_REVIEW_SAMPLE_RATE" \
+  --min-correct-rate "$QA_MIN_CORRECT_RATE" \
+  --min-kappa "$QA_MIN_KAPPA"
 ```
 
 Show the report status, QA balance, human metrics, and non-passing gates:
@@ -1166,29 +1188,46 @@ PY
 
 Promotion specifically requires these gates to pass:
 
-- accepted QA count;
+- accepted QA count equals `$QA_TARGET`;
 - exact QA planning balance;
-- completed independent double review;
-- human correctness and grounding of at least 0.95;
-- Cohen's kappa of at least 0.70.
+- completed independent double review (sized off `$QA_TARGET` and
+  `$QA_REVIEW_SAMPLE_RATE`);
+- human/LLM-reviewer correctness and grounding of at least
+  `$QA_MIN_CORRECT_RATE`;
+- Cohen's kappa of at least `$QA_MIN_KAPPA`.
 
-Do not change honest review decisions merely to make a gate pass.
+Do not lower `QA_MIN_CORRECT_RATE` or `QA_MIN_KAPPA`, and do not change
+honest review decisions, merely to make a gate pass on a real production
+run. Lowering them is only for fast local/colleague test runs (see step 2).
 
 ## 17. Promote the passing final QA run
 
-Only run this after the required report gates pass:
+Only run this after the required report gates pass. Pass the exact same
+`QA_TARGET`/`QA_REVIEW_SAMPLE_RATE`/`QA_MIN_CORRECT_RATE`/`QA_MIN_KAPPA`
+used in step 16 — `qa promote` re-checks these itself and will reject the
+run if the review sample size doesn't match what `QA_TARGET` and
+`QA_REVIEW_SAMPLE_RATE` predict (this is the "review diagnostics" mismatch
+you get if you build a smaller test run but promote with the production
+defaults):
 
 ```bash
-uv run aviation-data qa promote --run-id "$QA_RUN_ID"
+uv run aviation-data qa promote \
+  --run-id "$QA_RUN_ID" \
+  --qa-target "$QA_TARGET" \
+  --review-sample-rate "$QA_REVIEW_SAMPLE_RATE" \
+  --min-correct-rate "$QA_MIN_CORRECT_RATE" \
+  --min-kappa "$QA_MIN_KAPPA"
 ```
 
 Check the promoted pointer and schema versions:
 
 ```bash
-uv run python - <<'PY'
+uv run python - "$QA_TARGET" <<'PY'
 from pathlib import Path
 import json
+import sys
 
+target = int(sys.argv[1])
 pointer = json.loads(Path("data/qa/current_run.json").read_text(encoding="utf-8"))
 accepted = [
     json.loads(line)
@@ -1202,7 +1241,7 @@ print(json.dumps(pointer, indent=2))
 print("Promoted accepted QA:", len(accepted))
 print("Schema versions:", sorted({row["schema_version"] for row in accepted}))
 
-assert len(accepted) == 1500
+assert len(accepted) == target
 assert {row["schema_version"] for row in accepted} == {"1.1.0"}
 PY
 ```
@@ -1264,19 +1303,20 @@ uv run aviation-data package \
 Check the package manifest and every checksum:
 
 ```bash
-uv run python - "$PUBLIC_OUTPUT" <<'PY'
+uv run python - "$PUBLIC_OUTPUT" "$QA_TARGET" <<'PY'
 from pathlib import Path
 import json
 import sys
 
 root = Path(sys.argv[1])
+target = int(sys.argv[2])
 manifest = json.loads(
     (root / "package_manifest.json").read_text(encoding="utf-8")
 )
 print(json.dumps(manifest, indent=2, ensure_ascii=False))
 
 assert manifest["rights_boundary_verified"] is True
-assert manifest["qa"] == 1500
+assert manifest["qa"] == target
 assert manifest["fixture_qa"] == 0
 PY
 
@@ -1317,9 +1357,9 @@ The end-to-end run is complete when:
 - all four local source profiles produced their JSON artifacts;
 - extraction review is complete;
 - production passages use the pinned tokenizer and contain no restricted data;
-- the final QA run contains exactly 1,500 accepted v1.1 records;
-- accepted QA contains 750 English and 750 Turkish questions;
-- the independent human review and required promotion gates pass;
+- the final QA run contains exactly `$QA_TARGET` accepted v1.1 records;
+- accepted QA is split 50/50 English and Turkish;
+- the independent primary/fallback LLM review and required promotion gates pass;
 - the benchmark is promoted;
 - retrieval evaluation has run;
 - the public package reports `rights_boundary_verified: true`;
@@ -1342,6 +1382,8 @@ Safe resume rules:
 - interrupted extraction review: rerun with the same reviewer ID;
 - interrupted QA build: rerun the exact command with the same run ID and
   configuration;
+- interrupted `qa llm-review`: rerun the same command with the same
+  `--reviewer-slot`; it redoes that slot's rows and re-merges;
 - new terminal: run `source data/run.env`;
 - stopped containers: restart them with `docker start`;
 - never copy QA files between experiment run directories.

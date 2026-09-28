@@ -13,3 +13,5 @@ release/
 *.part
 data-archive/
 datatoprocess/
+scripts/
+prompts/qa_generation.md

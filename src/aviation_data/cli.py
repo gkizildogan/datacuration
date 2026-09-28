@@ -23,6 +23,7 @@ from aviation_data.io import read_jsonl, write_jsonl
 from aviation_data.passages import build_passages
 from aviation_data.qa_generation import build_qa, generate_qa
 from aviation_data.qa_lifecycle import promote_qa_run
+from aviation_data.qa_llm_review import run_llm_review
 from aviation_data.qa_planning import CapacityError, qa_run_dir
 from aviation_data.qa_validation import validate_qa
 from aviation_data.registry import audit_registry, load_registry
@@ -65,6 +66,11 @@ class RetrievalBackend(StrEnum):
 class ModelChoice(StrEnum):
     PRIMARY = "primary"
     FALLBACK = "fallback"
+
+
+class ReviewerSlot(StrEnum):
+    A = "A"
+    B = "B"
 
 
 def _echo(value: object) -> None:
@@ -235,6 +241,43 @@ def qa_review_sample(
     )
 
 
+@qa_app.command("llm-review")
+def qa_llm_review(
+    run_id: Annotated[str, typer.Option("--run-id")] = "qa-v2",
+    reviewer_slot: Annotated[ReviewerSlot, typer.Option("--reviewer-slot")] = ReviewerSlot.A,
+    backend: Annotated[Backend, typer.Option("--backend")] = Backend.FIXTURE,
+    endpoint: Annotated[str, typer.Option("--endpoint")] = "http://127.0.0.1:8000/v1",
+    data_dir: Annotated[Path, typer.Option("--data-dir")] = DEFAULT_DATA,
+    config_path: Annotated[Path, typer.Option("--config")] = Path("configs/generation.yaml"),
+    prompt_path: Annotated[Path, typer.Option("--prompt")] = Path("prompts/qa_review.md"),
+) -> None:
+    """Have the reviewer slot's model (A=primary, B=fallback) review its QA sample.
+
+    Run once per slot. The slot-A model must run against the primary
+    container and slot-B against the fallback container. Once both
+    llm_review_A.jsonl and llm_review_B.jsonl exist, this also merges them
+    into human_reviews.jsonl for the promotion gate.
+    """
+    rows = run_llm_review(
+        data_dir,
+        run_id,
+        reviewer_slot=reviewer_slot.value,
+        backend=backend.value,
+        endpoint=endpoint,
+        config_path=config_path,
+        prompt_path=prompt_path,
+    )
+    merged_ready = (qa_run_dir(data_dir, run_id) / "human_reviews.jsonl").is_file()
+    _echo(
+        {
+            "run_id": run_id,
+            "reviewer_slot": reviewer_slot.value,
+            "reviewed": len(rows),
+            "merged": merged_ready,
+        }
+    )
+
+
 @qa_app.command("build")
 def qa_build(
     run_id: Annotated[str, typer.Option("--run-id")] = "qa-v2",
@@ -283,12 +326,35 @@ def qa_promote(
     airline_cohort: Annotated[Path, typer.Option("--airline-cohort")] = Path(
         "configs/airline_cohort.yaml"
     ),
+    qa_target: Annotated[
+        int,
+        typer.Option(
+            "--qa-target",
+            min=1,
+            help="Required accepted QA count for promotion (also drives the review sample size).",
+        ),
+    ] = 1500,
+    review_sample_rate: Annotated[
+        float,
+        typer.Option(
+            "--review-sample-rate",
+            min=0.001,
+            max=1.0,
+            help="Must match the --rate used for 'qa review-sample' on this run.",
+        ),
+    ] = 0.15,
+    min_correct_rate: Annotated[float, typer.Option("--min-correct-rate", min=0.0, max=1.0)] = 0.95,
+    min_kappa: Annotated[float, typer.Option("--min-kappa", min=-1.0, max=1.0)] = 0.70,
 ) -> None:
     _echo(
         promote_qa_run(
             data_dir,
             run_id,
             airline_cohort_path=airline_cohort,
+            qa_target=qa_target,
+            review_sample_rate=review_sample_rate,
+            min_correct_and_grounded_rate=min_correct_rate,
+            min_cohens_kappa=min_kappa,
         )
     )
 
@@ -486,8 +552,31 @@ def report(
     airline_cohort: Annotated[Path, typer.Option("--airline-cohort")] = Path(
         "configs/airline_cohort.yaml"
     ),
+    qa_target: Annotated[
+        int,
+        typer.Option(
+            "--qa-target",
+            min=1,
+            help="Must match the value passed to 'qa promote' for gate statuses to agree.",
+        ),
+    ] = 1500,
+    review_sample_rate: Annotated[
+        float, typer.Option("--review-sample-rate", min=0.001, max=1.0)
+    ] = 0.15,
+    min_correct_rate: Annotated[float, typer.Option("--min-correct-rate", min=0.0, max=1.0)] = 0.95,
+    min_kappa: Annotated[float, typer.Option("--min-kappa", min=-1.0, max=1.0)] = 0.70,
 ) -> None:
-    _echo(build_report(data_dir, airline_cohort, qa_run_id=qa_run_id))
+    _echo(
+        build_report(
+            data_dir,
+            airline_cohort,
+            qa_run_id=qa_run_id,
+            qa_target=qa_target,
+            review_sample_rate=review_sample_rate,
+            min_correct_and_grounded_rate=min_correct_rate,
+            min_cohens_kappa=min_kappa,
+        )
+    )
 
 
 @app.command("package")

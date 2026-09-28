@@ -19,8 +19,9 @@ from aviation_data.models import (
     QARecord,
     QAType,
 )
-from aviation_data.qa_generation import _response_schema, _vllm_preflight
-from aviation_data.qa_planning import build_evidence_candidates, quota_plan
+from aviation_data.qa_generation import _response_schema, _vllm_preflight, _vllm_response
+from aviation_data.qa_llm_review import _vllm_review
+from aviation_data.qa_planning import PlannedTask, build_evidence_candidates, quota_plan
 from aviation_data.qa_validation import _joint_support, _token_sequence_in
 from aviation_data.review import create_review_sample
 
@@ -257,3 +258,100 @@ def test_review_sample_has_exact_unique_and_assignment_counts(tmp_path: Path) ->
         sum(row["qa_id"] == qa_id for row in assignments) == 2
         for qa_id in {row["qa_id"] for row in assignments}
     )
+
+
+def test_generator_and_reviewer_receive_section_path(tmp_path: Path) -> None:
+    text = "The aircraft was repainted again in 2000–2001 at Southend Airport."
+    passage = _passage(text).model_copy(
+        update={"section_path": ["Avro Vulcan XL426", "History", "After service"]}
+    )
+    candidate = next(
+        item
+        for item in build_evidence_candidates([passage])
+        if QAType.TEMPORAL in item.compatible_types
+    )
+    assert candidate.section_path == ["Avro Vulcan XL426", "History", "After service"]
+
+    task = PlannedTask(
+        index=0,
+        task_id="task-0",
+        question_language=Language.ENGLISH,
+        qa_type=QAType.TEMPORAL,
+        answerability=Answerability.ANSWERABLE,
+        anchor_id=candidate.anchor_id,
+    )
+    sent: dict[str, object] = {}
+
+    def generation_handler(request: httpx.Request) -> httpx.Response:
+        sent.update(json.loads(json.loads(request.content)["messages"][1]["content"]))
+        content = json.dumps(
+            {
+                "kind": "answer",
+                "question": "When was Avro Vulcan XL426 repainted again?",
+                "answer_items": ["2000–2001"],
+            }
+        )
+        return httpx.Response(200, json={"choices": [{"message": {"content": content}}]})
+
+    with httpx.Client(transport=httpx.MockTransport(generation_handler)) as client:
+        _vllm_response(
+            client, "https://example.test/v1", task, candidate, _generator(), "prompt", 256, 0
+        )
+    assert sent["section_path"] == ["Avro Vulcan XL426", "History", "After service"]
+
+    run_dir = tmp_path / "data" / "qa" / "experiments" / "section-path"
+    evidence = EvidenceSpan(
+        passage_id=passage.passage_id,
+        document_id=passage.document_id,
+        passage_char_start=candidate.passage_char_start,
+        passage_char_end=candidate.passage_char_end,
+        canonical_char_start=candidate.canonical_char_start,
+        canonical_char_end=candidate.canonical_char_end,
+        quote=candidate.anchor_text,
+        quote_sha256=sha256_text(candidate.anchor_text),
+    )
+    qa = QARecord(
+        qa_id="qa-0000",
+        question="When was Avro Vulcan XL426 repainted again?",
+        answer="2000–2001",
+        answer_items=["2000–2001"],
+        question_language=Language.ENGLISH,
+        evidence_languages=[Language.ENGLISH],
+        primary_type=QAType.TEMPORAL,
+        answerability=Answerability.ANSWERABLE,
+        evidence=[evidence],
+        acceptable_variants=["2000–2001"],
+        provenance_passage_ids=[passage.passage_id],
+        source_document_ids=[passage.document_id],
+        split_group_id=passage.variant_group_id,
+        generator=_generator(),
+        created_at=datetime.now(UTC),
+    )
+    write_jsonl(run_dir / "accepted.jsonl", [qa])
+    write_jsonl(run_dir / "passage_snapshot.jsonl", [passage])
+    assignments = create_review_sample(tmp_path / "data", run_id="section-path", rate=1.0)
+    assert all(
+        row["section_paths"] == [["Avro Vulcan XL426", "History", "After service"]]
+        for row in assignments
+    )
+
+    reviewed: dict[str, object] = {}
+
+    def review_handler(request: httpx.Request) -> httpx.Response:
+        reviewed.update(json.loads(json.loads(request.content)["messages"][1]["content"]))
+        content = json.dumps(
+            {
+                "clarity": True,
+                "correctness": True,
+                "evidence_sufficiency": True,
+                "language_quality": True,
+                "notes": "",
+            }
+        )
+        return httpx.Response(200, json={"choices": [{"message": {"content": content}}]})
+
+    with httpx.Client(transport=httpx.MockTransport(review_handler)) as client:
+        _vllm_review(
+            client, "https://example.test/v1", assignments[0], "model", "prompt", 0.0, 1, 256
+        )
+    assert reviewed["section_paths"] == [["Avro Vulcan XL426", "History", "After service"]]

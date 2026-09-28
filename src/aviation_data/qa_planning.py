@@ -72,6 +72,7 @@ class EvidenceCandidate(BaseModel):
     token_count: int = Field(ge=MIN_ANCHOR_TOKENS, le=ANCHOR_TOKEN_LIMIT)
     list_items: list[str] = Field(default_factory=list)
     mutation_terms: list[MutationTerm] = Field(default_factory=list)
+    section_path: list[str] = Field(default_factory=list)
 
 
 class PlannedTask(BaseModel):
@@ -258,6 +259,7 @@ def _candidate(
         token_count=token_count,
         list_items=extractive_list_items,
         mutation_terms=_mutation_terms(anchor),
+        section_path=list(passage.section_path),
     )
 
 

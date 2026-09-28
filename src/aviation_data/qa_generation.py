@@ -32,6 +32,8 @@ from aviation_data.qa_planning import (
     qa_run_dir,
 )
 
+PROMPT_VERSION = "qa_generation_v3.md"
+
 
 class RejectedResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -83,7 +85,7 @@ def _generator_config(
             model_revision="local-v2",
             tokenizer_revision="not-applicable",
             container_digest="not-applicable",
-            prompt_version="qa_generation_v2.md",
+            prompt_version=PROMPT_VERSION,
             prompt_sha256=sha256_text(prompt),
             temperature=0.0,
             seed=int(generation["seed"]),
@@ -123,7 +125,7 @@ def _generator_config(
         model_revision=revision,
         tokenizer_revision=tokenizer_revision,
         container_digest=digest,
-        prompt_version="qa_generation_v2.md",
+        prompt_version=PROMPT_VERSION,
         prompt_sha256=sha256_text(prompt),
         temperature=float(generation["temperature"]),
         seed=int(generation["seed"]),
@@ -281,6 +283,7 @@ def _vllm_response(
         "question_language": task.question_language.value,
         "qa_type": task.qa_type.value,
         "passage_language": candidate.language.value,
+        "section_path": candidate.section_path,
         "anchor": candidate.anchor_text,
         "list_items": candidate.list_items,
         "required_question_term": task.mutation_source,

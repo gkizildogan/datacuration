@@ -90,7 +90,13 @@ def build_report(
     airline_cohort_path: Path = Path("configs/airline_cohort.yaml"),
     *,
     qa_run_id: str = "benchmark",
+    qa_target: int = 1500,
+    review_sample_rate: float = 0.15,
+    min_correct_and_grounded_rate: float = 0.95,
+    min_cohens_kappa: float = 0.70,
 ) -> dict[str, Any]:
+    expected_unique_review_items = math.ceil(qa_target * review_sample_rate)
+    expected_review_assignment_rows = expected_unique_review_items * 2
     qa_dir = qa_run_dir(data_dir, qa_run_id)
     source_records = read_jsonl(data_dir / "manifests" / "source_records.jsonl", SourceRecord)
     extracted = read_jsonl(data_dir / "extracted" / "documents.jsonl", DocumentRecord)
@@ -264,8 +270,8 @@ def build_report(
         _gate(
             "accepted_qa_count",
             len(accepted_qa),
-            1500,
-            len(accepted_qa) == 1500,
+            qa_target,
+            len(accepted_qa) == qa_target,
         ),
         _gate(
             "exact_evidence_offset_validity",
@@ -298,8 +304,13 @@ def build_report(
                 "assignment_rows": len(review_sample),
                 "submitted_rows": len(human_rows),
             },
-            {"unique_items": 225, "assignment_rows": 450},
-            double_review_complete and len(sampled_qa_ids) == 225 and len(review_sample) == 450,
+            {
+                "unique_items": expected_unique_review_items,
+                "assignment_rows": expected_review_assignment_rows,
+            },
+            double_review_complete
+            and len(sampled_qa_ids) == expected_unique_review_items
+            and len(review_sample) == expected_review_assignment_rows,
         ),
         _gate(
             "airline_cohort_frozen",
@@ -310,18 +321,18 @@ def build_report(
         _gate(
             "human_correctness_and_grounding",
             human["correct_and_grounded_rate"],
-            0.95,
+            min_correct_and_grounded_rate,
             (
                 None
                 if human["correct_and_grounded_rate"] is None
-                else human["correct_and_grounded_rate"] >= 0.95
+                else human["correct_and_grounded_rate"] >= min_correct_and_grounded_rate
             ),
         ),
         _gate(
             "reviewer_agreement_kappa",
             human["cohens_kappa"],
-            0.70,
-            (None if human["cohens_kappa"] is None else human["cohens_kappa"] >= 0.70),
+            min_cohens_kappa,
+            (None if human["cohens_kappa"] is None else human["cohens_kappa"] >= min_cohens_kappa),
         ),
     ]
     statuses = {gate["status"] for gate in gates}
