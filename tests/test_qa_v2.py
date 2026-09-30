@@ -338,7 +338,9 @@ def test_generator_and_reviewer_receive_section_path(tmp_path: Path) -> None:
     reviewed: dict[str, object] = {}
 
     def review_handler(request: httpx.Request) -> httpx.Response:
-        reviewed.update(json.loads(json.loads(request.content)["messages"][1]["content"]))
+        body = json.loads(request.content)
+        reviewed.update(json.loads(body["messages"][1]["content"]))
+        reviewed["chat_template_kwargs"] = body["chat_template_kwargs"]
         content = json.dumps(
             {
                 "clarity": True,
@@ -355,3 +357,5 @@ def test_generator_and_reviewer_receive_section_path(tmp_path: Path) -> None:
             client, "https://example.test/v1", assignments[0], "model", "prompt", 0.0, 1, 256
         )
     assert reviewed["section_paths"] == [["Avro Vulcan XL426", "History", "After service"]]
+    # Qwen3 thinking must be disabled, otherwise the reasoning parser leaves content=None.
+    assert reviewed["chat_template_kwargs"] == {"enable_thinking": False}

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import csv
 import json
 from datetime import date
 from pathlib import Path
@@ -142,6 +143,28 @@ def test_offline_pipeline_and_public_rights_boundary(tmp_path: Path) -> None:
     )
     assert manifest["documents"] == 3
     assert manifest["qa"] == 8
+    public_passages = {
+        row["passage_id"]: row["text"]
+        for row in map(
+            json.loads,
+            (release_dir / "records" / "passages.jsonl").read_text(encoding="utf-8").splitlines(),
+        )
+    }
+    public_qa = [
+        json.loads(line)
+        for line in (release_dir / "records" / "qa.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    with (release_dir / "records" / "qa_export.csv").open(encoding="utf-8", newline="") as handle:
+        export_rows = list(csv.DictReader(handle))
+    answerable_qa = [row for row in public_qa if row["evidence"]]
+    assert list(export_rows[0]) == ["number", "question", "answer", "passage"]
+    assert [row["number"] for row in export_rows] == [
+        str(number) for number in range(1, len(answerable_qa) + 1)
+    ]
+    for export_row, qa in zip(export_rows, answerable_qa, strict=True):
+        assert export_row["question"] == qa["question"]
+        assert export_row["answer"] == qa["answer"]
+        assert export_row["passage"] == public_passages[qa["evidence"][0]["passage_id"]]
     restricted = [
         json.loads(line)
         for line in (release_dir / "restricted_extension_manifest.jsonl")

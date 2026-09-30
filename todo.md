@@ -724,7 +724,7 @@ uv run aviation-data qa build \
   --model-choice primary \
   --run-id "$SMOKE_RUN_ID" \
   --endpoint "$VLLM_ENDPOINT" \
-  --target 200 \
+  --target 10 \
   --dense-endpoint "$DENSE_ENDPOINT" \
   --dense-model "$DENSE_MODEL" \
   --dense-revision "$DENSE_REVISION" \

@@ -98,3 +98,13 @@ def write_qa_csv(path: Path, rows: Iterable[dict[str, Any]]) -> None:
             output = {key: row.get(key) for key in fieldnames}
             output["source_document_ids"] = "|".join(row.get("source_document_ids", []))
             writer.writerow(output)
+
+
+def write_qa_export_csv(path: Path, rows: Iterable[dict[str, Any]]) -> None:
+    ensure_parent(path)
+    fieldnames = ["number", "question", "answer", "passage"]
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for number, row in enumerate(rows, start=1):
+            writer.writerow({"number": number, **{key: row[key] for key in fieldnames[1:]}})

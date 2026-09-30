@@ -61,6 +61,7 @@ def _vllm_review(
     temperature: float,
     seed: int,
     max_output_tokens: int,
+    chat_template_kwargs: dict[str, Any] | None = None,
 ) -> LLMReviewResponse:
     question_language = str((row.get("stratum") or [""])[0])
     payload = {
@@ -82,6 +83,7 @@ def _vllm_review(
             "temperature": temperature,
             "seed": seed,
             "max_tokens": max_output_tokens,
+            "chat_template_kwargs": chat_template_kwargs or {"enable_thinking": False},
             "response_format": _response_schema(),
         },
     )
@@ -149,6 +151,7 @@ def run_llm_review(
                     generator.temperature,
                     generator.seed,
                     max_output_tokens,
+                    chat_template_kwargs=generator.settings.get("chat_template_kwargs"),
                 )
             reviewed.append(
                 {

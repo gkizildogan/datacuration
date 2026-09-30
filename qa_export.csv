@@ -1,0 +1,934 @@
+number,question,answer,passage
+1,What determines when an aircraft will stall?,The critical angle of attack (AOA),"## Types of airspeeds
+
+There are four types of airspeed that can be remembered with the acronym ICE-T. Indicated airspeed ( IAS ), is read directly off the ASI. It has no correction for air density variations, installation or instrument errors. Calibrated airspeed ( CAS ) is corrected for installation and instrument errors. Equivalent airspeed ( EAS ) is calibrated airspeed (CAS) corrected for the compressibility of air at a non-trivial Mach number . True airspeed ( TAS ) is CAS corrected for altitude and nonstandard temperature. TAS is used for flight planning . TAS increases as altitude increases, as air density decreases. TAS may be determined via a flight computer, such as the E6B . Some ASIs have a TAS ring. Alternatively, a rule of thumb is to add 2 percent to the CAS for every 1,000 ft (300 m) of altitude gained.
+
+## Jet aircraft
+
+Jet aircraft do not have V NO and V NE like piston-engined aircraft, but instead have a maximum operating speed expressed in knots, V MO and Mach number , M MO . Thus, a pilot of a jet aeroplane needs both an airspeed indicator and a Machmeter , with appropriate red lines. An ASI will include a red-and-white striped pointer, or "" barber's pole "", that automatically moves to indicate the applicable speed limit at any given time.
+
+## Angle of attack and Lift Reserve Indicators
+
+An aeroplane can stall at any speed, so monitoring the ASI alone will not prevent a stall. The critical angle of attack (AOA) determines when an aircraft will stall. For a particular configuration, it is a constant independent of weight, bank angle, temperature, density altitude , and the center of gravity of an aircraft . An AOA indicator provides stall situational awareness as a means for monitoring the onset of the critical AOA. The AOA indicator will show the current AOA and its proximity to the critical AOA.
+
+Similarly, the Lift Reserve Indicator (LRI) provides a measure of the amount of lift being generated. It uses a pressure differential system to provide the pilot with a visual representation of reserve lift available."
+2,What is the website of the Aeronautical Radio of Thailand (AEROTHAI)?,www.aerothai.co.th,"| Name | Country | Website | CANSO |
+| --- | --- | --- | --- |
+| Aeronautical Radio of Thailand (AEROTHAI) | Thailand | www.aerothai.co.th | [1] |
+| Aeroportos de Moçambique, E.P. (ADM) | Mozambique | www .aeroportos .co .mz | [ link removed ] |
+| Air Navigation & Weather Services, CAA (ANWS) | Taiwan | www.anws.gov.tw | [2] |
+| Air Navigation Services of the Czech Republic (ANS Czech Republic) | Czech Republic | www .ans .cz | [ link removed ] |
+| Air Traffic Management Bureau (ATMB) | China | www.atmb.net.cn |  |
+| Air Traffic & Navigation Services (ATNS) | South Africa | www .atns .com | [ link removed ] |
+| National Air Navigation Services Company (NANSC) | Egypt | www .nansceg .net | [3] |
+| Airport & Aviation Services (S.L.) Limited (AASL) | Sri Lanka | www .airport .lk | [ link removed ] |
+| Airports Authority of India (AAI) | India | www .aai .aero | [4] |
+| Airports Fiji Limited (AFL) | Fiji | www .airports .fiji .com | [ link removed ] |
+| Airservices Australia | Australia | www .airservicesaustralia .com | [5] |
+| Airways New Zealand | New Zealand | www .airways .co .nz | [6] |
+| AirNav Indonesia | Indonesia | www .airnavindonesia .co .id | [7] |
+| Austro Control | Austria | www.austrocontrol.at | [ link removed ] |
+| Avinor AS | Norway | www.avinor.no | [ link removed ] |
+| AZANS Azerbaijan (Azerbaijan Air Navigation Services) | Azerbaijan |  | [8] |
+| Skeyes | Belgium | www .skeyes .be | [ link removed ] |
+| Bulgarian Air Traffic Services Authority (BULATSA) | Bulgaria | www.bulatsa.com | [ link removed ] |
+| CAA Uganda (Civil Aviation Authority of Uganda) | Uganda | www .caa .co .ug | [ link removed ] |
+| Civil Aviation Authority of Bangladesh (CAAB) | Bangladesh | www .caab .gov .bd | [ link removed ] |
+| Civil Aviation Authority of Singapore (CAAS) | Singapore | www .caas .gov .sg | [9] |
+| Civil Aviation Regulatory Commission (CARC) | Jordan | www .carc .gov .jo | [ link removed ] |
+| Department of Airspace Control (DECEA) | Brazil | www.decea.gov.br | [ link removed ] |
+| Department of Civil Aviation, Republic of Cyprus | Cyprus | www .mcw .gov .cy /dca | [ link removed ] |
+| DFS Deutsche Flugsicherung GmbH | Germany | www.dfs.de | [ link removed ] |
+| Dirección General de Control de Tránsito Aéreo (DGCTA) | Argentina |  | [ link removed ] |
+| Direction des Services de la navigation aérienne (DSNA) | France | www.developpement-durable.gouv.fr | [10] |
+| Dutch Caribbean Air Navigation Service Provider (DC-ANSP) | Curaçao | dc-ansp .org | [11] |
+| Empresa Argentina de Navegación Aérea (EANA) | Argentina | www .eana .com .ar | [12] |
+| ENAIRE | Spain | www.enaire.es | [ link removed ] |
+| ENANA-EP ( Empresa Nacional de Exploração de Aeroportos e Navegação Aérea ) | Angola | www.enana.co.ao | [ link removed ] |
+| ENAV S.p.A. ( Ente Nazionale di Assistenza al Volo ) | Italy | www.enav.it | [13] |
+| Estonian Air Navigation Services (EANS) | Estonia | www.eans.ee | [ link removed ] |
+| Federal Aviation Administration (FAA) | United States | www .faa .gov | [14] |
+| Fintraffic | Finland | www.fintraffic.fi | [15] |
+| GCAA United Arab Emirates (General Civil Aviation Authority) | United Arab Emirates | www.gcaa.gov.ae | [ link removed ] |
+| Hellenic Civil Aviation Authority (HCAA) | Greece | www.hcaa.gr | [ link removed ] |
+| HungaroControl Pte. Ltd. Co. | Hungary | www .hungarocontrol .hu | [ link removed ] |
+| Iran Airports Co. (IAC) | Iran | www .airport .ir | [16] |
+| AirNav Ireland (ANI) | Ireland | www .airnav .ie | [ link removed ] |
+| ISAVIA Ltd. | Iceland | www.isavia.is Archived 2017-02-22 at the Wayback Machine | [ link removed ] |
+| Israel Airports Authority | Israel | www.iaa.gov.il | [ link removed ] |
+| Japan Air Navigation Service | Japan | www .mlit .go .jp /en /koku / | [17] |
+| Kazaeronavigatsia | Kazakhstan | www.ans.kz | [18] |
+| Kenya Civil Aviation Authority | Kenya | www .kcaa .or .ke |"
+3,What is an airstair?,a set of steps built into an aircraft so that passengers and crew can get on and off without needing help from outside,"# Airstair
+
+Figure: DC-3 modified with a simple airstair
+
+Figure: Northwest Airlines Boeing 727 with ventral airstair open
+
+Figure: 3-section folding airstair on a "" Combi "" 737-200 aircraft of Alaska Airlines
+
+Figure: George W. Bush boards a VC-25 using the lower-level airstair.
+
+Figure: The Il-86, a wide-body airliner with airstairs into the lower cargo level. The rear airstair is also visible in this picture.
+
+Figure: The airstair on a business jet
+
+Figure: There were no passengers to accommodate on this business jet conversion for cargo operations. A manually-placed, folding airstair saved weight for crew access to the cockpit.
+
+An airstair is a set of steps built into an aircraft so that passengers and crew can get on and off without needing help from outside. The stairs are built as part of a door or are lowered from inside after a door has been opened. Airstairs do away with needing a mobile stairway or jetway to get in and out of an aircraft. Some of the earliest aircraft with airstairs were the Martin 2-0-2 and Martin 4-0-4 . Some Douglas DC-3 aircraft were retrofitted with airstairs. As the infrastructure of airports developed, the need for airstairs decreased.
+
+The cabin doors on wide-body aircraft are significantly higher above the ground than on narrow-body aircraft. When airstairs have been a requirement, as on the VC-25 and the Ilyushin Il-86 , the airstairs go into the lower level cargo hold, with steps inside to get to the cabin.
+
+Some aircraft, like the Boeing 727 and McDonnell Douglas DC-9 , were designed to improve ground services, with passengers deplaning from the front as the aircraft is serviced from the rear, enabling quicker turnarounds.
+
+Airstairs are also used as a security measure, for example on aircraft carrying the President of the United States , allowing the aircraft to be boarded by VIPs at any time – with or without the cooperation of ground services.
+
+## Design
+
+Ventral airstairs have been used on rear-engined airliners, such as the Boeing 727 , the McDonnell Douglas DC-9 , MD-80 and MD-90 , the BAC 1-11 , the Sud Aviation Caravelle and the Yakovlev Yak-40 / Yak-42 series, and are incorporated as ramps which lower from the fuselage. The Ilyushin Il-86 has three airstairs on the port side.
+
+The most common type of airstair is found on most business aircraft, regional jets, and other small airliners. Steps are built on the inside of the passenger door, which is hinged at its lower edge to make a stairway from the ground. Because the aircraft which use it sit low to the ground, it is simple and relatively light. This type has also been used with a single-length stair extension to the cargo compartment of the widebody Ilyushin Il-86 (the primary entrance to the aircraft for passengers), Boeing VC-25 , and the belly lounges of three Lockheed L-1011s ."
+4,Where are the separate accessory drives taken from on the de Havilland Goblin?,"the nose cone, above and below the engine core","# Accessory drive
+
+Figure: Klimov TV3-117 turboshaft engine. The accessory drive is the large casting on the top.
+
+The accessory drive is a gearbox that forms part of a gas turbine engine. Although not part of the engine's core, it drives the accessories – such as generators, pumps for fuel and lubrication oil, air compressors, hydraulic pumps and engine starters – that are otherwise essential for the operation of the engine or the aircraft on which it is mounted. Accessory drives on large engines handle between 400–500 hp.
+
+## Components
+
+Figure: Turbomeca Adour , with the accessory drive mounted beneath. The accessories are removed and their mounting flanges covered by bright red blanking plugs.
+
+Power for the accessory drive is taken from the central shaft linking the turbine and compressor sections of the engine. This requires an internal gearbox that couples the drive to a radial driveshaft or towershaft that drives an external gearbox .
+
+### Internal gearbox
+
+Figure: Internal gearbox of the Rolls-Royce Pegasus
+
+The design of the internal gearbox is complicated by the heat and small space available in which to connect the driveshaft. It is usually placed between the compressor outlet and the combustor . In turboprops or designs with centrifugal compressors, it may be placed ahead of the compressor.
+
+For two-shaft designs, an accessory drive will be taken from the high-pressure shaft, i.e. the outer and shorter of the two concentric shafts. This shaft comes up to speed more quickly when the engine is started. The drive and accessory gearboxes may also be split in two, one driven from each engine shaft, so as to distribute their loads. The engine-critical systems, including the starter drive, are arranged on the high-pressure shaft, with aircraft systems on the low-pressure shaft. The high-pressure shaft also rotates faster than the low-pressure shaft, which may influence the distribution of accessories.
+
+To allow for thermal expansion, the drive from the main shaft may be taken by one of three means:
+
+- Direct drive, by a bevel gear on the main shaft.
+
+- Stub shaft drive, where a tubular stub shaft is fitted over the main shaft and driven from it by splines. This stub shaft carries the bevel gear that drives the radial shaft.
+
+- Idler shaft drive, a narrow shaft runs parallel to the main shaft. It is driven by spur gears and in turn drives the bevel gear to the main gearbox.
+
+### Radial driveshaft
+
+Figure: de Havilland Goblin Separate accessory drives are taken from the nose cone, above and below the engine core.
+
+To make the best use of the limited space for the driveshaft and internal gearbox, the driveshaft runs at high speed, thus allowing it to be of small diameter. This reduces the disruption to the airflow and the size of the hollow fairing that encloses it."
+5,How many Boeing 777-300ER aircraft did Turkish Airlines lease from Jet Airways in December 2008?,3 adet Boeing 777-300ER,"Beş yılda filosunu 65'ten 120'ye neredeyse iki katına çıkaran ve 2005'ten beri herhangi bir uçak sipariş etmeyen havayolunun, Ekim 2008'de Hürriyet 'e göre 25 adede kadar geniş gövde ve 50 adede kadar dar gövde uçak sipariş etmeyi planladığı bildirildi. Dört yıl önce sipariş edilen Airbus A330 uçakları sadece eski Airbus A310uçaklarının yerini aldı, bu da Türk Hava Yolları'nın uzun mesafe filosunda kayda değer bir büyüme sağlayamadığı anlamına geliyordu. Havayolu ayrıca, kira sözleşmesi yenilenmeyen eski 737-400 varyantının yerine 4 adet Boeing 737-700 uçağı kiraladı. Buna ek olarak, 2008 yılında çoğunluğu Airbus A320 ailesi ve Boeing 737 Next Generation uçakları olmak üzere toplam 21 kiralık uçak filoya katıldı, ayrıca dört geniş gövdeli uçak da filoya dahil oldu. Nisan 2008'de havayolu, AnadoluJet 'i ticari marka olarak kurdu ve Boeing 737-400'lerinin beşini bu markaya devretti. AnadoluJet, Türk Hava Yolları çatısı altında faaliyet gösteren ve bağımsız olmayan bir şirkettir. Kasım 2008 itibarıyla havayolu, Airbus A310'larından üçünü kargo uçağına dönüştürdü. Bu tipteki iki uçak Nisan 2009'da Ariana Afghan Airlines 'a satıldı. Türk Hava Yolları, Aralık 2008'de Jet Airways 'ten 3 adet Boeing 777-300ER uçağı kiraladı. Nisan 2009'da Türk Hava Yolları 5 adet Boeing 777-300ER uçağı sipariş ettiğini açıkladı. Aynı yılın Temmuz ayında 7 uçak daha sipariş edilerek toplam uçak sayısı 12'ye çıkarıldı. Kasım 2009'da havayolu 3 adet Airbus A330-300 uçağı sipariş ederek toplam sipariş sayısını 10'a çıkardı. Türk Hava Yolları ayrıca 2 adet Airbus A330-200F kargo uçağı için Airbus ile bir mutabakat zaptı imzaladı.
+
+### 2010'lar
+
+Figure: İlk neo 2013'te filoya katıldı."
+6,How does the behavior of spinning turbine components change once the engine is warmed up?,"Once the engine is warmed up, all components are at a steady temperature, and the spinning turbine components maintain their deformation due to centrifugal forces.","# Active tip-clearance control
+
+Active clearance control ( ACC ) is a method used in aircraft gas turbine engines to improve fuel efficiency . This is achieved by actively controlling the turbine tip clearance during multiple phases of flight. Passive clearance control, on the other hand, sets the tip clearance for one operating condition, and the clearance at the other conditions results from the heating and forces on the components.
+
+Figure: CFM International CFM56 -5B engine showing turbine tip clearance control: piccolo tubes, round LPT case, and smooth outer surface of HPT case cooling manifold
+
+ACC has been used in aircraft engine design since the late 1960s to reduce wasted energy in the engine, and increase fuel efficiency. It is used on engines such as the CFM International CFM56 -5B engine, installed on the Airbus A320 , and the Rolls-Royce BR700 .
+
+## Background
+
+Blade tip sealing has been a challenging problem since the development of gas turbine engines. This is because the clearance between the rotating blade tips and surrounding casing varies from thermal expansion and mechanical strain of the components.
+
+Turbine tip clearance is a leakage path for gas to flow around, and not through the turbine blades . Gas that does not flow through the turbine blades does not contribute to the power produced by the turbine. This wastes energy, and reduces fuel efficiency.
+
+There are three main components that contribute to tip clearance: the spinning turbine disc, spinning turbine blades, and the non-moving shroud. At start-up, these are all cold and moving slowly. During warm-up, they are heating up and expanding at different rates. The turbine components deform due to centrifugal stresses as they spin, while the non-moving shroud does not. Once the engine is warmed up, all of the components are at a steady temperature, and the spinning turbine components maintain their deformation due to centrifugal forces. In none of these states is it acceptable for the turbine tips to rub on the shroud, so positive clearance must be maintained in all cases. Zero clearance is ideal for the sake of efficiency. With only passive clearance control, the tip clearance is set as low as safely possible in whatever the worst-case condition is, and then the clearance is larger in all of the other conditions. With active clearance control, the clearance can be set as low as safely possible in multiple conditions.
+
+High pressure turbine (HPT) blade tip clearance has a significant impact on fuel burn and emissions. Using ACC gives significant benefits in cruise fuel burn, range, and payload capability for aircraft.
+
+## Basic system overview
+
+As an example the CFM International CFM56 -5A engine active clearance control uses HPC air for the HPTACC and fan bypass air for the LPTACC. Clearance control is managed by the engine FADEC which consists of an electronic control unit (ECU), an hydromechanical unit (HMU) and HP and LP ACC valves."
+7,"What revisions of AC 20-115 are listed in its revision history, along with their years and summaries?",AC 20-115 | 1982 | Called attention to RTCA DO-178.; AC 20-115A | 1986 | Called attention to RTCA DO-178A.; AC 20-115B | 1993 | Called attention to RTCA DO-178B.; AC 20-115C | 2013 | Calls attention to RTCA DO-178C w/guidance for Rev B to Rev C change.; AC 20-115D | 2017 | Minor updates largely to harmonize with EASA guidance. Additional Guidance for Field Loadable Software and for User Modifiable Software.,"## Revision History
+
+| Revision | Year | Summary |
+| --- | --- | --- |
+| AC 20-115 | 1982 | Called attention to RTCA DO-178. |
+| AC 20-115A | 1986 | Called attention to RTCA DO-178A. |
+| AC 20-115B | 1993 | Called attention to RTCA DO-178B. |
+| AC 20-115C | 2013 | Calls attention to RTCA DO-178C w/guidance for Rev B to Rev C change. |
+| AC 20-115D | 2017 | Minor updates largely to harmonize with EASA guidance. Additional Guidance for Field Loadable Software and for User Modifiable Software. |"
+8,What are the projected cabin upgrade categories and their 2016 and 2026 values in the aircraft cabin evolution table?,Interior modifications | 2600 | 4600; Avionics/systems | 765 | 1365; painting | 539 | 862; AD/service bulletins | 302 | 410; cabin connectivity | 190 | 323,"| 2016 | 2026 | Cabin upgrades |
+| --- | --- | --- |
+| Interior modifications | 2600 | 4600 |
+| Avionics/systems | 765 | 1365 |
+| painting | 539 | 862 |
+| AD/service bulletins | 302 | 410 |
+| cabin connectivity | 190 | 323 |"
+9,"In the list of air navigation service providers, what URL is listed for the National Civil Aviation Center (NCAC)?",www .ncac .mcaa .gov .mn,"| Name | Country/region | URL | Ref. |
+| --- | --- | --- | --- |
+| Administration de la navigation aérienne (ANA) | Luxembourg | www .ana .public .lu /en / |  |
+| Department of Civil Aviation (ATS) | Cyprus | www .mcw .gov .cy /mcw /dca /dca .nsf /DMLairtraffic _en /DMLairtraffic _en?OpenDocument |  |
+| National Civil Aviation Center (NCAC) | Mongolia | www .ncac .mcaa .gov .mn |  |
+| Aeronautical Radio of Thailand (AEROTHAI) | Thailand | www.aerothai.co.th |  |
+| Air Navigation Services Aruba (ANSA) | Aruba | www .ansa .aw |  |
+| Air Navigation Services Finland (ANS Finland) | Finland | www.ansfinland.fi |  |
+| Air Navigation Services of the Czech Republic (ANS CR) | Czech Republic | www .ans .cz |  |
+| Agence pour la Securité de la Navigation Aerienne en Afrique et Madagascar (ASECNA) | Madagascar | www .asecna .aero |  |
+| Air Traffic & Navigation Services (ATNS) | South Africa | www .atns .com / www .atns .co .za |  |
+| Airports Authority of India (AAI) | India | www .aai .aero |  |
+| Airservices Australia | Australia | www .airservicesaustralia .com |  |
+| Airways New Zealand | New Zealand | www .airways .co .nz |  |
+| Saudi Air Navigation Service (SANS) | Saudi Arabia | www .sans .com .sa |  |
+| Armenian Air Traffic Services (ARMATS) | Armenia | www.armats.com |  |
+| Austro Control | Austria | www.austrocontrol.at |  |
+| Avinor | Norway | www.avinor.no |  |
+| Azerbaijan Air Navigation Services (AZANS) | Azerbaijan | www .azans .az |  |
+| Belgocontrol (trade name skeyes) | Belgium | skeyes .be |  |
+| Bosnia and Herzegovina Air Navigation Services Agency (BHANSA) | Bosnia and Herzegovina | www .bhansa .gov .ba |  |
+| Bulgarian Air Traffic Services Authority (BULATSA) | Bulgaria | www.bulatsa.com |  |
+| Civil Aviation Authority of Mongolia (CAA Mongolia) | Mongolia | www.mcaa.gov.mn |  |
+| Civil Aviation Authority of Pakistan (CAA Pakistan) | Pakistan | www .caapakistan .com .pk |  |
+| Civil Aviation Authority of Uganda (CAA Uganda) | Uganda | www .caa .co .ug |  |
+| Air Traffic Management Bureau | China | www.atmb.net.cn |  |
+| Civil Aviation Department (Hong Kong) | Hong Kong | www.cad.gov.hk |  |
+| Vietnam Air Traffic Management Corporation (VATM) | Vietnam | https://vatm.vn |  |
+| Corporación Centroamericana de Servicios de Navegación Aérea (COCESNA) | Central America | www .cocesna .org |  |
+| Corporación Peruana de Aeropuertos y Aviación Comercial (CORPAC) | Peru | www .corpac .gob .pe |  |
+| Civil Aviation Authority of the Philippines (CAAP) | Philippines | caap .gov .ph /air-navigation-service / |  |
+| Croatia Control - Croatian Air Navigation Services | Croatia | www .crocontrol .hr |  |
+| Departamento de Controle do Espaço Aéreo (DECEA) | Brazil | www.decea.gov.br |  |
+| Deutsche Flugsicherung (DFS) | Germany | www.dfs.de |  |
+| DFS Aviation Services (DAS) | Germany | dfs-as.aero |  |
+| Devlet Hava Meydanları İşletmesi (DHMI, State Airports Authority) | Turkey | www.dhmi.gov.tr |  |
+| Directorate of Air Navigation Services (DANS) | Kenya | www.kcaa.or.ke |  |
+| Direction des Services de la navigation aérienne (DSNA) | France | www.developpement-durable.gouv.fr |  |
+| Dutch Caribbean Air Navigation Service Provider (DC-ANSP) | Curaçao | www.dc-ansp.org |  |
+| Empresa Argentina de Navegación Aérea ( EANA ) | Argentina | www.eana.com.ar |  |
+| ENAIRE | Spain | www .enaire .es |  |
+| ENAV S.p.A. (Italian air navigation service provider) | Italy | www.enav.it |  |
+| Estonian Air Navigation Services (EANS) | Estonia | www.eans.ee |  |
+| Etablissement National de la Navigation Aérienne (ENNA) | Algeria | www.enna.dz |  |
+| EUROCONTROL Maastricht UAC | Belgium , Netherlands , Luxembourg , upper airspace in north-western part of Germany | MUAC |  |
+| Federal Air Transport Agency (FATA) | Russia | www .favt .ru |  |
+| State Air Traffic Management Corporation (State ATM Corporation) | Russia | www .gkovd .ru /en / |  |
+| Federal Aviation Administration (FAA) | United States | www .faa .gov |  |
+| NATS Holdings (NATS) | United Kingdom | www ."
+10,How does the number of commercial aircraft dismantled by AFRA members in 2009 compare to the number of military aircraft dismantled that same year?,"In 2009, AFRA members dismantled 7,000 commercial aircraft and 2,000 military aircraft.","# Aircraft Fleet Recycling Association
+
+The Aircraft Fleet Recycling Association ( AFRA ) is an international non-profit association that brings together manufacturers, recycling companies and aviation tech companies across the aircraft industry . It aims to promote environmental best practices , regulatory excellence and sustainable development in aircraft disassembly and in the salvaging and recycling of aircraft parts and materials.
+
+Aircraft recycling is being addressed by multiple companies through individual environmental programmes. AFRA aims to provide an international perspective, advising aviation industry stakeholders on the legal, regulatory and technical issues of aircraft recycling and promoting greater cooperation among governments and industries.
+
+## Market
+
+Of the 400 to 450 aircraft scrapped and disassembled globally each year, around one third are parted out and disassembled by AFRA members, producing each year more than 30,000 tons of aluminium and 1,800 tons of other specialty alloy metals (including titanium , nickel , magnesium , and more) for recycling. In 2009, AFRA members dismantled more than 9,000 aircraft, including 7,000 commercial and 2,000 military. AFRA believe more value can be extracted from end-of-life activity.
+
+## History
+
+AFRA was founded in 2005, when 11 companies from Africa , Europe and North America agreed to develop an industry code of conduct and best practices in the areas of aircraft dismantling and material recycling. The group's aim was to motivate industry around the safe and environmentally responsible way of managing end-of-life aircraft.
+
+The original 11 members were Air Salvage International, Adherent Technologies, Bartin Group, The Boeing Company , Chateauroux Air Centre, Europe Aviation, Huron Valley Fritz, Milled Carbon, Rolls-Royce , and WINGNet.
+
+## Membership
+
+AFRA members include original equipment manufacturers , aircraft disassemblers, parts distributors, aircraft insurers and appraisers, materials recyclers, and technology developers. AFRA is also associated with technological companies and the academic community regarding research and development of recycling technologies. AFRA has grown from its founding 11 members to now encompass 40 members from 10 countries.
+
+## Mission
+
+The organization's mission is the sustainable management of end-of-life airframes and engines. AFRA promotes and publishes the collective experience of its members to improve best practice in the management of end-of-life aircraft. AFRA also encourages greater collaboration between organizations and companies that have a track record in the environmentally responsible management of end-of-life aircraft.
+
+AFRA develops partnerships and industry collaborations to create and enhance innovative technologies meant to improve environmentally sustainable practices in managing end-of-life aircraft. The organization is also developing technology that they believe can increase the economic value of aircraft assets. The safe handling and disposal of materials that cannot be recycled is a key priority of AFRA, as is returning reclaimed metals and composite materials back into commercial and aircraft manufacturing. AFRA members ultimately target a 95% recyclability rate."
+11,When did the Cavalese cable car crash occur?,3 February 1998,"The Cavalese cable car crash , also known as Strage del Cermis ( lit. ' Cermis massacre ' ), occurred on 3 February 1998, near the Italian town of Cavalese , a ski resort in the Dolomites some 40 kilometres (25 mi) northeast of Trento . Twenty people were killed when a United States Marine Corps EA-6B Prowler aircraft, flying too low and too fast, against regulations, cut a cable supporting a cable car of an aerial lift .
+
+The pilot, Captain Richard J. Ashby, and his navigator , Captain Joseph Schweitzer, were put on trial in the United States and found not guilty of involuntary manslaughter and negligent homicide . Later they were found guilty of obstruction of justice and conduct unbecoming an officer and a gentleman for having destroyed a videotape recorded from the plane, and were dismissed from the Marine Corps. The disaster, and the subsequent acquittal of the pilots, strained relations between the U.S. and Italy .
+
+## Details of the disaster
+
+Figure: Map of Trentino , Italy ; Cavalese is located in the north-east of the autonomous province
+
+On 3 February 1998, an EA-6B Prowler , an electronic warfare aircraft belonging to Marine Tactical Electronic Warfare Squadron 2 (VMAQ-2) of the United States Marine Corps , was on a low-altitude training mission . At 15:13 local time, the aircraft struck the cables supporting the aerial lift from Cavalese . It was flying at a speed of 470 knots (870 km/h; 541 mph) and at an altitude of between 80 and 100 metres (260 and 330 ft) above ground level in a narrow valley between mountains. Its right wing struck the cables from underneath, severing them and causing cabin No. 1 from Cermis with twenty people on board to fall over 80 metres (260 ft), leaving no survivors. The plane had wing and tail damage but was able to return to Aviano Air Base .
+
+### Victims"
+12,Bursa Yenişehir Havalimanı'nda 6 Ağustos 2004 itibarıyla Ankara'ya ilk tarifeli yolcu seferlerini hangi havayolu şirketi başlatmıştır?,Türk Hava Yolları,"Bursa-Yenişehir Havaalanı'nın 3 Kasım 2000 tarihinde resmi açılışı yapılmıştır. Aydınlatma ve benzeri eksiklerinin tamamlanmasını müteakiben faal olarak açılması 1 Haziran 2001 tarihinde olmuştur. Aynı gün Yunuseli'ndeki Bursa Havaalanı hava trafiğine kapatılmış ve Havaalanı Hava Kuvvetleri Komutanlığı'na teslim edilmiştir. Bugün itibarıyla de Yunuseli'ndeki eski Bursa Havaalanı hava trafiğine kapalıdır.
+
+21.05.2001 yılında Bakanlar Kurulu, 2001/2444 sayılı karar ile Bursa-Yenişehir Havaalanı'nı daimi yolcu giriş-çıkış hava hudut kapısı olarak tespit etmiştir. Böylelikle Yenişehir Havaalanı uluslararası hava trafiğine de açılmıştır.
+
+Yenişehir Havalimanı'na ilk yolcu seferleri 28.12.2002 tarihinde Rusya ve Ukrayna 'dan Uludağ 'a yılbaşını geçirmek üzere gelen turistleri taşıyan uçaklarla başlamıştır. Tarifesiz (charter) olarak yapılan bu seferler bugün de aynı dönemlerde yapılmaya devam etmektedir. Bunu müteakiben 2004 Hac mevsiminde, Yenişehir Havaalanı ilk hacılarını da uğurlamaya başlamıştır.
+
+6 Ağustos 2004 tarihi itibarıyla ilk tarifeli yolcu seferleri Türk Hava Yolları tarafından Ankara 'ya başlamıştır. Ancak talebin düşük olması sebebiyle bu seferler iptal edilmiştir.
+
+Bursa tarifeli iç hat seferlerine 26.03.2007 tarihinde tekrar kavuşmuştur. Trabzon seferleri yine THY tarafından icra edilmiştir. Bunu Erzurum seferleri izlemiştir. Sun Express 'in uçaklarının devreye girmesiyle de Diyarbakır , İzmir ve Antalya seferleri başlamıştır. Daha sonra THY uçuşları tamamen Sun Express'e devretmiştir. Ancak önce İzmir ve Diyarbakır sonra ise Antalya ve en son 18.02.2010 tarihinde Erzurum ve Trabzon seferleri iptal edilerek havaalanındaki bütün tarifeli seferler son bulmuştur. Bu arada 2009 yılında umre seferleri de havaalanımızdan yapılmaya başlandı. Bu seferler halen devam etmektedir. Yine 2009 yılı içerisinde MNG Hava Yolları tarafından Mısır Kahire 'ye civciv ihracatı amacıyla kargo seferleri 14.04.2009'da başlamıştır. Bu seferler devam etmektedir."
+13,"EGPWS'nin Mod4'ünde, ILS alçalma istikametinde aşırı bir değişim tespit edildiğinde hangi sesli ikaz verilir?","""GLIDESLOPE""","### Mod4, Araziye güvensiz uçuş
+
+FITNL , iniş donanımları devreye alınmamış iken araziye yaklaşım anlamına gelen Flight Into Terrain Not in Landing Configuration kelimelerinin baş harflerinden kısaltılmıştır. Radar mesafe ölçeri, irtifa ölçümünde kullanır ve iniş tekerleri ve (veya) flaplar devreye alınmamışsa ikaz verir.
+
+İniş takımları açık ve kapalı olmasına göre iki farklı çalışması vardır. Mod4A: İniş takımları kapalı iken yere güvensiz yaklaşım. uyarısı too low terrain, too low gear, too low flap.
+
+İniş takımları kapalı olduğu halde 700 ft (213m) ve üzeri radar irtifalarında devrededir. 0.35 mach (432 km/h) ve daha düşük hızlarda tehlikeli bölgeye girilirse ""İngilizce:TOO LOW, GEAR"" (aşırı alçak, tekerler) ikazı duyulur. 0.35 mach ve üzeri hızlarda tehlikeli bölgeye girilirse ""İngilizce:TOO LOW, TERRAIN"" (aşırı alçalma, arazi) sesli ikazı duyulur ve tehlikeli yükseklik ikaz bölgesi 1000 ft (304m) olarak ayarlanır.
+
+Mod4B:İniş takımları açık iken devrededir.""too low terrain,too low flap"" mod 4c:İnis takımları açık, flaplar açıksa sadece ""too low terrain "" ikazi verir.
+
+### Mod5, aletli alçalmadan sapma
+
+Aletli ( ILS ) alçalma istikametinde aşırı değişim gözlemlendiğinde sesli olarak ""GLIDESLOPE"" ikazı verilir.
+
+Uçağın iniş doğrultusunun, aletli uçuş çizgisinin sınırları dışına çıkıp çıkmadığını denetler.
+
+### Mod6, yanal açı
+
+Yan kanat açısı aşırı değiştiğinde ""BANK ANGLE"" ikazı verilir.
+
+### Mod7, hava boşluğu
+
+Havaboşluğuna girme ve türbülans sonucu irtifada ani değişim gözlemlendiğinde ""WINDSHEAR"" ikazı verilir.
+
+## Çalışma şeması
+
+Uçağın sistemlerinden ve sensörlerinden gelen bilgileri değişik algoritmalar ile işleyerek sesli, ışıklı veya görüntülü uyarılar verir.
+
+Figure: EGPWS çalışma şeması"
+14,AA-11'in harp başlığı ağırlığı nedir?,7.4 kg,"# AA-11
+
+Figure: AA-11 Archer (Okçu)
+
+Vympel R-73 NATO rapor ismi adıyla AA-11 archer'dır, Sovyetler 'in 1980'li yıllarda yaptığı 0,5–30 km menzilli yakın hava-hava muharebe füzesidir. Kendi çapında dünyanın en iyisi olduğu söylenebilir. SSCB çöktüğünde Batılıları şaşkına çevirmiştir zira 60g manevra kabiliyeti vardır ki bu onu gerçekten mükemmel yapar. Bugün hâla kullanımdadır. Nato kod adı AA-11 archer'dır.
+
+## Teknik Veriler
+
+Üretici Firma: Vympel NPO/ Rusya
+
+Tipi: Kısa Menzilli Havadan Havaya Muharebe Füzesi
+
+Güdüm Sistemi: Kızılötesi Görüntüleme (IR)
+
+Harp Başlığı: 7.4 kg Parça Tesirli HE harp başlığı
+
+Azami Etkili Menzili: 30 km
+
+Hızı: 2.5 Mach
+
+İtki Tipi: Sıvı Yakıtlı Roket Motoru
+
+Uzunluk: 2,90 m
+
+Çap: 170 mm
+
+Ağırlık: 105 kg"
+15,Antonov An-225 Mriya'da hangi motor tipi ve sayısı kullanılmıştır?,6× ZMKB Progress D-18 turbofan,"## Kullanıcılar
+
+### Eski Kullanıcılar
+
+**Sovyetler Birliği**
+
+- Sovyet Buran programı için Antonov Airlines (eski operatör); şirket ve uçak Sovyetler Birliği'nin dağılmasından sonra Ukrayna'ya geçti.
+
+**Ukrayna**
+
+- Antonov Airlines
+
+27 Şubat 2022'de Rusya'nın Ukrayna'yı işgali sırasında Rus güçleri tarafından imha edildi.
+
+## Genel özellikler
+
+- Mürettebat : 6
+
+- Boş ağırlık : 285.000 kg (628.315 lb)
+
+- Alabileceği En Fazla Yük : 250.000 kg (551.000 lb)
+
+- Azami Kalkış Ağırlığı : 640.000 kg (1.411.000 lb)
+
+- Yükleme Ölçüleri : 440 x 640 cm (14,4 x 21,0 ft)
+
+- Uzunluk : 84 m (276 ft)
+
+- Yükseklik : 18,1 m (59,3 ft)
+
+- Kanat açıklığı : 88,40 m (291 ft 2 in)
+
+- Kanat alanı : 905,0 m2 (9.741 ft2)
+
+- Motor : 6× ZMKB Progress D-18 turbofan , 229 kN (51.600 lbf) her biri
+
+- Havalanma (Kalkış) mesafesi : 3.500 m (11.500 ft) (azami ağırlıktayken)
+
+## Performans
+
+- Azami hız : 850 km/s (460 knots, 530 mph)
+
+- Uçuş hızı : 750 km/s (400 knots, 465 mph)
+
+- Menzil :
+
+  - Azami yakıtla : 14.000 km (8.700 mi)
+
+  - Azami yükle : 4.000 km (2.500 mi)
+
+- Uçuş yüksekliği : 10.000 m (33.000 ft)"
+16,Sınır tabaka yutulması tekniğinin kullanıldığı Aurora D8 veya Onera Nova konseptlerinde seyir sırasında sağlanan tasarruf oranı nedir?,%5 tasarruf,"${L \over \delta _{2}}={\sqrt {\rho vL \over \mu }}={\sqrt {Re}}$
+
+burada $Re$ = Reynolds Sayısı; $\rho$ = yoğunluk; $v$ = hız; $\delta _{2}$ = konvektif sınır tabakanın uzunluğu; $\mu$ = viskozite; $L$ = karakteristik uzunluk.
+
+## Sınır tabaka yutulması
+
+Sınır tabaka yutulması, yavaş gövde sınır tabakasını yutan ve sürüklemeyi azaltmak ve itici verimi artırmak için iz bölgesini yeniden enerjelendiren kıça monte edilmiş bir itici ile uçak yakıt verimliliğinde bir artış vadetmektedir. Bozuk hava akışında çalışmak için fan daha ağırdır, verimliliği azalır ve entegrasyonu zordur. Aurora D8 veya Fransız araştırma ajansı Onera 'nın Nova konsepti gibi tasarımlarda, gövde sınır tabakasının %40'ını yutarak seyir sırasında %5 tasarruf sağlamak için kullanılır.
+
+Airbus , Nautilius konseptini Eylül 2018'deki ICAS kongresinde sundu: azimut akış bozulmasını en aza indirirken tüm gövde sınır tabakasını yutmak için, gövde 13-18:1 baypas oranlı fanlara sahip iki iğe ayrılır. İtici verimlilikleri, daha küçük, daha hafif, daha az karmaşık ve gürültülü motorlara sahip zıt yönlü dönen açık rotorlar gibi %90'a kadar çıkar. Normal bir kanat altı 15:1 baypas oranlı motora kıyasla yakıt tüketimini %10'dan fazla düşürebilir."
+17,"Değişken pitch veya sabit hız pervaneli uçaklar, starter motor devresindeki hava yüklerini ve akımı azaltmak için hangi pitch konumunda çalıştırılır?",fine pitch,"### Hucks starter
+
+Figure: The Shuttleworth Collection 's working Hucks Starter positioned with their Bristol F.2 Fighter
+
+The Hucks starter (invented by Bentfield Hucks during WWI) is a mechanical replacement for the ground crew. Based on a vehicle chassis the device uses a clutch driven shaft to turn the propeller, disengaging as the engine starts. A Hucks starter is used regularly at the Shuttleworth Collection for starting period aircraft.
+
+### Pull cord
+
+Self-sustaining motor gliders (often known as 'turbos') are fitted with small two-stroke engines with no starting system, for ground testing a cord is wrapped around the propeller boss and pulled rapidly in conjunction with operating decompressor valves. These engines are started in flight by operating the decompressor and increasing airspeed to windmill the propeller. Early variants of the Slingsby Falke motor glider use a cockpit mounted pull start system.
+
+### Electric starter
+
+Figure: A Supermarine Spitfire at readiness with a trolley accumulator connected
+
+Aircraft began to be equipped with electrical systems around 1930, powered by a battery and small wind-driven generator . The systems were initially not powerful enough to drive starter motors. Introduction of engine-driven generators solved the problem.
+
+Introduction of electric starter motors for aero engines increased convenience at the expense of extra weight and complexity. They were a necessity for flying boats with high mounted, inaccessible engines. Powered by an onboard battery, ground electrical supply or both, the starter is operated by a key or switch in the cockpit. The key system usually facilitates switching of the magnetos.
+
+In cold ambient conditions the friction caused by viscous engine oil causes a high load on the starting system. Another problem is the reluctance of the fuel to vaporise and combust at low temperatures. Oil dilution systems were developed (mixing fuel with the engine oil), and engine pre-heaters were used (including lighting fires under the engine). The Ki-Gass priming pump system was used to assist starting of British engines.
+
+Aircraft fitted with variable-pitch propellers or constant speed propellers are started in fine pitch to reduce air loads and current in the starter motor circuit.
+
+Many light aircraft are fitted with a 'starter engaged' warning light in the cockpit, a mandatory airworthiness requirement to guard against the risk of the starter motor failing to disengage from the engine.
+
+### Coffman starter
+
+The Coffman starter was an explosive cartridge operated device, the burning gases either operating directly in the cylinders to rotate the engine or operating through a geared drive. First introduced on the Junkers Jumo 205 diesel engine in 1936 the Coffman starter was not widely used by civil operators due to the expense of the cartridges.
+
+### Pneumatic starter
+
+In 1920 Roy Fedden designed a piston engine gas starting system, used on the Bristol Jupiter engine in 1922. A system used in early Rolls-Royce Kestrel engines ducted high-pressure air from a ground unit through a camshaft driven distributor to the cylinders via non-return valves , the system had disadvantages only overcome by conversion to electric starting."
+18,Posta güvercini nasıl tanımlanır?,"Posta güvercini, mektup taşıyıcı güvercinler tarafından gönderilen yazılı mesajların iletilme metodudur.","# Posta güvercini
+
+Posta güvercini ; mektup taşıyıcı güvercinler tarafından gönderilen yazılı mesajların iletilme metodudur . Bu tür posta teslimi Antik Çağ denilen insanlığın en eski zaman diliminde dahi yaygındı. Modern Çağ başlangıcında yalnızca askeri amaçlarla kullanılan bu yöntemin, özellikle 19.yüzyılda sivil amaçlarla da kullanımı yaygınlaşmış, taşıyıcı güvercin hatları oluşturulmuştur. Bazı yerlerde posta güvercinlerinin posta pulları bile çıkmıştı . İkinci Dünya Savaşı'ndan sonra, posta güvercinlerinin fonksiyonu neredeyse tamamen modern telekomünikasyon araçlarıyla sağlanmaya başlandı.
+
+Figure: Posta güvercini"
+19,Alumni Network nasıl tanımlanır?,"Önceden EUROAVIA'da aktif olarak görev almış olan üyeler tarafından kurulur; değişik fikirlerin geliştirilmesi adına, topluluğun 50 yıllık köklü geçmişine dayanarak, daha verimli bir ortamın oluşmasına katkı sağlar.","Yerel gruplardan ikisi Kaloşvar ve Covilhã Prospected Affiliated Society statüsündedir. Bu iki grup şu anda birliğe katılım sürecindedir.
+
+### Working Groups (Çalışma Grupları)
+
+Çeşitli alanlarda aktivite gösteren çalışma grupları vardır.
+
+#### EUROAVIA News
+
+“EUROAVIA News” topluluğun 3 ayda bir resmi yayın yapan organıdır. “EUROAVIA News” topluluğun hem her üyeyle hem de topluluğu destekleyen her şirketle iletişim içerisinde kalmasını sağlar.
+
+#### Newsletter
+
+Ayda bir yayınlanan ve üyeleri topluluk içerisinde olup bitenlerden haberdar eden “Newsletter” topluluk içi bir iletişim aracıdır. Her üyeye yazı yayınlama fırsatı tanıyan “Newsletter” internet üzerinden okuyuculara ulaştırılır.
+
+#### EUROAVIA Young Engineers (EYE) (EUROAVIA Genç Mühendisler)
+
+EYE, staj ve iş olanaklarını bir çatı altında toplayarak bu bilgileri web ortamında ziyaretçilerin hizmetine sunan çalışma grubudur. Kullanıcılarına CV bırakma olanağı da sunmakta olan EYE, şirketler tarafından havacılık öğrencilerinin toplandığı bir havuz olarak görülmekte böylece hem genç mühendisler hem de şirketler bundan karşılıklı fayda sağlamaktadırlar.
+
+#### EUROAVIA Alumni Network (EAN) (EUROAVIA Mezunlar Ağı)
+
+Önceden EUROAVIA'da aktif olarak görev almış olan üyeler tarafından kurulan “Alumni Network” değişik fikirlerin geliştirilmesi adına, topluluğun 50 yıllık köklü geçmişine dayanarak, daha verimli bir ortamın oluşmasına katkı sağlamaktadır.
+
+#### Public Relations (PR) (Halka İlişkiler)
+
+Rzeszow'daki EMEAC 2008'de kurulan PR WG, topluluğun en genç çalışma grubudur. PR WG'nin görevi topluluk içi olduğu kadar topluluk dışı bağlantılar noktasında da sağlıklı ve yapıcı bir iletişim sağlamaktır.
+
+#### Air Show
+
+AIR SHOW çalışma grubunun görevi, EUROAVIA'nın geleneksel olarak katıldığı Le Bourget'deki Paris Air Show ve Berlin'deki ILA'da stant ve katılımcı üyelerin koordinasyonu gibi olayları organize ederek EUROAVIA'yı orada temsil etmektir. EUROAVIA, Friedrischshafen'de 2009'da düzenlenen AERO'da ilk kez katılmıştır.
+
+#### Informaion Technology (IT) (Bilişim Teknolojileri)
+
+Bilişim konusunda deneyimli üyelerden oluşan çalışma grubunun görevi, topluluğun websitesini düzenli olarak yenilemek ve dijital iletişim araçları olan forum ve elektronik posta listelerinin çalışırlıklarını kontrol etmek ve devamlılıklarını sağlamaktır. Aachen'da 2009'da düzenlenen EMEAC'da alınan karara göre, IT çalışma grubunun sorumlukları arasına “Central Archive” de eklenmiştir. “Central Archive” topluluğun basılı ya da dijital olan tüm dokümanları bir araya getirir. Bu arşiv yazılı olarak Aachen'da, dijital olarak ise Delft'te saklanır. Dijital arşiv tüm topluluk üyelerine açıktır."
+20,Yatırgaçların ana görevi nasıl tanımlanır?,Yatırgaçların ana görevi yuvarlanma hareketini sağlamaktır.,"## Temel kontrol yüzeyleri
+
+Sabit kanatlı bir uçak için temel kontrol yüzeyleri, bu yüzeylerin akışa karşı durup onu bozması ve böylece yüksek basınçlı bir bölge oluşturma prensibiyle çalışırlar. Kontrol yüzeylerinin çalıştığı durumlarda uçağın iki zıt tarafındaki basınç simetrisi bozulur ve bu da hareketi sağlar.
+
+### Kanatçıklar
+
+Kanatçıklar (aileron) kanat uçlarının firar kenarına yerleştirilirler ve birbirlerine zıt yönde çalışırlar. Pilot, lövyeyi sola eğdiğinde soldaki yatırgaç kalkar, sağdaki yatırgaç ise iner. Sağdaki kanatta hem kamburluk arttığı için sirkülasyonun şiddeti artar ve uçak sola yatar. Yatırgaçlar sıfır konuma gelmediği müddetçe uçak yuvarlanma hareketi yapmaya devam eder.
+
+### İrtifâ dümeni
+
+İrtifâ dümeni (elevator) yatay dengeleyici art kenarına dengeleyicinin çeşidine göre bir ya da karşılıklı iki adet yerleştirilir. Pilot lövyeyi geriye çektiğinde irtifa dümeni yukarı hareket eder. Bu da yatay dengeleyici üzerinde bir yüksek basınç bölgesi oluşturur ve uçak burun yukarı moment elde eder. Bu moment uçağın burnunu kaldırır. Lövye ileri itildiğinde ise tersi gerçekleşir. İrtifa dümeni sıfır konuma gelmediği müddetçe uçak yunuslama hareketine devam eder.
+
+### İstikâmet dümeni
+
+İstikâmet dümeni (rudder), genellikle kuyruğun art kenarına yerleştirilir. Pilot sol pedala bastığında Yüzgeç sola döner ve Yüzgeç üzerinde bir yüksek basınç bölgesi oluşur. Yüzgeç sıfır seviyeye gelmedikçe uçak sapma hareketine devam eder.
+
+Figure: Control surfaces 1. Kanatucu plakası (Winglet) 2. Düşük hız Yatırgacı 3. Yüksek hız Yatırgacı 4. Flap track fairing 5. Krüger flapları 6. Slatlar 7. Üç kademeli iç flap 8. Üç kademeli dış flap 9. Ters flap 10. Ters flaplar- Hava freni
+
+### Uçuş denetimlerinin ikincil etkileri
+
+#### Kanatçık
+
+Yatırgaçların ana görevi yuvarlanma hareketini sağlamaktır; zira taşımanın arttığı kanatta taşımaya bağlı olan indüklenmiş sürükleme de artmaktadır. Bu yüzden bir kanatta taşıma artıp, diğerinde azalırken taşımanın arttığı kanatta sürükleme de artmakta, diğerinde ise azalmaktadır. Bu yüzden yatırgaçlar ters bir sapma hareketine sebep olurlar. Bu ters sapma çoğu zaman küçük ölçüde gerçekleşse de planör gibi kanat açıklığı büyük olan küçük ve hafif uçaklarda önemli etkiler yaratabilir. Bazı gelişmiş uçaklarda diferansiyelli yatırgaçlarla bu etki yok edilmektedir."
+21,De Havilland Comet nasıl tanımlanır?,İngiliz De Havilland şirketi tarafından “dünyanın ilk jet motorlu yolcu uçağı” olarak tanıtılan ve ilk uçuşunu 27 Temmuz 1949 tarihinde ve ilk ticari uçuşunu Mayıs 1952'de yapan yolcu uçağıdır.,"# De Havilland Comet
+
+Figure: Bir Royal Air Force Comet C.2
+
+De Havilland Comet , İngiliz De Havilland şirketi tarafından ""dünyanın ilk jet motorlu yolcu uçağı"" olarak tanıtılan ve ilk uçuşunu 27 Temmuz 1949 tarihinde ve ilk ticari uçuşunu Mayıs 1952'de yapan yolcu uçağıdır .
+
+Uçağın kanadına yerleştirilmiş 4 adet Havilland Ghost 50 turbojet tipi motoru ile 480 mph hız yapabilmekteydi. Comet'in ilk modellerinde önemli uçak kazalarına sebebiyet veren ""metal yorgunluğu"" görülmüştür. metal yorgunluğu , kabinin sürekli döngüsel olarak basınçlandırılması ve ardından da basınçsızlandırılması sonucunda oluşmuş ve uçak gövdesine ağır bir zarar vermiştir. Comet serisinin ilki olan Comet 1 'in 10 Ocak 1954 tarihinde Roma - Londra seferini yaparken kalkıştan 20 dakika sonra metal yorgunluğu sebebiyle gövdesi parçalanmış ve 29 yolcu ve 6 mürettebattan kurtulan olmamıştır. 10 Ocak 1954 ve 8 Nisan 1954 tarihlerinde kalkıştan hemen sonra meydana gelen 2 gizemli kaza İngiliz otoritelerini Comet'i soruşturmaya yöneltmiş ve Comet'lerde hava basıncından oluşan metal yorgunluğu saptanarak uçağın gövdesinde ve tasarımında değişikliğe gidilmiş ve 1958 yılında Comet 4 modeliyle göklere geri dönmüştür."
+22,9K37 Buk sisteminin çeşitleri nelerdir?,"9K37 ""Buk"", 9K37M, 9K37M1 ""Buk-M1"", 9K37M1-2 ""Buk-M1-2"", 9K37M1-2A, 9K317 ""Buk-M2"", ""Buk-M3"" donanma: 3S90 (M-22), 3S90M, 3S90E1, 3S90M1","# 9K37 Buk
+
+| 9K35 Strela-10 |  |
+| --- | --- |
+| Buk-M1-2 |  |
+| Çeşidi | Taşınabilir uçaksavar sistemi |
+| Uyruğu | Sovyetler Birliği |
+| Hizmet geçmişi |  |
+| Hizmet | 1979-günümüze |
+| Kullanıcılar | Kullanıcılar |
+| Kullanıldığı savaşlar | Güney Osetya Savaşı Donbass Savaşı |
+| Üretim tarihi |  |
+| Tasarımcı | Almaz-Antey |
+| Çeşitleri | 9K37 ""Buk"", 9K37M, 9K37M1 ""Buk-M1"", 9K37M1-2 ""Buk-M1-2"", 9K37M1-2A, 9K317 ""Buk-M2"", ""Buk-M3"" donanma: 3S90 (M-22), 3S90M, 3S90E1, 3S90M1 |"
+23,Gazipaşa-Alanya Havalimanı'nın özet tablosunda hangi temel bilgiler yer almaktadır?,"IATA : GZP - ICAO : LTFG; Havalimanı tipi | Sivil; İşletici | TAV; Yer | Gazipaşa , Antalya Türkiye; Açılış | 2010; İnşa tarihi | 1998; Kullanım süresi | Sivil; Rakım ( ODS ) | 28 m / 91 ft; Koordinatlar | 36°17′56′′K 32°18′12′′D ﻿ / ﻿ 36.29889°K 32.30333°D ﻿ / 36.29889; 32.30333; Web sitesi | http://www.gzpairport.com/tr-TR/","| Gazipaşa-Alanya Havalimanı |  |
+| --- | --- |
+|  |  |
+|  |  |
+| IATA : GZP - ICAO : LTFG |  |
+| Özet |  |
+| Havalimanı tipi | Sivil |
+| İşletici | TAV |
+| Yer | Gazipaşa , Antalya Türkiye |
+| Açılış | 2010 |
+| İnşa tarihi | 1998 |
+| Kullanım süresi | Sivil |
+| Rakım ( ODS ) | 28 m / 91 ft |
+| Koordinatlar | 36°17′56′′K 32°18′12′′D ﻿ / ﻿ 36.29889°K 32.30333°D ﻿ / 36.29889; 32.30333 |
+| Web sitesi | http://www.gzpairport.com/tr-TR/ |
+| Harita |  |
+|  |  |
+| GZP Türkiye haritasında göster GZP Avrupa haritasında göster GZP Asya haritasında göster |  |
+| Pistler |  |
+| Yön Uzunluk Yüzey ft m 08/26 8,202 2,500 Beton |  |
+|  |  |"
+24,"Amerika Birleşik Devletleri'nin aktif hava araçları listesindeki Donanım bölümünde, Boeing ve Boeing Insitu tarafından üretilen İHA'ların adları nelerdir?",ScanEagle; RQ-21A Blackjack,"  |  |
+| TH-57B/C Sea Ranger | Bell | ABD | Helikopter | Eğitim helikopteri |  | 114 |  |  |
+| ScanEagle | Boeing | ABD | İHA |  |  |  |  |  |
+| RQ-21A Blackjack | Boeing Insitu | ABD | İHA |  |  |  |  |  |
+| MQ-8 Fire Scout | Northrop Grumman | ABD | İHA | Devriye | 2009 | 27 |  | Helikopter. Planlanan 96 adet |"
+25,Armstrong Whitworth AW.171'in genel bilgi tablosunda hangi özellikler ve değerler yer alır?,Type | Experimental aircraft; Manufacturer | Armstrong Whitworth; Status | Cancelled; Number built | 0,"| AW.171 |  |
+| --- | --- |
+| General information |  |
+| Type | Experimental aircraft |
+| Manufacturer | Armstrong Whitworth |
+| Status | Cancelled |
+| Number built | 0 |"
+26,To what time was the airspace closure extended on Monday 19 April following the 2010 Eyjafjallajökull eruption?,08:00 UTC+02," Irish Aviation Authority (IAA), and Dublin Airport Authority (DAA), met on the evening of 15 April to discuss the emergency. The taskforce had met at the National Emergency Co-ordinating Centre on five further occasions by the morning of 20 April 2010. On 16 April, Irish air space was reopened for domestic flights from 10:00 IST and westward transatlantic flights resumed from Dublin: Irish flights which were scheduled to fly eastwards over the United Kingdom and continental European airspace remained grounded. On 17 April, the ash spread to most of Ireland, and all airspace was closed until 18:00 UTC+01, and subsequently extended until 18:00 UTC+01 on Monday 19 April. On Monday 19 April, the country's aviation chief warned that Dublin was ""damned"" and would be shut off to the rest of the world until Friday 23 April. On Tuesday 20 April, it was reported that at least 30,000 Irish people were still stranded abroad, unable to get home. Those who were at home were opting for ""staycations"", as Irish holidaymakers swapped Barcelona for Ballybunion in a boost for domestic tourism. It had been anticipated that Irish air space would re-open for limited flights from 05:00 UTC+1 on 20 April; however, the volcanic ash cloud made this impossible. It was expected that normal flights will resume from Friday, 23 April, due to the backlog of flights. Shannon Airport opened at 13:00 UTC+1 on 20 April (not for departing commercial flights) but Cork Airport and Dublin Airport remained closed. On 20 April at 21:00 UTC+1 Irish airspace fully re-opened, but air travellers were advised to contact their airline. It was expected that normal flights would resume on Friday 23 April. A statement from the Irish Aviation Authority said ""[it] is expected that flights tomorrow [21 April] will focus on positioning aircraft and crews and full service by the airlines may take up to three days to recover. Passengers should consult airline websites before travelling to the airport for flights."" On 4 May, Irish airspace closed from 07:00 to 13:00 IST. The IAA said the decision was based on information from the Volcanic Ash Advice Centre (VAAC). The no fly zone affected Dublin, Shannon, Galway, Sligo, Ireland West (Knock), Donegal, Cork, and Kerry. At 13:00 UTC+1 Irish airspace fully re-opened. However further closures and cancellations occurred the next day, on 5 May. |
+| Italy | Ente Nazionale per l'Aviazione Civile closed the airspace over Northern Italy for 17 April, excluding emergency flights and flights flying over 35,000 feet (11,000 m), from 06:00 CEST until 14:00 CEST . The closure was later extended to 08:00 UTC+02 on Monday 19 April. Over 198 flights at the Rome airports were cancelled, 436 at the Milan airports, 104 at Naples , and 43 at Catania . |
+| Kosovo | Kosovo closed its airspace at 00:00 UTC+02 on 18 April, cutting air access to Pristina . It reopened at 14:00 UTC+02 on 18 April. |
+| Latvia | Latvian airspace was closed at 21:00 UTC on 15 April, cutting air access to Riga and other airports of local significance. It is to remain closed until at least 06:00 UTC on 19 April, but would probably remain closed until 22 April. |
+| Luxembourg | Luxembourg Airport was closed for virtually all flights on 16 April and remained closed at least until the evening of 18 April. |
+| Netherlands | Dutch airspace closed at 17:00 UTC on 15 April and remained closed until 20:00 CEST on 19 April. They restarted flights after this time, starting with 4 KLM flights to Dubai , New York, Toronto, and Shanghai. |
+| Norway | Air travel was suspended from 14 April. Airports throughout Nord-Trøndelag , Nordland , Troms , and Finnmark were re-opened at times, as those areas were least affected by the ash: the largest of these, Trondheim , was opened for six hours on 16 April. The total closure of Norwegian airspace included the 21 search and rescue and medical aircraft and helicopters in the country. The health authorities stated that the challenges faced were unprecedented in modern history, and ambulances and medical personnel were moved north and out of cities to decentralise the service and replace the lost aerial transport. The air space caused most of the oil platforms in the North Sea to not be able to fly in new personnel, causing existing crews to have to work until 18 April. |
+| Poland | Poland closed the northern part of its airspace at 18:00 UTC on 15 April. On 16 April its whole airspace was shut down. The disruption affected the funeral for the Polish president Lech Kaczyński , his wife Maria , and the other victims who died in an air crash earlier in April. Family members decided not to postpone the ceremony, resulting in other countries' dignitaries being unable to attend. |
+| Portugal | Portugal's Institute of Meteorology (IM) announced on Tuesday "
+27,What type of aircraft is the Boeing X-48 (C) classified as in the list of blended wing body aircraft?,UAV,"| Type | Country | Class | Role | Date | Status | No. | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Airbus Maveric | Multinational | UAV | Experimental | 2019 | Prototype | 1 |  |
+| Boeing X-45 | US | UAV | Experimental | 2002 | Prototype | 2 |  |
+| Boeing X-48 (C) | US | UAV | Experimental | 2013 | Prototype | 2 | Two engine |
+| Boeing X-48 (B) | US | UAV | Experimental | 2007 | Prototype | 2 | Three engine |
+| Lockheed A-12 , M-21 and YF-12 | US | Jet | Reconnaissance | 1962 | Production | 18 | YF-12 was a prototype interceptor |
+| Lockheed SR-71 Blackbird | US | Jet | Reconnaissance | 1964 | Production | 32 |  |
+| McDonnell XP-67 | US | Propeller | Fighter | 1944 | Prototype | 1 | Aerofoil profile maintained throughout. |
+| McDonnell / NASA BWB-17 | US | UAV | Experimental | 1997 | Prototype | 1 |  |
+| Miles M.30 | UK | Propeller | Experimental | 1942 | Prototype | 1 |  |
+| Natilus HORIZON | US | Jet | Transport | 2024 | Project | 0 |  |
+| Natilus KONA | US | Propeller | Transport | 2019 | Project | 0 |  |
+| Northrop Grumman Bat | US | Prop/electric | Reconnaissance | 2006 | Production | 10 |  |
+| Rockwell B-1 Lancer | US | Jet | Bomber | 1974 | Production | 104 | Variable-sweep wing |
+| Tupolev Tu-160 | USSR | Jet | Bomber | 1981 | Production | 36 | Variable-sweep wing |
+| Tupolev Tu-404 | Russia | Propeller | Airliner | 1991 | Project | 0 | One of two alternatives studied |
+| Westland Dreadnought | UK | Propeller | Transport | 1924 | Prototype | 1 | Mail plane. Aerofoil profile maintained throughout. |"
+28,What is the purpose of fairings in relation to the flap operating mechanism?,Fairings are needed to enclose the flap operating mechanism when the flap is up. They open up as the flap comes down and may also pivot to allow the necessary sideways movement of the extending mechanism which occurs on swept-wing installations.,"# Aircraft fairing
+
+Figure: The wing root fairing of an American Aviation AA-1 Yankee
+
+An aircraft fairing is a structure whose primary function is to produce a smooth outline and reduce drag .
+
+These structures are covers for gaps and spaces between parts of an aircraft to reduce form drag and interference drag , and to improve appearance.
+
+Figure: A cockpit fairing or ""pod"" with a windshield on a P&M GT450 ultralight trike
+
+Figure: Spats on a Cessna Skylane 182T
+
+Figure: An aircraft wheel fairing, commonly called a wheel pant or spat or, by some manufacturers, a speed fairing
+
+## Types
+
+On aircraft, fairings are commonly found on:
+
+**Belly fairing**
+
+Also called a ""ventral fairing"", it is located on the underside of the fuselage between the main wings . It can also cover additional cargo storage or fuel tanks.
+
+**Cockpit fairing**
+
+Also called a "" cockpit pod "", it protects the crew on ultralight trikes . Commonly made from fiberglass , it may also incorporate a windshield.
+
+**Elevator and horizontal stabilizer tips**
+
+Elevator and stabilizer tips fairings smooth out airflow at the tips.
+
+**Fin and rudder tip fairings**
+
+Fin and rudder tip fairings reduce drag at low angles of attack but also reduce the stall angle, so the fairing of control surface tips depends on the application.
+
+**Fillets**
+
+Fillets smooth the airflow at the junction between two components, such as the fuselage and wing.
+
+**Fixed landing gear junctions**
+
+Landing gear fairings reduce drag at these junctions.
+
+**Flap track fairings**
+
+Fairings are needed to enclose the flap operating mechanism when the flap is up. They open up as the flap comes down and may also pivot to allow the necessary sideways movement of the extending mechanism which occurs on swept-wing installations.
+
+**Spinner**
+
+To protect and streamline the propeller hub.
+
+**Strut-to-wing and strut-to-fuselage junctions**
+
+Strut end fairings reduce drag at these junctions.
+
+**Tail cones**
+
+Tail cones streamline the rear extremity of a fuselage by eliminating the base area, which is a source of base drag.
+
+**Wing root**
+
+Wing roots are often faired to reduce interference drag between the wing and the fuselage. On the top and bottom of the wing, this consists of small rounded edges to reduce surface and friction drag. At the leading and trailing edge it consists of much larger taper and smooths out the pressure differences: high pressure at the leading and trailing edge, low pressure on top of the wing and around the fuselage.
+
+Figure: The flap track fairings on a Boeing 747
+
+**Wing tips**
+
+Wing tips are often formed as complex shapes to reduce vortex generation and so also drag, especially at low speed."
+29,How is a transponder code assigned to an aircraft before takeoff?,The transponder code is assigned to the aircraft by the air traffic controller before takeoff.,"## Secondary radar
+
+Figure: Video of radar screen at Nice Côte d'Azur Airport , Nice, France, showing aircraft preparing to land under the direction of the approach controller. The speed is increased to show the motion. Each aircraft is represented by an icon with a tail to show the direction of motion, with text beside it showing the aircraft's identifying flight number and altitude provided by secondary radar.
+
+The need for a secondary radar system developed from the limitations of primary radar and need for more information by air traffic controllers due to the increasing postwar volume of air traffic. The primary radar displays a ""return"" indiscriminately from any object in its field of view, and cannot distinguish between aircraft, drones, weather balloons, birds, and some elevated features of the terrain (called "" ground clutter ""). Primary radar also cannot identify an aircraft; before secondary radar aircraft were identified by the controller asking the aircraft by radio to turn onto a specified heading. Another limitation is that primary radar cannot determine the altitude of the aircraft.
+
+Secondary surveillance radar (SSR), also called the air traffic control radar beacon system (ATCRBS) had its origin in Identification Friend or Foe (IFF) systems used by military aircraft during World War II. All aircraft are required to carry an automated microwave transceiver called a transponder . The secondary radar is a rotating flat antenna, often mounted on top of the primary radar dish, which transmits a narrow vertical fan-shaped microwave beam on a frequency of 1030 MHz in the L band with peak power of 160 - 1500 W. When it is interrogated by this signal, the aircraft's transponder beacon transmits a coded identifying microwave signal at a frequency of 1090 MHz back to the secondary radar antenna. This coded signal includes a 4 digit number called the ""transponder code"" which identifies the aircraft, and the aircraft's pressure altitude from the pilot's altimeter . This information is displayed on the radar screen beside the aircraft's icon for use by the air traffic controller. The transponder code is assigned to the aircraft by the air traffic controller before takeoff. Controllers use the term ""squawk"" when they are assigning a transponder code, e.g., ""Squawk 7421"".
+
+Transponders can respond with one of several different ""modes"" determined by the interrogation pulse from the radar. Various modes exist from Mode 1 to 5 for military use, to Mode A, B, C and D, and Mode S for civilian use. Only Mode C transponders report altitude. Busy airports usually require all aircraft entering their airspace to have a mode C transponder which can report altitude, due to their strict requirements for aircraft altitude spacing; this is called a "" Mode C veil "".
+
+## Types
+
+Due to its crucial safety purpose, extreme uptime requirements, and need to be compatible with all the different types of aircraft and avionics systems, the design of airport surveillance radar is strictly controlled by government agencies. In the US the Federal Aviation Administration (FAA) is responsible for developing airport surveillance radar. All ASRs have the common requirements of detecting aircraft out to a range of 60 miles and an elevation of 25,000 feet. Upgrades are released in ""generations"" after careful testing:"
+30,What is the purpose of the flare maneuver during an Autoland emergency autoland?,"The purpose of the flare is to produce lift and drag on the aircraft, which reduces descent rate and forward airspeed respectively, allowing the aircraft to settle onto the runway.","On December 20, 2025, the first recorded true emergency activation of a fully autonomous Autoland system occurred after avionic-detection of unsafe low cabin pressure initiated the system in a Beechcraft Super King Air B200 twin- turboprop aircraft (call sign N479BR) culminating in a full-stop landing and post-landing engine shutdown. The Autoland system, which automatically chose a suitable airport, flight plan, and descent from high altitude pattern, landed safely at Rocky Mountain Metropolitan Airport Broomfield, Colorado. During the event, the autoland subsystem tuned the radio to proper tower frequency, transmitted computer-enunciated voice radio messages including call sign, pilot incapacitation, aircraft position, and estimated time of arrival to the chosen airport. Updates were transmitted every few minutes to which ground emergency units and air traffic controllers prepared the airport and cleared approach airspace for the emergency aircraft. The incident marked the first recorded instance of a fully navigated and planned, pilot-incapacitation autoland in U.S. general aviation history.
+
+## Systems
+
+A typical autoland system consists of an ILS (integrated glideslope receiver, localizer receiver, and perhaps GPS receiver as well) radio to receive the localizer and glideslope signals. The output of this radio will be a deviation from center which is provided to the flight control computer ; this computer controls the aircraft control surfaces to maintain the aircraft centered on the localizer and glideslope. The flight control computer also controls the aircraft throttles to maintain the appropriate approach speed.
+
+At the appropriate height above the ground (as indicated by the radio altimeter) the flight control computer will retard the throttles and initiate a pitch-up maneuver. The purpose of this "" flare "" is to produce lift and drag on the aircraft. These aerodynamic forces reduce descent rate and forward airspeed respectively, allowing the aircraft to settle onto the runway.
+
+For CAT IIIc, the flight control computer will continue to accept deviations from the localizer and use the rudder to maintain the aircraft on the localizer (which is aligned with the runway centerline). On landing, the spoilers will deploy; these are surfaces on the top of the wing towards the trailing edge which cause airflow over the wing to become turbulent, destroying lift. At the same time the autobrake system will apply the brakes. The anti-skid system will modulate brake pressure to keep all wheels turning. As the speed decreases, the rudder will lose effectiveness and the pilot will need to control the direction of the airplane using nose wheel steering, a system which typically is not connected to the flight control computer.
+
+From an avionics safety perspective, a CAT IIIc landing is the worst-case scenario for safety analysis because a failure of the automatic systems from flare through the roll-out could easily result in a ""hard over"" (where a control surface deflects fully in one direction). This would happen so fast that the flight crew may not effectively respond. For this reason, autoland systems are designed to incorporate a high degree of redundancy so that a single failure of any part of the system can be tolerated and a second failure can be detected – at which point the autoland system will turn itself off (uncouple, fail passive)."
+31,How is the A-B Helicopters A/W 95 described in terms of its design origin and intended regulatory compliance?,"The A/W 95 is a development of the Adams-Wilson Choppy, and it was designed to comply with the US Experimental Amateur-built rules because its empty weight is too heavy for the FAR 103 Ultralight Vehicles rules.","The A-B Helicopters A/W 95 is an American helicopter , produced by A-B Helicopters in the form of plans for amateur construction .
+
+By 2012 the A-B Helicopters website had been taken down and plans are no longer available.
+
+The design was developed into the Vortech A/W 95 and plans for that version remain available from Vortech .
+
+## Design and development
+
+The A/W 95 is a development of the Adams-Wilson Choppy , which the A/W designation acknowledges. The A/W 95 was designed to comply with the US Experimental Amateur-built rules, since the empty weight is too heavy for the FAR 103 Ultralight Vehicles rules, which stipulates a maximum empty weight of 254 lb (115 kg). The aircraft has a standard empty weight of 271 lb (123 kg). It features a single main rotor, a single-seat open cockpit without a windshield, skid landing gear and a twin cylinder, air-cooled, two-stroke , dual-ignition 50 hp (37 kW) Rotax 503 engine.
+
+The aircraft fuselage is an open frame made from bolted-together and gusseted aluminum tubing. Its 19.5 ft (5.9 m) diameter two-bladed extruded aluminum rotor has a chord of 7 in (17.8 cm) and employs a symmetrical airfoil . The transmission is constructed from a belt and chain mechanism. With its standard empty weight of 271 lb (123 kg) and a gross weight of 490 lb (222 kg), the useful load is 219 lb (99 kg). Fuel tank capacity is 5 U.S. gallons (19 L; 4.2 imp gal), rendering a full-fuel payload of 189 lb (86 kg).
+
+While the A/W 95 is primarily plans-built, during the time that A-B Helicopters was in business some pre-fabricated parts were available.
+
+## Operational history
+
+By January 2013 two examples had been registered in the United States with the Federal Aviation Administration .
+
+## Specifications (A/W 95)
+
+Data from Bayerl
+
+General characteristics
+
+- Crew: one
+
+- Airfoil : symmetrical
+
+- Empty weight: 271 lb (123 kg)
+
+- Gross weight: 489 lb (222 kg)
+
+- Fuel capacity: 5 U.S. gallons (19 L; 4.2 imp gal)
+
+- Powerplant: 1 × Rotax 503 two cylinder, air-cooled, two stroke aircraft engine , 50 hp (37 kW)
+
+- Main rotor diameter: 19 ft 6 in (5.94 m)"
+32,R-77'nin kılavuz sistemi nedir?,Ataletsel güdüm Terminal aktif radar ve kızılötesi evleme (R-77T),"# R-77
+
+| R-77 |  |
+| --- | --- |
+| R-77 |  |
+| Çeşidi | Orta menzilli aktif radar evlemeli havadan havaya füze |
+| Uyruğu | Rusya |
+| Hizmet geçmişi |  |
+| Hizmet | 2002-günümüze |
+| Kullanıcılar | Kullanıcılar |
+| Üretim tarihi |  |
+| Üretici | Vımpel |
+| Özellikler |  |
+| Ağırlık | 175 kg (R-77), 190 kg (R-77-1) |
+| Uzunluk | 3.6 m (R-77), 3.71 m (R-77-1) |
+| Namlu çapı | 200 mm |
+| Savaş başlığı | Genişleyen çubuklu yüksek patlayıcı |
+| Savaş başlığı ağırlığı | 22.5 kg |
+| Motor | Katı yakıtlı roket motoru (R-77) Hava solunum ramjet (R-77-PD) |
+| Harekat menzili | 80 km (R-77), 110 km (R-77-1) |
+| Seyir irtifası | 5-25 km |
+| Azami hız | 4 mach |
+| Kılavuz sistemi | Ataletsel güdüm Terminal aktif radar ve kızılötesi evleme (R-77T) |"
+33,"AeroVironment, Switchblade sistemleri üretimi için İsveç Silahlı Kuvvetleri'ne yönelik sözleşmeyi hangi tarihte imzaladı?",26 Eylül 2024,"Romanya
+
+- Romanya Silahlı Kuvvetleri : Temmuz 2024'te, Romanya'nın 176 milyon lei değerinde 25 adet SwitchBlade 300 sistemi ve sayısı bilinmeyen SwitchBlade 600 sistemi tedarik edeceği açıklandı. 26 Eylül 2024 tarihinde AeroVironment , Litvanya, Romanya ve İsveç'e yapılacak 2024 Yabancı Askeri Satışları kapsamında Switchblade sistemleri için sözleşme imzaladı ve sözleşmenin tamamlanma tarihi 30 Haziran 2026 olarak belirlendi.
+
+İsveç
+
+- İsveç Silahlı Kuvvetleri : 26 Eylül 2024 tarihinde AeroVironment, ABD Savunma Bakanlığı tarafından Litvanya, Romanya ve İsveç'e yapılacak 2024 Yabancı Askeri Satışları kapsamında Switchblade sistemleri üretimi için bir sözleşme imzaladı.
+
+Tayvan
+
+- Çin Cumhuriyeti Silahlı Kuvvetleri : Temmuz 2024'te ABD Savunma Bakanlığı, Tayvan Silahlı Kuvvetleri için tahmini maliyeti 60,2 milyon dolar olan Switchblade 300 devriye mühimmatının olası satışını duyurdu."
+34,Politechnika Warszawska PW-5 Smyk nasıl tanımlanır?,"Politechnika Warszawska PW-5 Smyk, yarışmalar için tasarlanmış bir planördür.","# PW-5
+
+Politechnika Warszawska PW-5 Smyk , yarışmalar için tasarlanmış bir planördür .
+
+Varşova Teknoloji Üniversitesi'nde geliştirilmiştir. Motorsuz hava taşıtlarındandır. Basit yapısı ve düşük maliyetiyle planör yarışmalarında birincilik almıştır. Tek kişiliktir. 200 kadar üretilmiştir.
+
+Ağırlığı 190 kg, uzunluğu 6,22 m, hızı: 220 km/saattir."
+35,JAA'ya göre profesyonel pilotlar ile husûsî pilotların sahip olması gereken uçuş muayenesi sertifikası sınıfları nasıl karşılaştırılır?,"Profesyonel pilotların 1. sınıf, husûsî pilotların ise 2. sınıf uçuş muayenesi sertifikası sahip olması gerekir.","# Uçuş muayenesi
+
+Uçuş muayenesi , pilot ve diğer uçucuların uçuş lisanslarında belirtilen hakları kullanabilmeleri için gerekli olan sağlık kontrolü. Uçuş muayeneleri belirli aralıklarla yinelenir. Uçuş muayenesinde uçuş emniyetini etkileyebilecek bir rahatsızlığı tespit edilen uçucuların uçuşu kesilir (durdurulur).
+
+JAA 'ya göre profesyonel pilotların 1. sınıf, husûsî pilotların 2. sınıf uçuş muayenesi sertifikası sahip olması gerekir.
+
+1. sınıf uçuş muayenesi şu zaman aralıklarında geçerlidir. Yolcu taşınan tek pilotlu uçuşlarda:
+
+- 40 yaş altında: 12 ay
+
+- 40 ve üzeri: 6 ay
+
+Diğer tüm uçuşlarda:
+
+- 60 yaş altında: 12 ay
+
+- 60 ve üzeri: 6 ay
+
+2. sınıf uçuş muayenesi şu zaman aralıklarında geçerlidir:
+
+- 40 yaş altında: 60 ay veya 42. doğumgününe kadar (hangisi önce gelirse)
+
+- 40-49 yaş: 24 ay
+
+- 50 ve üzeri: 12 ay
+
+Pilotlar uçuş muayenelerini ""en erken"" süresinin dolmasına 45 gün kala yenileyebilirler. Yeni sertifikanın geçerlilik zamanı eskisinin süresi bitince başlar."
+36,Lilienthal'in ölümüne neden olan düşüş sırasında hangi yükseklikten düşmüştür?,17 m,"### Adımları hızlandırmak
+
+1880'ler, 20. yüzyıla kadar birçok araştırmanın yer aldığı ateşli bir çalışma dönemi oldu. 1880'lerdeki gelişmelerin başlamasıyla ilk gerçek anlamda pratik planörün inşası olanaklı oldu. Bu dönemde şu üç kişi gerçekten aktif rol aldılar: Otto Lilienthal , Percy Pilcher ve Octave Chanute . Gerçek anlamda çağdaş planörlerden biri John J. Montgomery tarafından üretildi ve bu planör kontrollü bir şekilde 28 Ağustos 1883'te San Diego 'nun dışında uçuşunu gerçekleştirdi. Bu uğraşlar ancak çok yıllar sonrası bilinir oldu. Bir başka delta kanat tarzı planör Viyana yakınlarında 1877 yılında Wilhelm Kress tarafından yapıldı.
+
+Figure: Otto Lilienthal , havadan ağır uçan bir makina yapan ilk adamlardan biri
+
+Alman otto Lilienthal , Wenham'ın çalışmasını 1874'te ikiye katlamış, çok geliştirerek 1889 tüm çalışmalarını yayınlamıştır. Ayrıca bir seri çok daha iyi planörler üretmiş ve 1891 yılında bu planörlerle 25 m mesafeli uçuşları sıradan hale getirmiştir. Tüm çalışmalarını fotoğraflamak da dahil olmak üzere titizlikle kayıt altına almıştır ve işte bu yüzden erken dönem öncüleri arasında en iyi tanınanlardan biri olmuştur. Onun bulduğu hava taşıtı günümüzde yelken kanat olarak bilinmektedir.
+
+Lilienthal, uçağa motor takıldığı andan itibaren havacılığın kanunlarını daha ileri boyutta çalışmanın olası olmadığını biliyordu. Onun bulduğu ve tanımladığı bu kanunlar ondan sonra gelenlere bıraktığı en önemli mirası idi ve takipçileri bu kanunları kullanarak birçok deneme ve hata yapmaktan tasarruf etmiş oldular.
+
+1896 yılında, en son tasarımı ile uçuş yaptığı esnada, şiddetli bir rüzgâr tarafından aracın kanatları kırılınca 17 m yükseklikten düşüp omurgasının kırılması nedeniyle öldüğünde, o ana kadar değişik tasarımlarla 2500 uçuş gerçekleştirmişti. Düşüşünün ertesi günü ölürken son sözleri ""Kurbanlar verilmelidir"" olmuştur. Lilienthal ölmeden önce tasarımlarını güçlendirmek için uygun küçük motorlar üzerinde çalışıyordu.
+
+Octave Chanute , Lilienthal'ın bıraktığı yerden devam ederek hava taşıtı tasarımlarının erken emekliliğini önlemiş ve birçok planörün geliştirilmesini finanse etmiştir. Ekibi, 1896 yılının yazında, tasarımlarını Indiana 'daki Miller plajında yaptı ve en iyisinin daha çağdaş görünümlü çift kanatlı (biplane) tasarımın olduğu sonucuna vardı. Lilienthal gibi, Chanute da tüm çalışmalarını fotoğraflayarak kayıt altına aldı ve kendisiyle aynı kafadaki tüm dünyadaki kişilerle iletişime geçti. Chanute kuşların aksine insanların içgüdüleri ile değil de manuel olarak yapmaları gereken dengeli uçuş konusuyla özellikle ilgileniyordu. En büyük sorun dikey denge idi, çünkü hücum açısı arttırıldığında basınç merkezi öne kayıyor ve bu da hücum açısının daha çok artmasına ve derhal müdahale edilmezse taşıtın burun yukarı yapmasına ve tutunma kaybına neden oluyordu."
+37,GLONASS uydusu Kosmos 1711 ne zaman fırlatıldı?,24.12.1985,"| GNSS | Uydu | Roket fırlatma üssü | Fırlatılma tarihi ( UTC ) | Uluslararası tanımlaması ( COSPAR ) | Katalog Num. ( AFSC ) | Tipi | NSSDC |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| GLONASS | Kosmos 1413 | Baykonur | 12.10.1982 | 1982-100A | 13603 | Uragan |  |
+| GLONASS | Kosmos 1490 | Baykonur | 10.08.1983 | 1983-084A | 14258 | Uragan |  |
+| GLONASS | Kosmos 1491 | Baykonur | 10.08.1983 | 1983-084B | 14259 | Uragan |  |
+| GLONASS | Kosmos 1519 | Baykonur | 29.12.1983 | 1983-127A | 14590 | Uragan |  |
+| GLONASS | Kosmos 1520 | Baykonur | 29.12.1983 | 1983-127B | 14591 | Uragan |  |
+| GLONASS | Kosmos 1554 | Baykonur | 19.05.1984 | 1984-047A | 14977 | Uragan |  |
+| GLONASS | Kosmos 1555 | Baykonur | 19.05.1984 | 1984-047B | 14978 | Uragan |  |
+| GLONASS | Kosmos 1593 | Baykonur | 04.09.1984 | 1984-095A | 15259 | Uragan |  |
+| GLONASS | Kosmos 1594 | Baykonur | 04.09.1984 | 1984-095B | 15260 | Uragan |  |
+| GLONASS | Kosmos 1650 | Baykonur | 17.05.1985 | 1985-037A | 15697 | Uragan |  |
+| GLONASS | Kosmos 1651 | Baykonur | 17.05.1985 | 1985-037B | 15698 | Uragan |  |
+| GLONASS | Kosmos 1710 | Baykonur | 24.12.1985 | 1985-118A | 16396 | Uragan |  |
+| GLONASS | Kosmos 1711 | Baykonur | 24.12.1985 | 1985-118B | 16397 | Uragan |  |
+| GLONASS | Kosmos 1778 | Baykonur | 16.09.1986 | 1986-071A | 16961 | Uragan |  |
+| GLONASS | Kosmos 1779 | Baykonur | 16.09.1986 | 1986-071B | 16962 | Uragan |  |
+| GLONASS | Kosmos 1780 | Baykonur | 16.09.1986 | 1986-071C | 16963 | Uragan |  |
+| GLONASS | Kosmos 1838 | Baykonur | 24.04.1987 | 1987-036A | 17902 | Uragan |  |
+| GLONASS | Kosmos 1839 | Baykonur | 24.04.1987 | 1987-036B | 17903 | Uragan |  |
+| GLONASS | Kosmos 1840 | Baykonur | 24.04.1987 | 1987-036C | 17904 | Uragan |  |
+| GLONASS | Kosmos 1883 | Baykonur | 16.09.1987 | 1987-079A | 18355 | Uragan |  |
+| GLONASS | Kosmos 1884 | Baykonur | 16.09.1987 | 1987-079B | 18356 | U"
+38,"According to the court filing, what percentage of Aveos Fleet Performance's revenues did Air Canada provide?",more than 85 per cent,"On Sunday, March 18, 2012, Aveos padlocked its doors, instructing many of its 1,800 Montreal employees to leave the premises at 5:30 p.m. and take their tools and belongings with them. According to several emails and voicemails to the Montreal Gazette, workers were told to contact the company for further instructions.
+
+On Monday, March 19, 2012, Aveos filed for creditor protection, laid off more than 2,600 workers, and shut plants in Montreal, Winnipeg and Vancouver. The Winnipeg plant is scheduled to shut down and lose 412 jobs, the Vancouver operation would close and shed 356 jobs while the Montreal site is likely to have at least 1,000 positions axed. According to the Companies' Creditors Arrangement Act filing in Quebec Superior Court, Aveos lost $48.9 million and its liabilities recently exceeded the book value of assets by $219.8 million. The company had a pension solvency deficit of $26 million at the end of 2011.
+
+In the court filing, Aveos laid the blame for its troubles squarely on Air Canada, which it accuses of refusing to deliver planes for repairs and of soliciting undercutting bids from rivals for work. Air Canada provides more than 85 per cent of Aveos's revenues and has a contract with Aveos that runs to 2013. Air Canada did not directly address the key issues of providing planes or undercutting bids, but said in a general statement that Air Canada ""is very disappointed by the Aveos announcement.""
+
+Approximately 1,800 of the affected employees are based in Montreal, while 350 are in Winnipeg and 250 are in Vancouver, according to the International Association of Machinists and Aerospace Workers. ""The maintenance component that supplies work to the Air Canada fleet has effectively ceased operations,"" according to Lorne Hammerberg, the IAMAW's local president in Winnipeg.
+
+### Liquidation
+
+On March 20, 2012, after getting permission from the Quebec Superior Court, Aveos said that it would immediately begin the process of liquidating its Canadian aircraft maintenance business, putting virtually all of the company's 2,600 employees across Canada out of work. About 160 employees will remain to oversee the liquidation process. According to chairman Eugene Davis, ""The company had no viable option but to cease operations. We deeply regret the job losses and the impact this decision has on our employees in Canada and extend our sincere gratitude to them for their dedication and service over the years.""
+
+Air Canada said it could be forced to cancel flights and strand thousands of passengers if Aveos is unable to complete repairs to several planes. The airline's lawyers argued in vain Monday for a Quebec Superior Court judge to order Aveos to not lay off more workers and to meet its obligations to complete the aircraft repairs. Justice Mark Schrager denied an Air Canada request that would have forced Aveos to maintain operations and employment to complete the contracted repairs. ""Accommodation, if there is any between Aveos and Air Canada, is going to be made in a boardroom, not a courtroom,"" he said before granting creditor protection Monday."
+39,How is crew scheduling defined?,"Crew scheduling is the process of assigning crews to operate transportation systems, such as rail lines or airlines.","# Crew scheduling
+
+Crew scheduling is the process of assigning crews to operate transportation systems, such as rail lines or airlines .
+
+## Complex
+
+Most transportation systems use software to manage the crew scheduling process. Crew scheduling becomes more and more complex as you add variables to the problem. These variables can be as simple as 1 location, 1 skill requirement, 1 shift of work and 1 set roster of people. In the Transportation industries, such as Rail or mainly Air Travel, these variables become very complex. In Air Travel for instance, there are numerous rules or ""constraints"" that are introduced. These mainly deal with legalities relating to work shifts and time, and a crew member's qualifications for working on a particular aircraft. Add numerous locations to the equation and Collective Bargaining and Federal labor laws and these become new considerations for the problem solving method. Fuel is also a major consideration as aircraft and other vehicles require a lot of costly fuel to operate. Finding the most efficient route and staffing it with properly qualified personnel is a critical financial consideration. The same applies to rail travel. Crew scheduling involves assigning complementary crews for each scheduled trip based on the timetable for the next day or a short period. In rail transportation, crew scheduling involves generating crew duties for conductors and train operators.
+
+The problem is computationally difficult and there are competing mathematical methods of solving the problem. Although not easy to describe in one sentence, the goal is essentially the same for any method of attacking the problem: ""Within a set of constraints and rules, move a set roster of people with certain qualifications, from place to place with the fewest personnel and aircraft or vehicles in the least amount of time."" Lowest cost has traditionally been the major driver for any crew scheduling solution.
+
+## Four Parts
+
+Although not a ""rule"", We can describe at least four parts of the equation that are ingested by the computational process:
+
+- People and their qualifications and abilities.
+
+- Aircraft or vehicles and their ""People"" qualification requirements and their cost to operate over distance.
+
+- Locations and the time and distance between each location.
+
+- Work rules for the personnel, including Shift hours and seniority.
+
+In crew scheduling the rules and constraints are typically a combination of:
+
+- government regulations concerning flight time, duty time and required rest, designed to promote aviation safety and limit pilot fatigue ,
+
+- crew bid requests, vacations,
+
+- labor agreements
+
+- aircraft maintenance schedules
+
+- crew member qualification and licensing
+
+- other constraints related to training
+
+- pairing experienced crew members with more junior crew members
+
+- returning crew to their base at the end of their trip (called deadheading )
+
+The first phase in crew planning is building the crew pairings (also known as trips, rotations, among other popular descriptions). This process pairs a generic crew member with a flight so that at the end of this process all aircraft flights are covered and all trips (combination of flights starting at a crew base and returning to that crew base or co-terminal are crew legal. The next step is the allocation of those trips to the individual crewmember."
+40,Parasitic drag nasıl tanımlanır?,"Parasitic drag, or profile drag, is the sum of viscous pressure drag (form drag) and drag due to surface roughness (skin friction drag).","The effect of streamlining on the relative proportions of skin friction and form drag is shown in the table at right for an airfoil , which is a streamlined body, and a cylinder, which is a bluff body. Also shown is a flat plate in two different orientations, illustrating the effect of orientation on the relative proportions of skin friction and form drag, and showing the pressure difference between front and back.
+
+A body is known as bluff or blunt when the source of drag is dominated by pressure forces, and streamlined if the drag is dominated by viscous forces. For example, road vehicles are bluff bodies. For aircraft, pressure and friction drag are included in the definition of parasitic drag . Parasite drag is often expressed in terms of a hypothetical.
+
+### Lift-induced drag
+
+Lift-induced drag (also called induced drag ) is drag which occurs as the result of the creation of lift on a three-dimensional lifting body , such as the wing or propeller of an airplane. Induced drag consists primarily of two components: drag due to the creation of trailing vortices ( vortex drag ); and the presence of additional viscous drag ( lift-induced viscous drag ) that is not present when lift is zero. The trailing vortices in the flow-field, present in the wake of a lifting body, derive from the turbulent mixing of air from above and below the body which flows in slightly different directions as a consequence of creation of lift .
+
+With other parameters remaining the same, as the lift generated by a body increases, so does the lift-induced drag. This means that as the wing's angle of attack increases (up to a maximum called the stalling angle), the lift coefficient also increases, and so too does the lift-induced drag. At the onset of stall , lift is abruptly decreased, as is lift-induced drag, but viscous pressure drag, a component of parasite drag, increases due to the formation of turbulent unattached flow in the wake behind the body.
+
+### Parasitic drag
+
+Parasitic drag , or profile drag, is the sum of viscous pressure drag ( form drag ) and drag due to surface roughness ( skin friction drag ). Additionally, the presence of multiple bodies in relative proximity may incur so called interference drag , which is sometimes described as a component of parasitic drag. In aeronautics the parasitic drag and lift-induced drag are often given separately.
+
+For an aircraft at low speed, induced drag tends to be relatively greater than parasitic drag because a high angle of attack is required to maintain lift, increasing induced drag. As speed increases, the angle of attack is reduced and the induced drag decreases. Parasitic drag, however, increases because the fluid is flowing more quickly around protruding objects increasing friction or drag. At even higher speeds ( transonic ), wave drag enters the picture. Each of these forms of drag changes in proportion to the others based on speed. The combined overall drag curve therefore shows a minimum at some airspeed - an aircraft flying at this speed will be at or close to its optimal efficiency. Pilots will use this speed to maximize endurance (minimum fuel consumption), or maximize gliding range in the event of an engine failure."
+41,"GLONASS açık L3 CDMA sinyali için mevcut süper-çerçeve ile gelecekte planlanan süper-çerçeve, kare sayısı ve veri miktarı açısından nasıl karşılaştırılır?","Mevcut süper-çerçeve 8 konumlama karesinden oluşur ve tüm 24 uydudan almanak için 12000 bit veri iletmek 120 saniye (2 dakika) sürer; gelecekte ise süper-çerçeve 30 uyduda 10 kare veya 15000 bit (150 saniye veya 2,5 dakika) veriyi kapsayacak şekilde genişletilecektir.","GLONASS geliştiricilerinin ön açıklamalarına göre, üç açık ve iki karartılmış CDMA sinyali olacaktır. L3 CDMA Açık sinyalin, 1202,25 MHz ortalanmış frekanslı veri ve pilot kanalları hem BPSK (10) modülasyonunu kullanır; hem de arasında değişen şifreyi saniye başına 10.23 milyon CDMA temel iletim birimi ile faz içinde ve dördün veri pilotlu QPSK kullanılarak taşıyıcı frekans üzerine modüle edilmiş olarak iletir. Veriler 5-bit Barker kodu ve 10-bit Neuman-Hoffman kodu ile yedek hata kodludur.
+
+Açık L1 CDMA ve karartılmış L1 CDMA sinyalleri 1600,995 MHz'te ortalanmış ve açık L2 CDMA ve karartılmış L2 CDMA sinyalleri 1248,06 MHz de üst üste gelen GLONASS FDMA sinyalleri ile ortalanmıştır. Açık L1 CDMA sinyalleri ve L2 karartılmış CDMA kullanım verileri ve BOC (1,1) BPSK (1) modülasyon ile kılavuz için modülasyon, vekil ve veri sinyallerinin iletimi için zaman bölmeli çoklama; geniş bantlı L1SC ve L2SC şifrelenmiş sinyallerin kullanımı BOC (5, 2.5) modülasyonu kılavuz ve verinin her ikisi için açık sinyaller dördün aşamasında iletilir. Bu yerlerde en yüksek sinyal gücü dar bant açık sinyallerinden uzaktadır.
+
+Temel GPS ve GLONASS sinyalleri için ikili faz kaydırmalı anahtarlama (BPSK) kullanılır; ancak BPSK ve dördün faz kaydırmalı anahtarlama (QPSK) dördün genlik modülasyonu ( QAM ), QAM-2 ve QAM-4 değişimleri olarak kabul edilebilir. İkili ofset taşıyıcı (BOC) modülasyon , geliştirilmiş Galileo , GPS ve Compass sistemleri tarafından kullanılan bir modüle yöntemidir.
+
+Açık L3 CDMA sinyalinin seyir mesajı 100 bit/sn 'de iletilir. Konumlamaya ilişkin çerçeve uzunluğu 15 saniyedir (1500 bit) ve her 3 saniye (300 bit) alımda 5 dize simge içerir. Bir çerçevede mevcut uydu ve almanağın bir parçası üç uydu için anlık gök günlüğü bilgisi içerir. Süper-çerçeve, 8 konumlama karesinden oluşmaktadır ve tüm 24 uydudan almanak için 12000 bit veri iletmek bu nedenle 120 saniye (2 dakika) sürer. Gelecekte, süper-çerçeve, 30 uyduda 10 kare veya 15000 bit (150 saniye veya 2,5 dakika) veriyi kapsayacak şekilde genişletilecektir. Sistem zamanını işaretleyici her dize UTC artık saniye düzeltimi ile iletilir; kısaltılması ya da uzatılması (sıfır-dolgu) ile bir saniyeye (100 bit) göre, günün son dizgesi uydu alıcısı tarafından yok edilmeden elde edilir."
+42,What 1967 fictionalized bestseller novel by Per Olof Sundman portrays Andrée as weak and cynical?,The Flight of the Eagle,"# Andrée's Arctic balloon expedition
+
+Figure: S. A. Andrée and Knut Frænkel with the balloon on the pack ice , photographed by the third expedition member, Nils Strindberg . The exposed film for this photograph and others from the failed 1897 expedition was recovered in 1930.
+
+Andrée's Arctic balloon expedition of 1897 was a failed Swedish effort to reach the North Pole , resulting in the deaths of all three expedition members, S. A. Andrée , Knut Frænkel , and Nils Strindberg . Andrée proposed a voyage by hydrogen balloon from Svalbard to either Russia or Canada, which was to pass, with luck, straight over the North Pole on the way. The scheme was received with patriotic enthusiasm in Sweden , a northern nation that had fallen behind in the race for the North Pole.
+
+Andrée ignored many early signs of the dangers associated with his balloon plan. Being able to steer the balloon to some extent was essential for a safe journey, but there was much evidence that the drag-rope steering technique he had invented was ineffective. Worse, the polar balloon Örnen ( Eagle ) was delivered directly to Svalbard from its manufacturer in Paris without being tested. When measurements showed it to be leaking more gas than expected, Andrée failed to acknowledge the risk.
+
+After Andrée, Strindberg, and Frænkel lifted off from Svalbard in July 1897, the balloon lost hydrogen quickly and crashed on the pack ice after only two days. The explorers were unhurt but faced a grueling trek back south across the drifting icescape. Inadequately clothed, equipped, and prepared, and shocked by the difficulty of the terrain, they did not make it to safety. As the Arctic winter closed in on them in October, the group ended up exhausted on the deserted Kvitøya (White Island) in Svalbard and died there. For 33 years the fate of the expedition remained one of the unsolved mysteries of the Arctic. The chance discovery in 1930 of the expedition's last camp created a media sensation in Sweden, where the dead men had been mourned and idolized.
+
+Andrée's motives and mindset have been the subject of extensive fictional and historical discussion, particularly inspired by his apparent foolhardiness. An early example is Per Olof Sundman 's fictionalized bestseller novel of 1967, The Flight of the Eagle , which portrays Andrée as weak and cynical, at the mercy of his sponsors and the media. Modern writers have been generally critical of Andrée.
+
+## Background
+
+### Andrée's scheme
+
+Figure: Salomon August Andrée
+
+The second half of the 19th century has often been called the Heroic Age of Antarctic Exploration . The inhospitable and dangerous Arctic and Antarctic regions appealed powerfully to the imagination of the age, not as lands with their own ecologies and cultures, but as challenges to be conquered by technological ingenuity and manly daring. Salomon August Andrée , an engineer at the patent office in Stockholm , shared these enthusiasms. A keen balloonist , Andrée proposed a plan for letting the wind propel a hydrogen balloon across the Arctic Sea to the Bering Strait , to fetch up in Alaska, Canada, or Russia, and passing near or even right over the North Pole on the way. It was also a period of governmental and popular enthusiasm for exploration, often at the service of imperial expansion."
+43,Balon nasıl tanımlanır?,"Balon, ısıtılmış hava ya da havadan hafif bir gazla (helyum, hidrojen vs.) doldurulan, atmosferde uçabilen, genellikle sepetli hava taşıtıdır.","# Balon (hava taşıtı)
+
+Figure: Çeşitli renk ve şekillerde sıcak hava balonları
+
+Balon , ısıtılmış hava ya da havadan hafif bir gazla ( helyum , hidrojen vs.) doldurulan, atmosferde uçabilen, genellikle sepetli hava taşıtı . İnsanoğlu ilk olarak uçurtma ile insan ve yük taşımaya çalışmıştır ancak balon ilk kullanışlı hava taşıtıdır.
+
+## Uçma prensibi
+
+Balonun havada yükselmesi, sudaki cismin yüzmesiyle aynı ilke olan boyansi (batmazlık) prensibine dayanır. Bir balon, hacmini kapladığı havanın ağırlığı kendi ağırlığına eşit oluncaya kadar yükselir. Yükseklik arttığında havanın yoğunluğu azaldığından ağırlık dengelenir ve balon daha yükseğe çıkamaz. Eğer daha yükseğe çıkmak isteniyorsa ağırlığın azaltılması, alçalmak isteniyorsa da balonun içindeki havanın azaltılması gerekir.
+
+## Kumanda etme
+
+Balonlar bir yerden bir yere ulaşmak için elverişli araçlar değildirler, zira sadece dikey hareket kontrolü vardır ve rüzgarla sürüklendiklerinden yatay yönlendirme imkânları yoktur. Ulaşım aracı olarak kullanılan ve bir nevi güdümlü balon olan zeplinlerin sürüklenerek değil itme kuvvetiyle yol almalarını sağlayan motorları ve havada yönlenmesini sağlayan dümenleri vardır.
+
+## Balonun parçaları
+
+Bir balon; kubbe, sepet denilen iki bölümden oluşur. Kubbe balonun havayla doldurulan yeri olduğundan yüksek iç basınca dayanıklı, küçük yırtıkların büyümesini önleyecek, gözenekli olmayan esnek ve hafif malzemelerden yapılmaktadır. Bu malzemeler ""panel"" denilen parçalarla yatay, dikey veya diagonal olarak şeritler ile birbirine eklenmektedir. Sepeti ve yükleri taşıyan bir ağ balonu çevreler. Balonun tepesinde alçalmak veya inişten sonra balonu söndürmek için ayrı bir iple çekilerek açılan hava boşaltma deliği vardır.
+
+## İlk uçuş
+
+Figure: Montgolfier Kardeşler 'in tarihi balonunun mühendislik bilgilerini de içeren 1786 tarihli bir şeması.
+
+Figure: Jacques Cesar Charles'ın balonu
+
+Balon fikri ilk kez 1766 yılında hidrojeni bulan Henry Cavendish 'in bu gazın havadan hafif olduğunu görmesi ve 1767'de Joseph Black 'ın hafif bir aracın hidrojenle doldurulduğu zaman uçabileceğini öne sürmesiyle doğdu. Ancak ilk balon hidrojenle değil sıcak havayla doldurularak uçtu. İlk uçuş 4 Haziran 1783 tarihinde Fransız Joseph Michel Montgolfier (1740-1810) ve Jacques Etienne Montgolfier (1745-1799) kardeşler tarafından Annonay köyünde çapı 10,5 metre olan ketenden bir torbayı sıcak havayla doldurarak olmuştur. Balon 450 metre kadar yükselerek 10 dakikada 1,5 millik mesafe katetmiştir."
+44,How does the application of a sea anchor differ from that of a drogue?,"The sea anchor is usually much larger, is intended to slow the vessel to a near-complete stop, and is usually deployed off the bow (front) of the boat so that end is presented to the oncoming waves.","# Drogue
+
+Figure: A drogue with tripping line attached to the pointed end
+
+A drogue or storm drogue is a device trailed behind a boat on a long line attached to the stern . A drogue is used to slow the boat down in a storm and to prevent the hull from becoming side-on to the waves . A boat that has deployed a drogue should not overspeed down the slope of a wave and crash into the next one, nor will the vessel broach . By slowing the vessel, the drogue makes the vessel easier to control in heavy weather and will help to prevent pitchpoling .
+
+A drogue works by providing substantial resistance when dragged through the water. An alternative device is the sea anchor which is streamed from the bows. The advantage of the sea anchor is that the bows of a yacht are invariably finer for breaking through waves than the stern, thereby giving a safer and more comfortable experience in a storm.
+
+Both drogues and sea anchors will have tripping lines to aid recovery of the drogue after deployment.
+
+An alternative procedure during a storm is heaving to .
+
+## Use
+
+Most drogues are best deployed out of sync with the boat by one-half of the length of the prevailing waves; thus the drogue climbs a wave when the boat slides down a wave. Nylon rope is widely used for hauling drogues since it best absorbs the shock loading by stretching. However, new research indicates that using a rope with less stretch accompanied by chain weight helps to maintain a constant force on the deployment rode rendering storm drogue use more effective.
+
+Weights such as chains may be employed to keep the drogue from breaching the surface of the water and skimming across the top. Besides, experienced boaters add a floating trip buoy so that the drogue can be deflated before recovery. The trip buoy line is a floating buoy attached to the top of the parachute cone which collapses the cone when pulled. In the case of series drogue lines, they are attached to the end of the line. Trip lines are especially helpful in series drogues because of their difficult recovery. Although the trip line concept is a derivative of the parachute sea anchor, evidence demonstrates that such a setup is not effective with the storm drogue.
+
+While similar in design, the sea anchor is quite different in application from a drogue. The sea anchor is usually much larger, is intended to slow the vessel to a near-complete stop, and is usually deployed off the bow (front) of the boat so that end is presented to the oncoming waves.
+
+## Speed-limiting variety
+
+Speed-limiting drogues are single-element devices. They come in several varieties of canopy shapes that are circular like a big round basket. Some are built with solid fabric while others are open in design to permit water to flow through them more readily. Holes or strips are usually cut in the drogue for stability, to reduce loads on the material or both. Currently, the speed-limiting drogue is the most commonly used storm drogue with many designs available in the market place. Ace Sailmakers also makes Speed Reducing Jordan Series Drogues, typically 30% or so number of cones for standard Jordan Series Drogue."
+45,How is indicated airspeed (IAS) described in the context of aircraft performance?,"İşarî hava sürati (IAS), hava taşıtlarındaki ana sürat göstergesinde görülen hızdır. Pito-statik sistemden gelen dinamik ve statik basınç verileri ile hesaplanır ve uçağın performans ve aerodinamik hesaplamalarında kullanılan ana sürattir.","# İşarî hava sürati
+
+Figure: Tipik bir hava sürati saati değerleri IAS cinsinden gösterir.
+
+İşarî hava sürati ( IAS ), hava taşıtlarındaki ana sürat göstergesinde görülen hız . IAS, İngilizce indicated airspeed kavramının kısaltmasıdır. İşarî hava sürati, pito-statik sistemden gelen dinamik ve statik basınç verileri ile hesaplanır. Uçağın performans ve aerodinamik hesaplamalarında kullanılan ana sürattir. Pek çok hava taşıtında sürat knot ( deniz mili /saat) cinsinden kullanılır ve sürat saatlerindeki değerler KIAS (knots indicated airspeed) olarak verilir.
+
+Uçak burnunda veya kanadında pitot tüpü denilen ve uçak hareket ettikçe oluşan toplam basıncı ölçen bir alet bulunur. Bu basınç uçağın ileri hareketi sonucu hava kütlelerine çarpmasıyla oluştuğu için darbe veya koçbaşı basıncı olarak da adlandırılır. Aynı zamanda genellikle uçak gövdesinde (yanlarda) bulunan statik port adı verilen deliklerden gelen verilerle statik (hareketsiz) basınç ölçülür. Toplam ve statik basınç arasındaki fark (dinamik basınç) işarî süratin hesaplanmasında kullanılır. İşarî sürat genellikle KIAS olarak sürat saatinden okunur. Bazı uçaklarda ise statik portlar, pitot tüpleriyle birleşik hâldedir.
+
+İşarî hava sürati, uçak deniz seviyesinde ve standart atmosfer basıncında (1013,25 hPA) uçarken gerçek hava süratine (TAS) eşittir. Uçak yükseldikçe havanın yoğunluğu azalır ve pito tüpüne çarpan hava molekülü miktarı azaldığı için IAS TAS'tan daha düşük bir değer gösterir. Uçağın hareket karakteristikleri de hava yoğunluğu ile değişeceğinden IAS pilot için gerçek hava süratinden daha önemli hale gelir. Bu nedenle uçaklardaki ana sürat saati kontrol süratlerini (V1, V2 vs.) işarî hava sürati cinsinden gösterir.
+
+## IAS (İşarî Hava Sürati), TAS (Hakikî Hava Sürati) Farkı"

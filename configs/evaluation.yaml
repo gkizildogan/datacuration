@@ -9,7 +9,7 @@ retrieval:
     endpoint: http://127.0.0.1:8001/v1
     passage_prefix: "passage: "
     query_prefix: "query: "
-    batch_size: 64
+    batch_size: 32  # must not exceed TEI max_client_batch_size (default 32)
     unanswerable_similarity_threshold: 0.82
 metrics:
   retrieval: [recall@5, recall@10, recall@20, mrr@10, ndcg@10]
