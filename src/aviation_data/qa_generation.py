@@ -32,7 +32,7 @@ from aviation_data.qa_planning import (
     qa_run_dir,
 )
 
-PROMPT_VERSION = "qa_generation_v3.md"
+PROMPT_VERSION = "qa_generation.md"
 
 
 class RejectedResponse(BaseModel):
