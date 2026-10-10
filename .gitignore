@@ -18,3 +18,22 @@ prompts/qa_generation.md
 latex/*
 !latex/main.pdf
 buboyle.csv
+
+# Personal and coding-agent instruction files (kept local, not published)
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+AGENTS.override.md
+GEMINI.md
+todo.md
+TODO.md
+.claude/
+.codex/
+.cursor/
+.cursorrules
+.gemini/
+.aider*
+.github/copilot-instructions.md
+
+# Machine-local model and tokenizer assets
+model-cache/

@@ -1,25 +1,23 @@
 # Release and publication
 
-The code, configuration, prompts, schemas, tests, and DVC graph are intended for
-GitHub under Apache-2.0. The open corpus, passages, and QA are published on
-Hugging Face as JSONL and Parquet shards partitioned by license family. Zenodo
-receives the immutable versioned archive, checksums, source/rights manifest,
-data dictionary, annotation guide, and model/prompt manifest.
+This GitHub repository is the single published source for the work: the code,
+configuration, prompts, schemas, tests, DVC graph, and the 50-pair QA sample
+(`50_qa_pairs.csv`). The code is Apache-2.0; third-party data keeps its own
+per-record license.
 
 `aviation-data package --public` is the single packaging path. It verifies that
 all included documents are `open`, that source/derivative/QA permissions are
 affirmative, and that every evidence passage belongs to an included open
-document. It publishes only a scrubbed manifest for restricted extensions.
+document. It publishes only a scrubbed manifest for restricted extensions. The
+generated `release/public/` tree is local output and is not committed.
 
-Before uploading:
+Before tagging a release:
 
-1. run all pilot gates and complete human review;
+1. run all pilot gates and complete review;
 2. freeze source revisions and the airline cohort;
 3. pin model/tokenizer commits and the container image digest;
-4. archive the generated `checksums.sha256`;
-5. create a Git tag matching the dataset version;
-6. upload the identical archive to Zenodo and record the DOI in the data card.
+4. keep the generated `checksums.sha256` with the local package;
+5. create a Git tag matching the dataset version and cite that tag and commit.
 
 The manuscript skeleton in `manuscript/data_descriptor.md` follows a Scientific
 Data-style Data Descriptor and can be reformatted for Data in Brief.
-
