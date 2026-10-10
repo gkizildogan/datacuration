@@ -159,22 +159,22 @@ def package_public(
     write_parquet_if_available(records_dir / "passages.parquet", open_passages)
     write_parquet_if_available(records_dir / "qa.parquet", open_qa)
     write_qa_csv(records_dir / "qa.csv", [qa.model_dump(mode="json") for qa in open_qa])
-    # End-user view: answerable QA with the full text of its evidence passage(s).
-    # Corpus-unanswerable items have no answer or passage and stay in qa.csv only.
+    # End-user view: every QA item with the full text of its evidence passage(s).
+    # Answerable items come first; corpus-unanswerable items follow with empty answer
+    # and passage cells.
     passage_text = {passage.passage_id: passage.text for passage in open_passages}
     write_qa_export_csv(
         records_dir / "qa_export.csv",
         [
             {
                 "question": qa.question,
-                "answer": qa.answer,
+                "answer": qa.answer or "",
                 "passage": "\n\n".join(
                     passage_text[passage_id]
                     for passage_id in dict.fromkeys(evidence.passage_id for evidence in qa.evidence)
                 ),
             }
-            for qa in open_qa
-            if qa.evidence
+            for qa in sorted(open_qa, key=lambda qa: not qa.evidence)
         ],
     )
 
