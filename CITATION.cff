@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software or its QA sample, cite this repository and the accompanying article."
-title: "Bilingual Aviation Corpus and RAG QA Benchmark Pipeline"
+title: "A Licence-Aware, Open-Source Pipeline for a Bilingual English–Turkish Aviation Corpus and Grounded Question-Answering Benchmark"
 type: software
 version: 0.1.0
 date-released: 2026-07-29
