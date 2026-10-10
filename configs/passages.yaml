@@ -6,7 +6,7 @@ tokenizer:
   mode: huggingface_local
   id: RedHatAI/Qwen3.8-27B-INT4
   revision: c063053e004e9783631651df95cf55d0bbf88b32
-  local_path: /home/goksu/llmodels/aviation/qwen38-tokenizer-c063053
+  local_path: model-cache/qwen38-tokenizer-c063053
   checksums:
     tokenizer.json: 06b9509352d2af50381ab2247e083b80d32d5c0aba91c272ca9ff729b6a0e523
     tokenizer_config.json: 5f7aa0d810000c4a0940b35c8f16e56c3439260fccc13a321826ebc3ccf2501f

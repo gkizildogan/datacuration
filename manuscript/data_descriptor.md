@@ -29,6 +29,7 @@ personal data, and the manifest-only reconstruction extension.
 
 ## Data availability
 
-Add GitHub, Hugging Face, Zenodo version/DOI, and immutable commit identifiers
-at release time.
+All code, configurations, prompts, schemas, and the 50-pair QA sample
+(`50_qa_pairs.csv`) are available at https://github.com/gkizildogan/datacuration.
+Cite the tagged release and its immutable commit identifier.
 

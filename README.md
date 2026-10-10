@@ -9,6 +9,10 @@ The repository includes a tiny, openly licensed offline fixture portfolio. It
 is a pipeline smoke test, not the research dataset. Live source acquisition and
 Qwen generation are always opt-in.
 
+This repository is the only published source for the accompanying article: all
+code, configurations, prompts, and schemas are here. `50_qa_pairs.csv` is a
+sample of generated QA pairs (question, answer, and evidence passage).
+
 ## Quick start
 
 ```bash
@@ -90,7 +94,8 @@ license family. The Python code is Apache-2.0; that license does not apply to
 third-party data.
 
 Production passage construction uses the locally downloaded fast tokenizer
-configured in `configs/passages.yaml`. Its 40-character model commit and local
+configured in `configs/passages.yaml`, expected under the ignored `model-cache/`
+directory. Its 40-character model commit and local
 file checksums are verified before loading. Offline tests use
 `configs/passages.fixture.yaml` so CI does not depend on machine-local model
 assets.
